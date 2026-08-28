@@ -265,67 +265,35 @@
         </div>
 
         <form id="ticketForm">
-          <div class="checkbox-group">
-            <input type="checkbox" id="discount_20" name="discount_20">
-            <label for="discount_20" style="margin-bottom: 0;">20% Discount Applied</label>
-          </div>
+  <div class="form-group">
+    <label for="sg_order_num">Order #</label>
+    <input type="text" id="sg_order_num" placeholder="e.g. #10452" required>
+  </div>
 
-          <div class="form-group">
-            <label for="name">Customer Name</label>
-            <input type="text" id="name" required>
-          </div>
+  <div class="form-group">
+    <label for="sg_customer_email">Customer Email</label>
+    <input type="email" id="sg_customer_email" required>
+  </div>
 
-          <div class="form-group">
-            <label for="email">Customer Email</label>
-            <input type="email" id="email" required>
-          </div>
+  <div class="form-group">
+    <label for="sg_refund_amount">Refund Amount</label>
+    <input type="text" id="sg_refund_amount" placeholder="e.g. $49.99 or N/A" required>
+  </div>
 
-          <div class="form-group">
-            <label for="gorgias_link">Gorgias Link</label>
-            <input type="text" id="gorgias_link">
-          </div>
+  <div class="form-group">
+    <label for="sg_sub_status">Sub Status</label>
+    <select id="sg_sub_status" required>
+      <option value="">-- Select Sub Status --</option>
+      <option value="Canceled">Canceled</option>
+      <option value="Active">Active</option>
+      <option value="Paused">Paused</option>
+      <option value="TBD">TBD</option>
+    </select>
+  </div>
 
-          <div class="form-group">
-            <label for="request">Request</label>
-            <select id="request" required>
-              <option value="">-- Select Request Type --</option>
-              <option value="Cancel Subscription">Cancel Subscription</option>
-              <option value="Replacement first; pause sub">Replacement first; pause sub</option>
-              <option value="Store Credit (Refunded)">Store Credit (Refunded)</option>
-              <option value="Store Credit (Not Claimed)">Store Credit (Not Claimed)</option>
-              <option value="Other (See Notes)">Other (See Notes)</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="sub_status">Sub Status</label>
-            <select id="sub_status" required>
-              <option value="">-- Select Sub Status --</option>
-              <option value="Canceled">Canceled</option>
-              <option value="Active">Active</option>
-              <option value="TBD">TBD</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="order_status">Order Status</label>
-            <select id="order_status" required>
-              <option value="">-- Select Order Status --</option>
-              <option value="Refunded">Refunded</option>
-              <option value="Partially Shipped">Partially Shipped</option>
-              <option value="Shipped">Shipped</option>
-              <option value="TBD">TBD</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="notes">Notes</label>
-            <textarea id="notes" rows="4"></textarea>
-          </div>
-
-          <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
-          <div id="statusMessage1" class="status-msg"></div>
-        </form>
+  <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
+  <div id="statusMessage1" class="status-msg"></div>
+</form>
       </div>
     </div>
 
