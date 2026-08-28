@@ -475,22 +475,25 @@
     }
 
     // Check Session on Load
-    function initAuth() {
-      const sessionRaw = localStorage.getItem('user_session');
-      if (sessionRaw) {
-        const session = JSON.parse(sessionRaw);
-        if (new Date().getTime() < session.expiry) {
-          document.getElementById('userEmail').innerText = session.email;
-          if (session.picture) document.getElementById('userAvatar').src = session.picture;
-          document.getElementById('userBar').style.display = 'flex';
-          showView('dashboardView');
-          return;
-        } else {
-          localStorage.removeItem('user_session');
-        }
-      }
+   function initAuth() {
+  const sessionRaw = localStorage.getItem('user_session');
+  if (sessionRaw) {
+    const session = JSON.parse(sessionRaw);
+    if (new Date().getTime() < session.expiry) {
+      document.getElementById('userEmail').innerText = session.email;
+      if (session.picture) document.getElementById('userAvatar').src = session.picture;
+      document.getElementById('userBar').style.display = 'flex';
       showView('dashboardView');
+      return;
+    } else {
+      localStorage.removeItem('user_session');
     }
+  }
+  
+  // Hide user bar and force redirect to Login view
+  document.getElementById('userBar').style.display = 'none';
+  showView('loginView');
+}
 
     // Form 1 Submission Logic (Super Greens)
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
