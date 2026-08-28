@@ -169,6 +169,7 @@
 </head>
 <body>
 
+  <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
@@ -176,6 +177,9 @@
     <ul class="nav-list">
       <li class="nav-item">
         <a onclick="showView('dashboardView')" class="nav-link active">📋 Ticket Forms</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('bagCodeView')" class="nav-link">🛍️ Replacement Bag Codes</a>
       </li>
       <li class="nav-item">
         <a onclick="showView('reportsView')" class="nav-link">📊 Search & Reports</a>
@@ -196,14 +200,17 @@
     </ul>
   </aside>
 
+  <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
+    <!-- Top User Profile Bar -->
     <div id="userBar" class="user-bar">
       <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
       <span id="userEmail" class="user-email"></span>
       <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
+    <!-- VIEW 1: LOGIN -->
     <div id="loginView" class="view-page">
       <div class="form-container" style="text-align: center; max-width: 400px;">
         <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
@@ -222,6 +229,7 @@
       </div>
     </div>
 
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
     <div id="dashboardView" class="view-page">
       <div class="header">
         <div><span class="badge">Portal</span></div>
@@ -272,6 +280,7 @@
       </div>
     </div>
 
+    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
     <div id="form1View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -313,6 +322,7 @@
       </div>
     </div>
 
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
     <div id="form2View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -360,6 +370,7 @@
       </div>
     </div>
 
+    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
     <div id="form3View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -413,6 +424,7 @@
       </div>
     </div>
 
+    <!-- VIEW 6: FORM 4 (Refund Others) -->
     <div id="form4View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -475,6 +487,7 @@
       </div>
     </div>
 
+    <!-- VIEW 7: REPLACEMENT BAG CODES LOOKUP -->
     <div id="bagCodeView" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -506,6 +519,7 @@
       </div>
     </div>
 
+    <!-- VIEW 8: SEARCH & REPORTS -->
     <div id="reportsView" class="view-page">
       <div class="header">
         <h1>Search & Analytics</h1>
@@ -554,16 +568,19 @@
       </div>
     </div>
 
+    <!-- VIEW 9: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header"><h1>Team Playbooks</h1></div>
       <div class="form-container" style="text-align: center;"><p>📚 Documentation coming soon!</p></div>
     </div>
 
+    <!-- VIEW 10: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header"><h1>Macro Guides</h1></div>
       <div class="form-container" style="text-align: center;"><p>💬 Gorgias Macros coming soon!</p></div>
     </div>
 
+    <!-- VIEW 11: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header"><h1>Internal FAQs</h1></div>
       <div class="form-container" style="text-align: center;"><p>❓ FAQ documentation coming soon!</p></div>
