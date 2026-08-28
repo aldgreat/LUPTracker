@@ -261,6 +261,14 @@
           </div>
           <button onclick="showView('form4View')" class="btn">Open Form &rarr;</button>
         </div>
+
+        <div class="card">
+          <div>
+            <h3>Replacement Bag Codes</h3>
+            <p>Search recall replacement bag codes and match lot numbers or product details.</p>
+          </div>
+          <button onclick="showView('bagCodeView')" class="btn">Search Bag Codes &rarr;</button>
+        </div>
       </div>
     </div>
 
@@ -467,6 +475,37 @@
       </div>
     </div>
 
+    <div id="bagCodeView" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container" style="max-width: 900px; width: 100%;">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Replacement Bag Codes</h1>
+          <p class="subtitle">Search recall replacement bag codes from the ALL CODES sheet.</p>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+          <input type="text" id="bagCodeSearchInput" placeholder="Search bag code, order #, or lot details..." onkeyup="filterBagCodeData()" style="flex: 1;" />
+          <button onclick="fetchBagCodeData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Codes</button>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr id="bagCodeTableHeader" style="border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
+                <th style="padding: 0.75rem;">Loading columns...</th>
+              </tr>
+            </thead>
+            <tbody id="bagCodeTableBody">
+              <tr>
+                <td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Codes" to pull bag codes.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <div id="reportsView" class="view-page">
       <div class="header">
         <h1>Search & Analytics</h1>
@@ -516,50 +555,33 @@
     </div>
 
     <div id="playbooksView" class="view-page">
-      <div class="header">
-        <h1>Team Playbooks</h1>
-        <p class="subtitle">Standard operating procedures and internal workflow processes.</p>
-      </div>
-      <div class="form-container" style="text-align: center;">
-        <p>📚 Playbooks documentation library coming soon!</p>
-      </div>
+      <div class="header"><h1>Team Playbooks</h1></div>
+      <div class="form-container" style="text-align: center;"><p>📚 Documentation coming soon!</p></div>
     </div>
 
     <div id="macroView" class="view-page">
-      <div class="header">
-        <h1>Macro Guides</h1>
-        <p class="subtitle">Approved Gorgias macros and CX canned response guidelines.</p>
-      </div>
-      <div class="form-container" style="text-align: center;">
-        <p>💬 Gorgias Macro directory coming soon!</p>
-      </div>
+      <div class="header"><h1>Macro Guides</h1></div>
+      <div class="form-container" style="text-align: center;"><p>💬 Gorgias Macros coming soon!</p></div>
     </div>
 
     <div id="faqView" class="view-page">
-      <div class="header">
-        <h1>Internal FAQs</h1>
-        <p class="subtitle">Quick reference guide for common customer inquiry scenarios.</p>
-      </div>
-      <div class="form-container" style="text-align: center;">
-        <p>❓ FAQ documentation coming soon!</p>
-      </div>
+      <div class="header"><h1>Internal FAQs</h1></div>
+      <div class="form-container" style="text-align: center;"><p>❓ FAQ documentation coming soon!</p></div>
     </div>
 
   </main>
 
   <script>
-    // GLOBAL CONFIGURATION
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
     let globalPortalData = [];
+    let globalBagCodeData = [];
 
-    // Helper: Enforce Leading '#' for Order Numbers
     function formatOrderNumber(input) {
       const trimmed = input.trim();
       if (!trimmed) return '';
       return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
     }
 
-    // Page Switcher Engine
     function showView(viewId) {
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
@@ -578,45 +600,32 @@
         const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
         if (activeLink) activeLink.classList.add('active');
 
-        if (viewId === 'reportsView' && globalPortalData.length === 0) {
-          fetchPortalData();
-        }
+        if (viewId === 'reportsView' && globalPortalData.length === 0) fetchPortalData();
+        if (viewId === 'bagCodeView' && globalBagCodeData.length === 0) fetchBagCodeData();
       }
     }
 
-    // Toggle Claim Reminder Box
     function checkClaimReminder() {
       const reason = document.getElementById('rep_reason').value;
       const reminderBox = document.getElementById('claimReminder');
-      if (reason === 'LIT' || reason === 'Damaged') {
-        reminderBox.style.display = 'block';
-      } else {
-        reminderBox.style.display = 'none';
-      }
+      reminderBox.style.display = (reason === 'LIT' || reason === 'Damaged') ? 'block' : 'none';
     }
 
-    // Google JWT Decoder
     function parseJwt(token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
-        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      ).join(''));
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
       return JSON.parse(jsonPayload);
     }
 
-    // Auth Handler
     function handleCredentialResponse(response) {
       const user = parseJwt(response.credential);
-      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
-      
       const sessionData = {
         email: user.email,
         name: user.name,
         picture: user.picture,
-        expiry: new Date().getTime() + thirtyDaysInMs
+        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
       };
-
       localStorage.setItem('user_session', JSON.stringify(sessionData));
       initAuth();
     }
@@ -626,7 +635,6 @@
       showView('loginView');
     }
 
-    // Check Session on Load
     function initAuth() {
       const sessionRaw = localStorage.getItem('user_session');
       if (sessionRaw) {
@@ -643,10 +651,71 @@
       showView('loginView');
     }
 
-    // --- REPORTING & SEARCH ENGINE ---
+    // --- BAG CODE SEARCH ENGINE ---
+    function fetchBagCodeData() {
+      const tbody = document.getElementById('bagCodeTableBody');
+      tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching ALL CODES sheet...</td></tr>';
+
+      fetch(`${SCRIPT_URL}?action=getBagCodes`)
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === 'success') {
+            globalBagCodeData = response.data;
+            renderBagCodeTable(globalBagCodeData);
+          } else {
+            tbody.innerHTML = `<tr><td style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load codes: ${response.message}</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: #d9534f;">Error pulling bag codes. Ensure Apps Script has permissions.</td></tr>';
+        });
+    }
+
+    function renderBagCodeTable(data) {
+      const thead = document.getElementById('bagCodeTableHeader');
+      const tbody = document.getElementById('bagCodeTableBody');
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No bag code records found.</td></tr>';
+        return;
+      }
+
+      const keys = Object.keys(data[0]);
+      keys.forEach(key => {
+        const th = document.createElement('th');
+        th.style.padding = '0.75rem';
+        th.innerText = key;
+        thead.appendChild(th);
+      });
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+        keys.forEach(key => {
+          const td = document.createElement('td');
+          td.style.padding = '0.75rem';
+          td.innerText = row[key] !== undefined ? row[key] : 'N/A';
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterBagCodeData() {
+      const query = document.getElementById('bagCodeSearchInput').value.toLowerCase();
+      const filtered = globalBagCodeData.filter(item => {
+        return Object.values(item).some(val => String(val).toLowerCase().includes(query));
+      });
+      renderBagCodeTable(filtered);
+    }
+
+    // --- REPORTS ENGINE ---
     function fetchPortalData() {
       const tbody = document.getElementById('reportsTableBody');
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching spreadsheet data...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching data...</td></tr>';
 
       fetch(`${SCRIPT_URL}?action=getReports`)
         .then(res => res.json())
@@ -661,15 +730,14 @@
         })
         .catch(err => {
           console.error(err);
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Error fetching data. Ensure Google Apps Script is deployed as a Web App.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Error fetching reports.</td></tr>';
         });
     }
 
     function renderReportMetrics(data) {
       document.getElementById('totalTicketCount').innerText = data.length;
       const replacements = data.filter(d => d._sourceSheet === 'Replacement Tracking Sheet').length;
-      const refunds = data.length - replacements;
-      document.getElementById('totalRefundCount').innerText = refunds;
+      document.getElementById('totalRefundCount').innerText = data.length - replacements;
       document.getElementById('totalReplacementsCount').innerText = replacements;
     }
 
@@ -685,16 +753,8 @@
       data.forEach(item => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid var(--border-color)';
-        
-        // Exclude internal tag to get real columns
         const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
         
-        // Strict positional mapping by column array index:
-        // Col A (0): Timestamp
-        // Col B (1): Agent Email
-        // Col C (2): Order #
-        // Col D (3): Customer Email
-        // Col E (4)+: Refund Amount / Sub Status / Reason
         const agent = item[keys[1]] || 'N/A';
         const orderNo = item[keys[2]] || 'N/A';
         const email = item[keys[3]] || 'N/A';
@@ -724,177 +784,84 @@
       renderReportTable(filtered);
     }
 
-    // --- FORM SUBMISSION LISTENERS ---
-    // Form 1: Super Greens
+    // FORM LISTENERS
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn1');
-      const statusMsg = document.getElementById('statusMessage1');
-      const userSession = JSON.parse(localStorage.getItem('user_session'));
-      
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Submitting...';
-      statusMsg.innerText = '';
-
-      const formData = {
-        form_type: 'super_greens',
-        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+      submitFormData('super_greens', {
         order_number: formatOrderNumber(document.getElementById('sg_order_num').value),
         customer_email: document.getElementById('sg_customer_email').value,
         refund_amount: document.getElementById('sg_refund_amount').value,
         sub_status: document.getElementById('sg_sub_status').value
-      };
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      .then(() => {
-        statusMsg.style.color = '#0E3A2F';
-        statusMsg.innerText = 'Ticket successfully recorded!';
-        document.getElementById('ticketForm').reset();
-      })
-      .catch(error => {
-        statusMsg.style.color = '#d9534f';
-        statusMsg.innerText = 'Error submitting ticket.';
-        console.error('Error:', error);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Ticket';
-      });
+      }, 'submitBtn1', 'statusMessage1', 'ticketForm');
     });
 
-    // Form 2: Replacement Tracking
     document.getElementById('replacementForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn2');
-      const statusMsg = document.getElementById('statusMessage2');
-      const userSession = JSON.parse(localStorage.getItem('user_session'));
-      
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Submitting...';
-      statusMsg.innerText = '';
-
-      const formData = {
-        form_type: 'replacement_tracking',
-        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+      submitFormData('replacement_tracking', {
         order_number: formatOrderNumber(document.getElementById('rep_order_num').value),
         customer_email: document.getElementById('rep_customer_email').value,
         reason: document.getElementById('rep_reason').value,
         replacement_order_num: formatOrderNumber(document.getElementById('rep_replacement_order').value)
-      };
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      .then(() => {
-        statusMsg.style.color = '#0E3A2F';
-        statusMsg.innerText = 'Replacement logged successfully!';
-        document.getElementById('replacementForm').reset();
-        document.getElementById('claimReminder').style.display = 'none';
-      })
-      .catch(error => {
-        statusMsg.style.color = '#d9534f';
-        statusMsg.innerText = 'Error submitting replacement.';
-        console.error('Error:', error);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Replacement';
-      });
+      }, 'submitBtn2', 'statusMessage2', 'replacementForm');
     });
 
-    // Form 3: Recall Order Refunds
     document.getElementById('recallForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn3');
-      const statusMsg = document.getElementById('statusMessage3');
-      const userSession = JSON.parse(localStorage.getItem('user_session'));
-      
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Submitting...';
-      statusMsg.innerText = '';
-
-      const formData = {
-        form_type: 'recall_order_refunds',
-        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+      submitFormData('recall_order_refunds', {
         order_number: formatOrderNumber(document.getElementById('recall_order_num').value),
         customer_email: document.getElementById('recall_customer_email').value,
         refund_amount: document.getElementById('recall_refund_amount').value,
         sub_status: document.getElementById('recall_sub_status').value,
         refund_reason: document.getElementById('recall_reason').value
-      };
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      .then(() => {
-        statusMsg.style.color = '#0E3A2F';
-        statusMsg.innerText = 'Recall refund logged successfully!';
-        document.getElementById('recallForm').reset();
-      })
-      .catch(error => {
-        statusMsg.style.color = '#d9534f';
-        statusMsg.innerText = 'Error submitting recall refund.';
-        console.error('Error:', error);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Recall Refund';
-      });
+      }, 'submitBtn3', 'statusMessage3', 'recallForm');
     });
 
-    // Form 4: Refund Others
     document.getElementById('refundOthersForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitBtn4');
-      const statusMsg = document.getElementById('statusMessage4');
+      submitFormData('refund_others', {
+        order_number: formatOrderNumber(document.getElementById('ro_order_num').value),
+        customer_email: document.getElementById('ro_customer_email').value,
+        refund_amount: document.getElementById('ro_refund_amount').value,
+        sub_status: document.getElementById('ro_sub_status').value,
+        refund_reason: document.getElementById('ro_reason').value
+      }, 'submitBtn4', 'statusMessage4', 'refundOthersForm');
+    });
+
+    function submitFormData(formType, dataObj, btnId, msgId, formId) {
+      const submitBtn = document.getElementById(btnId);
+      const statusMsg = document.getElementById(msgId);
       const userSession = JSON.parse(localStorage.getItem('user_session'));
       
       submitBtn.disabled = true;
       submitBtn.innerText = 'Submitting...';
       statusMsg.innerText = '';
 
-      const formData = {
-        form_type: 'refund_others',
-        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        order_number: formatOrderNumber(document.getElementById('ro_order_num').value),
-        customer_email: document.getElementById('ro_customer_email').value,
-        refund_amount: document.getElementById('ro_refund_amount').value,
-        sub_status: document.getElementById('ro_sub_status').value,
-        refund_reason: document.getElementById('ro_reason').value
-      };
+      const payload = Object.assign({
+        form_type: formType,
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent'
+      }, dataObj);
 
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
       .then(() => {
         statusMsg.style.color = '#0E3A2F';
-        statusMsg.innerText = 'Refund logged successfully!';
-        document.getElementById('refundOthersForm').reset();
+        statusMsg.innerText = 'Recorded successfully!';
+        document.getElementById(formId).reset();
       })
       .catch(error => {
         statusMsg.style.color = '#d9534f';
-        statusMsg.innerText = 'Error submitting refund.';
+        statusMsg.innerText = 'Error submitting entry.';
         console.error('Error:', error);
       })
       .finally(() => {
         submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Refund';
+        submitBtn.innerText = 'Submit';
       });
-    });
+    }
 
     initAuth();
   </script>
