@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recall Refund Playbook - Live It Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --primary-green: #0E3A2F;
+      --accent-green: #1B5E4B;
+      --text-dark: #1A221E;
+      --text-muted: #5C6B64;
+      --border-color: #E2ECE6;
+      --shadow: 0 10px 30px rgba(14, 58, 47, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--primary-green);
+      color: #FFF;
+      padding: 2rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+
+    header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    header p { color: #E8F2ED; font-size: 0.95rem; }
+
+    .nav-bar {
+      position: sticky;
+      top: 1rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      padding: 0.75rem 1.25rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+      z-index: 100;
+    }
+
+    .nav-bar a {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      transition: background 0.2s;
+    }
+
+    .nav-bar a:hover {
+      background: var(--border-color);
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      color: var(--primary-green);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+      font-size: 1.4rem;
+    }
+
+    .card h3 {
+      color: var(--accent-green);
+      margin: 1.25rem 0 0.5rem 0;
+      font-size: 1.1rem;
+    }
+
+    ul, ol { padding-left: 1.25rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.4rem; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: #E8F2ED;
+      color: var(--primary-green);
+      font-weight: 700;
+    }
+
+    .macro-box {
+      background: #F0F4F2;
+      border-left: 4px solid var(--primary-green);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+      font-family: inherit;
+      white-space: pre-line;
+      font-size: 0.9rem;
+    }
+
+    .alert {
+      background-color: #FFF3CD;
+      color: #856404;
+      border: 1px solid #FFEEBA;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📕 Recall Refund Playbook</h1>
+      <p><strong>Last Updated:</strong> February 6, 2026 | Internal CS Guidelines & Operational Procedures</p>
+    </header>
+
+    <div class="nav-bar">
+      <a href="#process">♻️ Process</a>
+      <a href="#criteria">✔️ Criteria</a>
+      <a href="#validation">👍 Validation</a>
+      <a href="#replacements">🛍️ Replacement Bags</a>
+      <a href="#store-credit">➕ Store Credit</a>
+      <a href="#cash">💰 Cash Refunds</a>
+      <a href="#amazon">🅰️ Amazon Orders</a>
+      <a href="#email-error">❌ Email Error Macros</a>
+      <a href="#automations">🤖 Automations</a>
+    </div>
+
+    <!-- REFUND PROCESS -->
+    <div id="process" class="card">
+      <h2>♻️ Refund Process</h2>
+      <div class="alert">🔒 Attorney-Client Privilege Document</div>
+      <p>The Recall Refund Playbook is designed to support our Customer Service team by clearly outlining the refund workflow, from intake to validation to completion.</p>
+
+      <h3>Customer Notification Sources</h3>
+      <ul>
+        <li>FDA press release (1/14) - Expiration dates 08/2026 to 01/2028 affected.</li>
+        <li>CDC press release / Social Media (1/14).</li>
+        <li>Live It Up customer email outreach (Starting 1/15) - Direct links to Gorgias / Forms.</li>
+        <li>Live It Up website footer & Super Greens PDP blog post (Starting 1/26).</li>
+      </ul>
+
+      <h3>Customer Inquiries & Submissions</h3>
+      <p>Customers submit claims via <strong>Refund Request Form A</strong> (requires Order # & Lot # Photo) or <strong>Form B</strong> (missing Order # / Lot #). Manual ticket submissions must be added to the Refund Tracking spreadsheet manually.</p>
+    </div>
+
+    <!-- REFUND CRITERIA -->
+    <div id="criteria" class="card">
+      <h2>✔️ Refund Criteria</h2>
+      <h3>Valid Refund Requirements</h3>
+      <ul>
+        <li>Lot Number starting with <strong>“A”</strong> or <strong>“3”</strong>.</li>
+        <li>Valid Email Address & Order Number.</li>
+        <li>Valid Picture: Package photo showing Lot Code/Exp Date OR canister/storage photo.</li>
+      </ul>
+
+      <h3>Refund Terms</h3>
+      <ul>
+        <li>Applies to current/non-current subscribers and single-time purchasers.</li>
+        <li>Refund covers <strong>ONE bag</strong> of Super Greens (or unfinished bags from bulk orders).</li>
+        <li>Full refund including shipping and tax (calculated from what was paid at purchase time).</li>
+      </ul>
+    </div>
+
+    <!-- VALIDATION -->
+    <div id="validation" class="card">
+      <h2>👍 Refund Validation Workflow</h2>
+      <ol>
+        <li>Log into the Vibe Refunding Portal, assign yourself, filter by status <strong>"New"</strong>, and sort by Email.</li>
+        <li>Verify Lot #: Must start with "A" or "3".</li>
+        <li>Look up Order # in Shopify. Confirm single-unit or multiple-unit purchase.</li>
+        <li>Validate Photo in Asana.</li>
+        <li>Set status to <strong>Confirmed</strong>, <strong>Denied</strong>, or <strong>Follow-up</strong>. <em>Never leave a ticket as "New".</em></li>
+      </ol>
+
+      <h3>Bundle Refund Calculation Matrix</h3>
+      <table>
+        <thead>
+          <tr><th>Bundle Type</th><th># of Valid Units</th><th>% of "Paid" Amount to Refund</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Greens 2-pack</td><td>1 / 2</td><td>50% / 100%</td></tr>
+          <tr><td>Greens 3-pack</td><td>1 / 2 / 3</td><td>33% / 66% / 100%</td></tr>
+          <tr><td>Greens 6-pack</td><td>1 / 2 / 3 / 4 / 5 / 6</td><td>16.6% / 33% / 50% / 66% / 83.3% / 100%</td></tr>
+          <tr><td>1 Greens + 1 GH / FTB</td><td>1</td><td>50%</td></tr>
+          <tr><td>Ultimate Survival Pack</td><td>1</td><td>22%</td></tr>
+          <tr><td>Day to Night Duo Pack</td><td>1</td><td>40%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- REPLACEMENT BAGS -->
+    <div id="replacements" class="card">
+      <h2>🛍️ Replacement Bag Redemption</h2>
+      <p>Applies to requests with Status: <strong>Confirmed</strong> and Type: <strong>Replacement Bag</strong>.</p>
+      <ul>
+        <li>Unique, one-time discount code per customer email (auto-applied via personalized URL).</li>
+        <li>All bags must be added and redeemed in a <strong>single order</strong>.</li>
+        <li>Super Greens is on pre-order and expected to ship Summer 2026. All other products ship immediately.</li>
+      </ul>
+
+      <h3>Replacement Bag Customer Macro</h3>
+      <div class="macro-box">Hi [first name],
+
+We’ve reviewed your Super Greens recall submission and your request for a replacement has been validated and approved. You’re now able to redeem [X] bag(s) of your choice.
+
+To claim your bag(s):
+1. Visit your personalized Replacement Bag Redemption page: [Link]
+2. Select [X] bags from any available products.
+3. Your redemption code [code] will automatically apply at checkout.
+
+Please note: All bags must be claimed at once in a single order. Super Greens will ship Summer 2026.
+
+- The Team @ Live it Up</div>
+    </div>
+
+    <!-- STORE CREDIT -->
+    <div id="store-credit" class="card">
+      <h2>➕ Store Credit Guidelines</h2>
+      <h3>Active Subscribers (Recharge)</h3>
+      <p>Credits are added to Recharge accounts. Customers toggle "Auto-apply to next order" in their account portal.</p>
+      
+      <h3>Non-Subscribers (Shopify)</h3>
+      <p>Credits are added to Shopify accounts. Customers sign in at checkout via the purple Shop icon to apply store credit.</p>
+    </div>
+
+    <!-- CASH REFUNDS -->
+    <div id="cash" class="card">
+      <h2>💰 Cash Refunds</h2>
+      <p>Cash refunds are processed over a rolling period. Customers receive an automated approval notification letting them know the refund has been scheduled.</p>
+    </div>
+
+    <!-- AMAZON ORDERS -->
+    <div id="amazon" class="card">
+      <h2>🅰️ Amazon Orders Protocol</h2>
+      <ul>
+        <li><strong>Official Amazon Store:</strong> Confirm with team, offer Replacement Bag first. If declined, post details in <code>#amazon-orders-recall</code> Slack channel for manual refund.</li>
+        <li><strong>3rd Party Resellers:</strong> Direct customer to the original seller. If escalated, require invoice + photo proof to process manual PayPal or check refund.</li>
+      </ul>
+    </div>
+
+    <!-- EMAIL ERROR RESPONSE MACROS -->
+    <div id="email-error" class="card">
+      <h2>❌ Email Error Response Macros</h2>
+      <p>For inquiries regarding the May 22, 2026 errant refund email batch:</p>
+
+      <h3>Macro: Unaware of Refund - Cash</h3>
+      <div class="macro-box">Hi [First Name],
+
+We're sorry for any confusion caused by our recent emails. Your cash refund of [amount] was already issued and returned to your original payment method. Please note that if you have multiple orders, they will show up as individual refunds. Please allow 5–7 business days for it to appear.
+
+— The Team @ Live it Up</div>
+
+      <h3>Macro: Denied Refund - Subscriber ($50 Credit Offer)</h3>
+      <div class="macro-box">Hi [First Name],
+
+After reviewing your request against our verification process, we were unable to verify your refund request as it contained invalid or missing information. However, we'd like to offer you a $50 store credit to use on a future order.
+
+To use your credit, sign into your account portal and toggle credit auto-apply.
+
+— The Team @ Live It Up</div>
+    </div>
+
+    <!-- AUTOMATIONS -->
+    <div id="automations" class="card">
+      <h2>🤖 Portal Automations</h2>
+      <ul>
+        <li><strong>Auto-Approval:</strong> Valid Order # + Unique + &lt;$45 + Approved Lot Code + Created &gt; 2025-01-01 $\rightarrow$ Set to <code>Confirmed</code>.</li>
+        <li><strong>Amazon Filter:</strong> Order ID containing "111-", "112-", "113-", "114-", or "Amazon" $\rightarrow$ Set to <code>Denied</code>.</li>
+        <li><strong>Invalid Lot Code:</strong> Lot # starting with "P" $\rightarrow$ Set to <code>Denied</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+</body>
+</html>
