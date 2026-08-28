@@ -146,9 +146,6 @@
     .form-group { margin-bottom: 1.25rem; }
     label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
     input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: #FAFAFA; }
-    
-    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; }
-    .checkbox-group input { width: 18px; height: 18px; accent-color: var(--primary-green); }
 
     /* Dynamic Alert Box */
     .alert-box {
@@ -172,6 +169,7 @@
 </head>
 <body>
 
+  <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
@@ -196,14 +194,17 @@
     </ul>
   </aside>
 
+  <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
+    <!-- Top User Profile Bar -->
     <div id="userBar" class="user-bar">
       <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
       <span id="userEmail" class="user-email"></span>
       <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
+    <!-- VIEW 1: LOGIN -->
     <div id="loginView" class="view-page">
       <div class="form-container" style="text-align: center; max-width: 400px;">
         <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
@@ -211,17 +212,18 @@
         <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
         
         <div style="display: flex; justify-content: center;">
-         <div id="g_id_onload"
-     data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtgq07jhpe.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse"
-     data-auto_select="false"
-     data-use_fedcm_for_prompt="false">
-</div>
+          <div id="g_id_onload"
+               data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtggq07jhpe.apps.googleusercontent.com"
+               data-callback="handleCredentialResponse"
+               data-auto_select="false"
+               data-use_fedcm_for_prompt="false">
+          </div>
           <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
         </div>
       </div>
     </div>
 
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
     <div id="dashboardView" class="view-page">
       <div class="header">
         <div><span class="badge">Portal</span></div>
@@ -256,6 +258,7 @@
       </div>
     </div>
 
+    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
     <div id="form1View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -265,38 +268,39 @@
         </div>
 
         <form id="ticketForm">
-  <div class="form-group">
-    <label for="sg_order_num">Order #</label>
-    <input type="text" id="sg_order_num" placeholder="e.g. #10452" required>
-  </div>
+          <div class="form-group">
+            <label for="sg_order_num">Order #</label>
+            <input type="text" id="sg_order_num" placeholder="e.g. #10452" required>
+          </div>
 
-  <div class="form-group">
-    <label for="sg_customer_email">Customer Email</label>
-    <input type="email" id="sg_customer_email" required>
-  </div>
+          <div class="form-group">
+            <label for="sg_customer_email">Customer Email</label>
+            <input type="email" id="sg_customer_email" required>
+          </div>
 
-  <div class="form-group">
-    <label for="sg_refund_amount">Refund Amount</label>
-    <input type="text" id="sg_refund_amount" placeholder="e.g. $49.99 or N/A" required>
-  </div>
+          <div class="form-group">
+            <label for="sg_refund_amount">Refund Amount</label>
+            <input type="text" id="sg_refund_amount" placeholder="e.g. $49.99 or N/A" required>
+          </div>
 
-  <div class="form-group">
-    <label for="sg_sub_status">Sub Status</label>
-    <select id="sg_sub_status" required>
-      <option value="">-- Select Sub Status --</option>
-      <option value="Canceled">Canceled</option>
-      <option value="Active">Active</option>
-      <option value="Paused">Paused</option>
-      <option value="TBD">TBD</option>
-    </select>
-  </div>
+          <div class="form-group">
+            <label for="sg_sub_status">Sub Status</label>
+            <select id="sg_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
 
-  <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
-  <div id="statusMessage1" class="status-msg"></div>
-</form>
+          <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
+          <div id="statusMessage1" class="status-msg"></div>
+        </form>
       </div>
     </div>
 
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
     <div id="form2View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -329,6 +333,7 @@
             </select>
           </div>
 
+          <!-- DYNAMIC CLAIM REMINDER BANNER -->
           <div id="claimReminder" class="alert-box">
             ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
           </div>
@@ -344,6 +349,7 @@
       </div>
     </div>
 
+    <!-- VIEW 5: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -354,6 +360,7 @@
       </div>
     </div>
 
+    <!-- VIEW 6: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -364,6 +371,7 @@
       </div>
     </div>
 
+    <!-- VIEW 7: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -460,48 +468,48 @@
       showView('loginView');
     }
 
-    // Form 1 Submission Logic (Super Greens)
+    // Form 1 Submission Logic (Super Greens Relaunch)
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  const submitBtn = document.getElementById('submitBtn1');
-  const statusMsg = document.getElementById('statusMessage1');
-  const userSession = JSON.parse(localStorage.getItem('user_session'));
-  
-  submitBtn.disabled = true;
-  submitBtn.innerText = 'Submitting...';
-  statusMsg.innerText = '';
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn1');
+      const statusMsg = document.getElementById('statusMessage1');
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
 
-  const formData = {
-    form_type: 'super_greens',
-    submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-    order_number: document.getElementById('sg_order_num').value,
-    customer_email: document.getElementById('sg_customer_email').value,
-    refund_amount: document.getElementById('sg_refund_amount').value,
-    sub_status: document.getElementById('sg_sub_status').value
-  };
+      const formData = {
+        form_type: 'super_greens',
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+        order_number: document.getElementById('sg_order_num').value,
+        customer_email: document.getElementById('sg_customer_email').value,
+        refund_amount: document.getElementById('sg_refund_amount').value,
+        sub_status: document.getElementById('sg_sub_status').value
+      };
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(formData)
-  })
-  .then(() => {
-    statusMsg.style.color = '#0E3A2F';
-    statusMsg.innerText = 'Ticket successfully recorded!';
-    document.getElementById('ticketForm').reset();
-  })
-  .catch(error => {
-    statusMsg.style.color = '#d9534f';
-    statusMsg.innerText = 'Error submitting ticket.';
-    console.error('Error:', error);
-  })
-  .finally(() => {
-    submitBtn.disabled = false;
-    submitBtn.innerText = 'Submit Ticket';
-  });
-});
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Ticket successfully recorded!';
+        document.getElementById('ticketForm').reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting ticket.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Ticket';
+      });
+    });
 
     // Form 2 Submission Logic (Replacement Tracking)
     document.getElementById('replacementForm').addEventListener('submit', function(e) {
