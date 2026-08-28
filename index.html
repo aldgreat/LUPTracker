@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live It Up - Portal</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --primary-green: #0E3A2F;
+      --accent-green: #1B5E4B;
+      --text-dark: #1A221E;
+      --text-muted: #5C6B64;
+      --border-color: #E2ECE6;
+      --shadow: 0 10px 30px rgba(14, 58, 47, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* Page Visibility Controls */
+    .view-page { display: none; width: 100%; max-width: 900px; flex-direction: column; align-items: center; }
+    .view-page.active { display: flex; }
+
+    .logo { max-width: 180px; height: auto; margin-bottom: 1.5rem; }
+    .header { text-align: center; max-width: 600px; margin-bottom: 2.5rem; }
+    
+    .badge {
+      display: inline-block;
+      background-color: #E8F2ED;
+      color: var(--primary-green);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    h1 { font-size: 2.2rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.5rem; }
+    p.subtitle { font-size: 1rem; color: var(--text-muted); }
+
+    /* Top User Bar */
+    .user-bar {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .user-email { font-size: 0.85rem; font-weight: 600; color: var(--primary-green); }
+    .logout-btn { background: none; border: none; color: #d9534f; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+    /* Cards Layout */
+    .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; width: 100%; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow); }
+    .card h3 { color: var(--primary-green); margin-bottom: 0.5rem; }
+    .card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Form Container */
+    .form-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 650px; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: #FAFAFA; }
+    
+    .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .checkbox-group input { width: 18px; height: 18px; accent-color: var(--primary-green); }
+
+    .btn { display: inline-block; width: 100%; text-align: center; padding: 0.875rem; background-color: var(--primary-green); color: #ffffff; border: none; font-weight: 600; font-size: 0.95rem; border-radius: 50px; cursor: pointer; text-decoration: none; transition: background-color 0.2s; }
+    .btn:hover { background-color: var(--accent-green); }
+    .btn-back { background: transparent; color: var(--primary-green); border: 1px solid var(--border-color); margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.25rem; }
+
+    #statusMessage { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- Top User Profile Bar -->
+  <div id="userBar" class="user-bar">
+    <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
+    <span id="userEmail" class="user-email"></span>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+  </div>
+
+  <!-- VIEW 1: LOGIN -->
+  <div id="loginView" class="view-page">
+    <div class="form-container" style="text-align: center; max-width: 400px;">
+      <img src="LiU_logo_green.png" alt="Live It Up Logo" class="logo" />
+      <h1>Welcome Back</h1>
+      <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
+      
+      <div style="display: flex; justify-content: center;">
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: MAIN DASHBOARD -->
+  <div id="dashboardView" class="view-page">
+    <div class="header">
+      <img src="LiU_logo_green.png" alt="Live It Up Logo" class="logo" />
+      <div><span class="badge">Portal</span></div>
+      <h1>Select Submission Type</h1>
+      <p class="subtitle">Choose the request type below to open the dedicated form.</p>
+    </div>
+
+    <div class="card-container">
+      <div class="card">
+        <div>
+          <h3>Super Greens Relaunch Ticket Trends</h3>
+          <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
+        </div>
+        <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
+      </div>
+
+      <div class="card">
+        <div>
+          <h3>Replacement Tracking</h3>
+          <p>Submit requests for shipment replacements and missing item fulfillments.</p>
+        </div>
+        <button onclick="alert('Replacement Tracking Form coming soon!')" class="btn">Open Form &rarr;</button>
+      </div>
+
+      <div class="card">
+        <div>
+          <h3>Recall Order Refunds</h3>
+          <p>Process customer refund requests and log recalled order details.</p>
+        </div>
+        <button onclick="alert('Recall Order Refunds Form coming soon!')" class="btn">Open Form &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: FORM 1 (Super Greens) -->
+  <div id="form1View" class="view-page">
+    <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+    <div class="form-container">
+      <div class="header" style="margin-bottom: 1.5rem;">
+        <h1>Super Greens Ticket Trends</h1>
+      </div>
+
+      <form id="ticketForm">
+        <div class="checkbox-group">
+          <input type="checkbox" id="discount_20" name="discount_20">
+          <label for="discount_20" style="margin-bottom: 0;">20% Discount Applied</label>
+        </div>
+
+        <div class="form-group">
+          <label for="name">Customer Name</label>
+          <input type="text" id="name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Customer Email</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="gorgias_link">Gorgias Link</label>
+          <input type="text" id="gorgias_link">
+        </div>
+
+        <div class="form-group">
+          <label for="request">Request</label>
+          <select id="request" required>
+            <option value="">-- Select Request Type --</option>
+            <option value="Cancel Subscription">Cancel Subscription</option>
+            <option value="Replacement first; pause sub">Replacement first; pause sub</option>
+            <option value="Store Credit (Refunded)">Store Credit (Refunded)</option>
+            <option value="Store Credit (Not Claimed)">Store Credit (Not Claimed)</option>
+            <option value="Other (See Notes)">Other (See Notes)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="sub_status">Sub Status</label>
+          <select id="sub_status" required>
+            <option value="">-- Select Sub Status --</option>
+            <option value="Canceled">Canceled</option>
+            <option value="Active">Active</option>
+            <option value="TBD">TBD</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="order_status">Order Status</label>
+          <select id="order_status" required>
+            <option value="">-- Select Order Status --</option>
+            <option value="Refunded">Refunded</option>
+            <option value="Partially Shipped">Partially Shipped</option>
+            <option value="Shipped">Shipped</option>
+            <option value="TBD">TBD</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">Submit Ticket</button>
+        <div id="statusMessage"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // GLOBAL CONFIGURATION
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+
+    // Page Switcher Engine
+    function showView(viewId) {
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+    }
+
+    // Google JWT Decoder
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    // Auth Handler
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+      
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: new Date().getTime() + thirtyDaysInMs
+      };
+
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+      initAuth();
+    }
+
+    function logout() {
+      localStorage.removeItem('user_session');
+      document.getElementById('userBar').style.display = 'none';
+      showView('loginView');
+    }
+
+    // Check Session on Load
+    function initAuth() {
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        if (new Date().getTime() < session.expiry) {
+          document.getElementById('userEmail').innerText = session.email;
+          if (session.picture) document.getElementById('userAvatar').src = session.picture;
+          document.getElementById('userBar').style.display = 'flex';
+          showView('dashboardView');
+          return;
+        } else {
+          localStorage.removeItem('user_session');
+        }
+      }
+      showView('loginView');
+    }
+
+    // Form Submission Logic
+    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      const statusMsg = document.getElementById('statusMessage');
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const formData = {
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+        discount_20: document.getElementById('discount_20').checked ? 'True' : 'False',
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        gorgias_link: document.getElementById('gorgias_link').value,
+        request: document.getElementById('request').value,
+        sub_status: document.getElementById('sub_status').value,
+        order_status: document.getElementById('order_status').value,
+        notes: document.getElementById('notes').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Ticket successfully recorded!';
+        document.getElementById('ticketForm').reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting ticket.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Ticket';
+      });
+    });
+
+    // Run auth check on initialization
+    initAuth();
+  </script>
+</body>
+</html>

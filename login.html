@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Portal</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --primary-green: #0E3A2F;
+      --text-muted: #5C6B64;
+      --border-color: #E2ECE6;
+      --shadow: 0 10px 30px rgba(14, 58, 47, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .logo { max-width: 160px; height: auto; margin-bottom: 1.5rem; }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary-green);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .google-btn-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="logo" />
+    <h1>Welcome Back</h1>
+    <p>Sign in with your Google account to access the submission portal.</p>
+    
+    <div class="google-btn-wrapper">
+      <div id="g_id_onload"
+           data-client_id="726234757478-3amht3rvsc82rdea1mu4qtichaqfhjs4.apps.googleusercontent.com"
+           data-callback="handleCredentialResponse">
+      </div>
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+    </div>
+  </div>
+
+  <script>
+    // Helper function to decode JWT payload safely
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+        '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      ).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      
+      // Calculate 30-day expiration date in milliseconds
+      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+      const expiryDate = new Date().getTime() + thirtyDaysInMs;
+
+      // Save user profile and 30-day session token in localStorage
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: expiryDate
+      };
+
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+
+      // Redirect to main home page
+      window.location.href = 'index.html';
+    }
+
+    // Auto-redirect if already logged in and token is valid
+    (function checkExistingSession() {
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        if (new Date().getTime() < session.expiry) {
+          window.location.href = 'index.html';
+        } else {
+          localStorage.removeItem('user_session'); // Session expired
+        }
+      }
+    })();
+  </script>
+
+</body>
+</html>
