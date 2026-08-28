@@ -213,7 +213,7 @@
         
         <div style="display: flex; justify-content: center;">
           <div id="g_id_onload"
-               data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtggq07jhpe.apps.googleusercontent.com"
+               data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtgq07jhpe.apps.googleusercontent.com"
                data-callback="handleCredentialResponse"
                data-auto_select="false"
                data-use_fedcm_for_prompt="false">
@@ -253,7 +253,15 @@
             <h3>Recall Order Refunds</h3>
             <p>Process customer refund requests and log recalled order details.</p>
           </div>
-          <button onclick="alert('Recall Order Refunds Form coming soon!')" class="btn">Open Form &rarr;</button>
+          <button onclick="showView('form3View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Refund Others</h3>
+            <p>Log refund requests for damaged items, lost shipments, and other issues.</p>
+          </div>
+          <button onclick="showView('form4View')" class="btn">Open Form &rarr;</button>
         </div>
       </div>
     </div>
@@ -349,7 +357,124 @@
       </div>
     </div>
 
-    <!-- VIEW 5: PLAYBOOKS -->
+    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
+    <div id="form3View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Recall Order Refunds</h1>
+        </div>
+
+        <form id="recallForm">
+          <div class="form-group">
+            <label for="recall_order_num">Order #</label>
+            <input type="text" id="recall_order_num" placeholder="e.g. #10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_customer_email">Customer Email</label>
+            <input type="email" id="recall_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_refund_amount">Refund Amount</label>
+            <input type="text" id="recall_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_sub_status">Sub Status</label>
+            <select id="recall_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_reason">Refund Reason</label>
+            <select id="recall_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Legal">Legal</option>
+              <option value="Health">Health</option>
+              <option value="BBB">BBB</option>
+              <option value="Multiple Follow ups">Multiple Follow ups</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn3">Submit Recall Refund</button>
+          <div id="statusMessage3" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 6: FORM 4 (Refund Others) -->
+    <div id="form4View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Refund Others</h1>
+        </div>
+
+        <form id="refundOthersForm">
+          <div class="form-group">
+            <label for="ro_order_num">Order #</label>
+            <input type="text" id="ro_order_num" placeholder="e.g. #10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_customer_email">Customer Email</label>
+            <input type="email" id="ro_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_refund_amount">Refund Amount</label>
+            <input type="text" id="ro_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_sub_status">Sub Status</label>
+            <select id="ro_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_reason">Refund Reason</label>
+            <select id="ro_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Damaged Order">Damaged Order</option>
+              <option value="LIT">LIT</option>
+              <option value="Missing order">Missing order</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Taste">Taste</option>
+              <option value="Texture">Texture</option>
+              <option value="Health">Health</option>
+              <option value="Negative Reaction">Negative Reaction</option>
+              <option value="Quantity (too much)">Quantity (too much)</option>
+              <option value="Quality">Quality</option>
+              <option value="Testing & Safety">Testing & Safety</option>
+              <option value="CS">CS</option>
+              <option value="Complaint/BBB">Complaint/BBB</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn4">Submit Refund</button>
+          <div id="statusMessage4" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 7: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -360,7 +485,7 @@
       </div>
     </div>
 
-    <!-- VIEW 6: MACRO GUIDES -->
+    <!-- VIEW 8: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -371,7 +496,7 @@
       </div>
     </div>
 
-    <!-- VIEW 7: FAQS -->
+    <!-- VIEW 9: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -552,6 +677,94 @@
       .finally(() => {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Submit Replacement';
+      });
+    });
+
+    // Form 3 Submission Logic (Recall Order Refunds)
+    document.getElementById('recallForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn3');
+      const statusMsg = document.getElementById('statusMessage3');
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const formData = {
+        form_type: 'recall_order_refunds',
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+        order_number: document.getElementById('recall_order_num').value,
+        customer_email: document.getElementById('recall_customer_email').value,
+        refund_amount: document.getElementById('recall_refund_amount').value,
+        sub_status: document.getElementById('recall_sub_status').value,
+        refund_reason: document.getElementById('recall_reason').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Recall refund logged successfully!';
+        document.getElementById('recallForm').reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting recall refund.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Recall Refund';
+      });
+    });
+
+    // Form 4 Submission Logic (Refund Others)
+    document.getElementById('refundOthersForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn4');
+      const statusMsg = document.getElementById('statusMessage4');
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const formData = {
+        form_type: 'refund_others',
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+        order_number: document.getElementById('ro_order_num').value,
+        customer_email: document.getElementById('ro_customer_email').value,
+        refund_amount: document.getElementById('ro_refund_amount').value,
+        sub_status: document.getElementById('ro_sub_status').value,
+        refund_reason: document.getElementById('ro_reason').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Refund logged successfully!';
+        document.getElementById('refundOthersForm').reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting refund.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Refund';
       });
     });
 
