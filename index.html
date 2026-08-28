@@ -488,10 +488,10 @@
           <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 2;" />
           <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 200px;">
             <option value="all">All Form Categories</option>
-            <option value="Super Greens">Super Greens Trends</option>
-            <option value="Replacement Tracking">Replacement Tracking</option>
-            <option value="Recall Order Refund">Recall Order Refunds</option>
-            <option value="Refund Others">Refund Others</option>
+            <option value="sgrelaunch">Super Greens Trends</option>
+            <option value="replacement tracking">Replacement Tracking</option>
+            <option value="recall order refund">Recall Order Refunds</option>
+            <option value="refund others">Refund Others</option>
           </select>
           <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
         </div>
@@ -712,10 +712,15 @@
       const filtered = globalPortalData.filter(item => {
         const sourceSheet = String(item._sourceSheet || '').toLowerCase();
         
-        // Flexible partial string matching for categories
-        const matchesCategory = (category === 'all') || sourceSheet.includes(category);
+        let matchesCategory = false;
+        if (category === 'all') {
+          matchesCategory = true;
+        } else if (category === 'sgrelaunch') {
+          matchesCategory = sourceSheet.includes('sgrelaunch') || sourceSheet.includes('super greens');
+        } else {
+          matchesCategory = sourceSheet.includes(category);
+        }
         
-        // Search bar query matching
         const matchesSearch = Object.values(item).some(val => 
           String(val).toLowerCase().includes(query)
         );
