@@ -690,13 +690,48 @@
     }
 
     function renderReportTable(data) {
-      const tbody = document.getElementById('reportsTableBody');
-      tbody.innerHTML = '';
+  const tbody = document.getElementById('reportsTableBody');
+  tbody.innerHTML = '';
 
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
-        return;
-      }
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
+    return;
+  }
+
+  data.forEach(item => {
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid var(--border-color)';
+    
+    // Get all key-value pairs returned for this row
+    const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
+    
+    // Map strictly by column order stored in row object:
+    // Col A (0): Timestamp
+    // Col B (1): Agent Email
+    // Col C (2): Order #
+    // Col D (3): Customer Email
+    // Col E (4): Refund Amount / Reason / Sub Status
+    const agent = item[keys[1]] || 'N/A';
+    const orderNo = item[keys[2]] || 'N/A';
+    const email = item[keys[3]] || 'N/A';
+    
+    // Grab remaining detail fields (Col E, F, G)
+    let detailsArr = [];
+    for (let i = 4; i < keys.length; i++) {
+      if (item[keys[i]]) detailsArr.push(item[keys[i]]);
+    }
+    const details = detailsArr.length > 0 ? detailsArr.join(' | ') : 'N/A';
+
+    tr.innerHTML = `
+      <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
+      <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
+      <td style="padding: 0.75rem;">${email}</td>
+      <td style="padding: 0.75rem;">${agent}</td>
+      <td style="padding: 0.75rem;">${details}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
       data.forEach(item => {
         const tr = document.createElement('tr');
