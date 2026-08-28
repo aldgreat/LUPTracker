@@ -50,7 +50,7 @@
       width: 140px;
       height: auto;
       margin-bottom: 2.5rem;
-      filter: brightness(0) invert(1); /* Keeps logo white in dark sidebar */
+      filter: brightness(0) invert(1);
     }
 
     .sidebar-section-title {
@@ -63,14 +63,8 @@
       padding-left: 0.75rem;
     }
 
-    .nav-list {
-      list-style: none;
-      margin-bottom: 2rem;
-    }
-
-    .nav-item {
-      margin-bottom: 0.35rem;
-    }
+    .nav-list { list-style: none; margin-bottom: 2rem; }
+    .nav-item { margin-bottom: 0.35rem; }
 
     .nav-link {
       display: flex;
@@ -156,11 +150,24 @@
     .checkbox-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; }
     .checkbox-group input { width: 18px; height: 18px; accent-color: var(--primary-green); }
 
+    /* Dynamic Alert Box */
+    .alert-box {
+      display: none;
+      background-color: #FFF3CD;
+      color: #856404;
+      border: 1px solid #FFEEBA;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
     .btn { display: inline-block; width: 100%; text-align: center; padding: 0.875rem; background-color: var(--primary-green); color: #ffffff; border: none; font-weight: 600; font-size: 0.95rem; border-radius: 50px; cursor: pointer; text-decoration: none; transition: background-color 0.2s; }
     .btn:hover { background-color: var(--accent-green); }
     .btn-back { background: transparent; color: var(--primary-green); border: 1px solid var(--border-color); margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.25rem; }
 
-    #statusMessage { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
+    .status-msg { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -239,7 +246,7 @@
             <h3>Replacement Tracking</h3>
             <p>Submit requests for shipment replacements and missing item fulfillments.</p>
           </div>
-          <button onclick="alert('Replacement Tracking Form coming soon!')" class="btn">Open Form &rarr;</button>
+          <button onclick="showView('form2View')" class="btn">Open Form &rarr;</button>
         </div>
 
         <div class="card">
@@ -320,13 +327,62 @@
             <textarea id="notes" rows="4"></textarea>
           </div>
 
-          <button type="submit" class="btn" id="submitBtn">Submit Ticket</button>
-          <div id="statusMessage"></div>
+          <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
+          <div id="statusMessage1" class="status-msg"></div>
         </form>
       </div>
     </div>
 
-    <!-- VIEW 4: PLAYBOOKS -->
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
+    <div id="form2View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Replacement Tracking</h1>
+        </div>
+
+        <form id="replacementForm">
+          <div class="form-group">
+            <label for="rep_order_num">Order #</label>
+            <input type="text" id="rep_order_num" placeholder="e.g. #10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="rep_customer_email">Customer Email</label>
+            <input type="email" id="rep_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="rep_reason">Replacement Reason</label>
+            <select id="rep_reason" onchange="checkClaimReminder()" required>
+              <option value="">-- Select Reason --</option>
+              <option value="LIT">LIT (Lost in Transit)</option>
+              <option value="Damaged">Damaged</option>
+              <option value="Missing">Missing</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Delivered not Received">Delivered not Received</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <!-- DYNAMIC CLAIM REMINDER BANNER -->
+          <div id="claimReminder" class="alert-box">
+            ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
+          </div>
+
+          <div class="form-group">
+            <label for="rep_replacement_order">Replacement Order #</label>
+            <input type="text" id="rep_replacement_order" placeholder="e.g. #10452-R" required>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn2">Submit Replacement</button>
+          <div id="statusMessage2" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 5: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -337,7 +393,7 @@
       </div>
     </div>
 
-    <!-- VIEW 5: MACRO GUIDES -->
+    <!-- VIEW 6: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -348,7 +404,7 @@
       </div>
     </div>
 
-    <!-- VIEW 6: FAQS -->
+    <!-- VIEW 7: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -370,10 +426,20 @@
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
 
-      // Update sidebar active state
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
       const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick').includes(viewId));
       if (activeLink) activeLink.classList.add('active');
+    }
+
+    // Toggle Claim Reminder Box
+    function checkClaimReminder() {
+      const reason = document.getElementById('rep_reason').value;
+      const reminderBox = document.getElementById('claimReminder');
+      if (reason === 'LIT' || reason === 'Damaged') {
+        reminderBox.style.display = 'block';
+      } else {
+        reminderBox.style.display = 'none';
+      }
     }
 
     // Google JWT Decoder
@@ -423,15 +489,15 @@
           localStorage.removeItem('user_session');
         }
       }
-      showView('dashboardView'); // Loads dashboard directly
+      showView('dashboardView');
     }
 
-    // Form Submission Logic
+    // Form 1 Submission Logic (Super Greens)
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
       e.preventDefault();
       
-      const submitBtn = document.getElementById('submitBtn');
-      const statusMsg = document.getElementById('statusMessage');
+      const submitBtn = document.getElementById('submitBtn1');
+      const statusMsg = document.getElementById('statusMessage1');
       const userSession = JSON.parse(localStorage.getItem('user_session'));
       
       submitBtn.disabled = true;
@@ -439,6 +505,7 @@
       statusMsg.innerText = '';
 
       const formData = {
+        form_type: 'super_greens',
         submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
         discount_20: document.getElementById('discount_20').checked ? 'True' : 'False',
         name: document.getElementById('name').value,
@@ -469,6 +536,50 @@
       .finally(() => {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Submit Ticket';
+      });
+    });
+
+    // Form 2 Submission Logic (Replacement Tracking)
+    document.getElementById('replacementForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn2');
+      const statusMsg = document.getElementById('statusMessage2');
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const formData = {
+        form_type: 'replacement_tracking',
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+        order_number: document.getElementById('rep_order_num').value,
+        customer_email: document.getElementById('rep_customer_email').value,
+        reason: document.getElementById('rep_reason').value,
+        replacement_order_num: document.getElementById('rep_replacement_order').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Replacement logged successfully!';
+        document.getElementById('replacementForm').reset();
+        document.getElementById('claimReminder').style.display = 'none';
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting replacement.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Replacement';
       });
     });
 
