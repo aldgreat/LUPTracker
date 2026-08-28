@@ -169,6 +169,7 @@
 </head>
 <body>
 
+  <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
@@ -176,6 +177,9 @@
     <ul class="nav-list">
       <li class="nav-item">
         <a onclick="showView('dashboardView')" class="nav-link active">📋 Ticket Forms</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('reportsView')" class="nav-link">📊 Search & Reports</a>
       </li>
     </ul>
 
@@ -193,14 +197,17 @@
     </ul>
   </aside>
 
+  <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
+    <!-- Top User Profile Bar -->
     <div id="userBar" class="user-bar">
       <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
       <span id="userEmail" class="user-email"></span>
       <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
+    <!-- VIEW 1: LOGIN -->
     <div id="loginView" class="view-page">
       <div class="form-container" style="text-align: center; max-width: 400px;">
         <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
@@ -219,6 +226,7 @@
       </div>
     </div>
 
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
     <div id="dashboardView" class="view-page">
       <div class="header">
         <div><span class="badge">Portal</span></div>
@@ -261,6 +269,7 @@
       </div>
     </div>
 
+    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
     <div id="form1View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -302,6 +311,7 @@
       </div>
     </div>
 
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
     <div id="form2View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -334,6 +344,7 @@
             </select>
           </div>
 
+          <!-- DYNAMIC CLAIM REMINDER BANNER -->
           <div id="claimReminder" class="alert-box">
             ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
           </div>
@@ -349,6 +360,7 @@
       </div>
     </div>
 
+    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
     <div id="form3View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -402,6 +414,7 @@
       </div>
     </div>
 
+    <!-- VIEW 6: FORM 4 (Refund Others) -->
     <div id="form4View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -464,6 +477,58 @@
       </div>
     </div>
 
+    <!-- VIEW 7: SEARCH & REPORTS -->
+    <div id="reportsView" class="view-page">
+      <div class="header">
+        <h1>Search & Analytics</h1>
+        <p class="subtitle">Search records across all sheets and view live metrics.</p>
+      </div>
+
+      <div class="form-container" style="max-width: 900px; width: 100%;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+          <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 1;" />
+          <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
+        </div>
+
+        <!-- Summary Metrics -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Submissions</span>
+            <h2 id="totalTicketCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Refund Requests</span>
+            <h2 id="totalRefundCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Replacements</span>
+            <h2 id="totalReplacementsCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+          <table id="reportsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
+                <th style="padding: 0.75rem;">Source Sheet</th>
+                <th style="padding: 0.75rem;">Order #</th>
+                <th style="padding: 0.75rem;">Customer Email</th>
+                <th style="padding: 0.75rem;">Agent</th>
+                <th style="padding: 0.75rem;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Data" to fetch live spreadsheet records.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 8: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -474,6 +539,7 @@
       </div>
     </div>
 
+    <!-- VIEW 9: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -484,6 +550,7 @@
       </div>
     </div>
 
+    <!-- VIEW 10: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -499,6 +566,7 @@
   <script>
     // GLOBAL CONFIGURATION
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+    let globalPortalData = [];
 
     // Helper: Enforce Leading '#' for Order Numbers
     function formatOrderNumber(input) {
@@ -525,6 +593,10 @@
         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
         const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
         if (activeLink) activeLink.classList.add('active');
+
+        if (viewId === 'reportsView' && globalPortalData.length === 0) {
+          fetchPortalData();
+        }
       }
     }
 
@@ -587,10 +659,78 @@
       showView('loginView');
     }
 
-    // Form 1 Submission Logic (Super Greens Relaunch)
+    // --- REPORTING & SEARCH ENGINE ---
+    function fetchPortalData() {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching spreadsheet data...</td></tr>';
+
+      fetch(`${SCRIPT_URL}?action=getReports`)
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === 'success') {
+            globalPortalData = response.data;
+            renderReportMetrics(globalPortalData);
+            renderReportTable(globalPortalData);
+          } else {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load data: ${response.message}</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Error fetching data. Ensure Google Apps Script is deployed as a Web App.</td></tr>';
+        });
+    }
+
+    function renderReportMetrics(data) {
+      document.getElementById('totalTicketCount').innerText = data.length;
+      const replacements = data.filter(d => d._sourceSheet === 'Replacement Tracking Sheet').length;
+      const refunds = data.length - replacements;
+      document.getElementById('totalRefundCount').innerText = refunds;
+      document.getElementById('totalReplacementsCount').innerText = replacements;
+    }
+
+    function renderReportTable(data) {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+        
+        const keys = Object.keys(item);
+        const orderNo = item['Order #'] || item['Order_number'] || item[keys[2]] || 'N/A';
+        const email = item['Customer Email'] || item['customer_email'] || item[keys[3]] || 'N/A';
+        const agent = item['Agent Email'] || item['submitted_by_agent'] || item[keys[1]] || 'N/A';
+        const detail = item['Refund Reason'] || item['Replacement Reason'] || item['Reason'] || item['Sub Status'] || item[keys[4]] || 'N/A';
+
+        tr.innerHTML = `
+          <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
+          <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
+          <td style="padding: 0.75rem;">${email}</td>
+          <td style="padding: 0.75rem;">${agent}</td>
+          <td style="padding: 0.75rem;">${detail}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterReportData() {
+      const query = document.getElementById('reportSearchInput').value.toLowerCase();
+      const filtered = globalPortalData.filter(item => {
+        return Object.values(item).some(val => String(val).toLowerCase().includes(query));
+      });
+      renderReportTable(filtered);
+    }
+
+    // --- FORM SUBMISSION LISTENERS ---
+    // Form 1: Super Greens
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       const submitBtn = document.getElementById('submitBtn1');
       const statusMsg = document.getElementById('statusMessage1');
       const userSession = JSON.parse(localStorage.getItem('user_session'));
@@ -630,10 +770,9 @@
       });
     });
 
-    // Form 2 Submission Logic (Replacement Tracking)
+    // Form 2: Replacement Tracking
     document.getElementById('replacementForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       const submitBtn = document.getElementById('submitBtn2');
       const statusMsg = document.getElementById('statusMessage2');
       const userSession = JSON.parse(localStorage.getItem('user_session'));
@@ -674,10 +813,9 @@
       });
     });
 
-    // Form 3 Submission Logic (Recall Order Refunds)
+    // Form 3: Recall Order Refunds
     document.getElementById('recallForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       const submitBtn = document.getElementById('submitBtn3');
       const statusMsg = document.getElementById('statusMessage3');
       const userSession = JSON.parse(localStorage.getItem('user_session'));
@@ -718,10 +856,9 @@
       });
     });
 
-    // Form 4 Submission Logic (Refund Others)
+    // Form 4: Refund Others
     document.getElementById('refundOthersForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      
       const submitBtn = document.getElementById('submitBtn4');
       const statusMsg = document.getElementById('statusMessage4');
       const userSession = JSON.parse(localStorage.getItem('user_session'));
