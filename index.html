@@ -13,6 +13,9 @@
     :root {
       --bg-color: #F8F6F0;
       --card-bg: #FFFFFF;
+      --sidebar-bg: #0E3A2F;
+      --sidebar-text: #E8F2ED;
+      --sidebar-hover: #1B5E4B;
       --primary-green: #0E3A2F;
       --accent-green: #1B5E4B;
       --text-dark: #1A221E;
@@ -28,18 +31,99 @@
       background-color: var(--bg-color);
       color: var(--text-dark);
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       min-height: 100vh;
-      padding: 2rem 1rem;
     }
 
+    /* LEFT SIDEBAR NAVIGATION */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.25rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 2.5rem;
+      filter: brightness(0) invert(1); /* Keeps logo white in dark sidebar */
+    }
+
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(232, 242, 237, 0.6);
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+
+    .nav-item {
+      margin-bottom: 0.35rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--sidebar-hover);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    /* Top User Bar */
+    .user-bar {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .user-email { font-size: 0.85rem; font-weight: 600; color: var(--primary-green); }
+    .logout-btn { background: none; border: none; color: #d9534f; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
     /* Page Visibility Controls */
-    .view-page { display: none; width: 100%; max-width: 900px; flex-direction: column; align-items: center; }
+    .view-page { display: none; width: 100%; max-width: 950px; margin: 3rem auto 0 auto; flex-direction: column; align-items: center; }
     .view-page.active { display: flex; }
 
-    .logo { max-width: 180px; height: auto; margin-bottom: 1.5rem; }
     .header { text-align: center; max-width: 600px; margin-bottom: 2.5rem; }
     
     .badge {
@@ -56,25 +140,6 @@
 
     h1 { font-size: 2.2rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.5rem; }
     p.subtitle { font-size: 1rem; color: var(--text-muted); }
-
-    /* Top User Bar */
-    .user-bar {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      background: var(--card-bg);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
-    }
-
-    .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
-    .user-email { font-size: 0.85rem; font-weight: 600; color: var(--primary-green); }
-    .logout-btn { background: none; border: none; color: #d9534f; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
     /* Cards Layout */
     .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; width: 100%; }
@@ -100,139 +165,201 @@
 </head>
 <body>
 
-  <!-- Top User Profile Bar -->
-  <div id="userBar" class="user-bar">
-    <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
-    <span id="userEmail" class="user-email"></span>
-    <button onclick="logout()" class="logout-btn">Logout</button>
-  </div>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
-  <!-- VIEW 1: LOGIN -->
-  <div id="loginView" class="view-page">
-    <div class="form-container" style="text-align: center; max-width: 400px;">
-      <img src="LiU_logo_green.png" alt="Live It Up Logo" class="logo" />
-      <h1>Welcome Back</h1>
-      <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
-      
-      <div style="display: flex; justify-content: center;">
-       <div id="g_id_onload"
-				data-client_id="726234757478-3amht3rvsc82rdea1mu4qtichaqfhjs4.apps.googleusercontent.com"
-				data-callback="handleCredentialResponse">
-			</div>
-        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+    <div class="sidebar-section-title">Portals</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('dashboardView')" class="nav-link active">📋 Ticket Forms</a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Knowledge Base</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('playbooksView')" class="nav-link">📖 Playbooks</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('macroView')" class="nav-link">💬 Macro Guides</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('faqView')" class="nav-link">❓ Internal FAQs</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main-wrapper">
+
+    <!-- Top User Profile Bar -->
+    <div id="userBar" class="user-bar">
+      <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
+      <span id="userEmail" class="user-email"></span>
+      <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <!-- VIEW 1: LOGIN -->
+    <div id="loginView" class="view-page">
+      <div class="form-container" style="text-align: center; max-width: 400px;">
+        <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
+        <h1>Welcome Back</h1>
+        <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
+        
+        <div style="display: flex; justify-content: center;">
+          <div id="g_id_onload"
+               data-client_id="YOUR_GOOGLE_CLIENT_ID"
+               data-callback="handleCredentialResponse">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- VIEW 2: MAIN DASHBOARD -->
-  <div id="dashboardView" class="view-page">
-    <div class="header">
-      <img src="LiU_logo_green.png" alt="Live It Up Logo" class="logo" />
-      <div><span class="badge">Portal</span></div>
-      <h1>Select Submission Type</h1>
-      <p class="subtitle">Choose the request type below to open the dedicated form.</p>
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
+    <div id="dashboardView" class="view-page">
+      <div class="header">
+        <div><span class="badge">Portal</span></div>
+        <h1>Select Submission Type</h1>
+        <p class="subtitle">Choose the request type below to open the dedicated form.</p>
+      </div>
+
+      <div class="card-container">
+        <div class="card">
+          <div>
+            <h3>Super Greens Relaunch Ticket Trends</h3>
+            <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
+          </div>
+          <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Replacement Tracking</h3>
+            <p>Submit requests for shipment replacements and missing item fulfillments.</p>
+          </div>
+          <button onclick="alert('Replacement Tracking Form coming soon!')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Recall Order Refunds</h3>
+            <p>Process customer refund requests and log recalled order details.</p>
+          </div>
+          <button onclick="alert('Recall Order Refunds Form coming soon!')" class="btn">Open Form &rarr;</button>
+        </div>
+      </div>
     </div>
 
-    <div class="card-container">
-      <div class="card">
-        <div>
-          <h3>Super Greens Relaunch Ticket Trends</h3>
-          <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
-        </div>
-        <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
-      </div>
+    <!-- VIEW 3: FORM 1 (Super Greens) -->
+    <div id="form1View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
-      <div class="card">
-        <div>
-          <h3>Replacement Tracking</h3>
-          <p>Submit requests for shipment replacements and missing item fulfillments.</p>
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Super Greens Ticket Trends</h1>
         </div>
-        <button onclick="alert('Replacement Tracking Form coming soon!')" class="btn">Open Form &rarr;</button>
-      </div>
 
-      <div class="card">
-        <div>
-          <h3>Recall Order Refunds</h3>
-          <p>Process customer refund requests and log recalled order details.</p>
-        </div>
-        <button onclick="alert('Recall Order Refunds Form coming soon!')" class="btn">Open Form &rarr;</button>
+        <form id="ticketForm">
+          <div class="checkbox-group">
+            <input type="checkbox" id="discount_20" name="discount_20">
+            <label for="discount_20" style="margin-bottom: 0;">20% Discount Applied</label>
+          </div>
+
+          <div class="form-group">
+            <label for="name">Customer Name</label>
+            <input type="text" id="name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Customer Email</label>
+            <input type="email" id="email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="gorgias_link">Gorgias Link</label>
+            <input type="text" id="gorgias_link">
+          </div>
+
+          <div class="form-group">
+            <label for="request">Request</label>
+            <select id="request" required>
+              <option value="">-- Select Request Type --</option>
+              <option value="Cancel Subscription">Cancel Subscription</option>
+              <option value="Replacement first; pause sub">Replacement first; pause sub</option>
+              <option value="Store Credit (Refunded)">Store Credit (Refunded)</option>
+              <option value="Store Credit (Not Claimed)">Store Credit (Not Claimed)</option>
+              <option value="Other (See Notes)">Other (See Notes)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="sub_status">Sub Status</label>
+            <select id="sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="order_status">Order Status</label>
+            <select id="order_status" required>
+              <option value="">-- Select Order Status --</option>
+              <option value="Refunded">Refunded</option>
+              <option value="Partially Shipped">Partially Shipped</option>
+              <option value="Shipped">Shipped</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" rows="4"></textarea>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">Submit Ticket</button>
+          <div id="statusMessage"></div>
+        </form>
       </div>
     </div>
-  </div>
 
-  <!-- VIEW 3: FORM 1 (Super Greens) -->
-  <div id="form1View" class="view-page">
-    <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
-
-    <div class="form-container">
-      <div class="header" style="margin-bottom: 1.5rem;">
-        <h1>Super Greens Ticket Trends</h1>
+    <!-- VIEW 4: PLAYBOOKS -->
+    <div id="playbooksView" class="view-page">
+      <div class="header">
+        <h1>Team Playbooks</h1>
+        <p class="subtitle">Standard operating procedures and internal workflow processes.</p>
       </div>
-
-      <form id="ticketForm">
-        <div class="checkbox-group">
-          <input type="checkbox" id="discount_20" name="discount_20">
-          <label for="discount_20" style="margin-bottom: 0;">20% Discount Applied</label>
-        </div>
-
-        <div class="form-group">
-          <label for="name">Customer Name</label>
-          <input type="text" id="name" required>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Customer Email</label>
-          <input type="email" id="email" required>
-        </div>
-
-        <div class="form-group">
-          <label for="gorgias_link">Gorgias Link</label>
-          <input type="text" id="gorgias_link">
-        </div>
-
-        <div class="form-group">
-          <label for="request">Request</label>
-          <select id="request" required>
-            <option value="">-- Select Request Type --</option>
-            <option value="Cancel Subscription">Cancel Subscription</option>
-            <option value="Replacement first; pause sub">Replacement first; pause sub</option>
-            <option value="Store Credit (Refunded)">Store Credit (Refunded)</option>
-            <option value="Store Credit (Not Claimed)">Store Credit (Not Claimed)</option>
-            <option value="Other (See Notes)">Other (See Notes)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="sub_status">Sub Status</label>
-          <select id="sub_status" required>
-            <option value="">-- Select Sub Status --</option>
-            <option value="Canceled">Canceled</option>
-            <option value="Active">Active</option>
-            <option value="TBD">TBD</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="order_status">Order Status</label>
-          <select id="order_status" required>
-            <option value="">-- Select Order Status --</option>
-            <option value="Refunded">Refunded</option>
-            <option value="Partially Shipped">Partially Shipped</option>
-            <option value="Shipped">Shipped</option>
-            <option value="TBD">TBD</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="notes">Notes</label>
-          <textarea id="notes" rows="4"></textarea>
-        </div>
-
-        <button type="submit" class="btn" id="submitBtn">Submit Ticket</button>
-        <div id="statusMessage"></div>
-      </form>
+      <div class="form-container" style="text-align: center;">
+        <p>📚 Playbooks documentation library coming soon!</p>
+      </div>
     </div>
-  </div>
+
+    <!-- VIEW 5: MACRO GUIDES -->
+    <div id="macroView" class="view-page">
+      <div class="header">
+        <h1>Macro Guides</h1>
+        <p class="subtitle">Approved Gorgias macros and CX canned response guidelines.</p>
+      </div>
+      <div class="form-container" style="text-align: center;">
+        <p>💬 Gorgias Macro directory coming soon!</p>
+      </div>
+    </div>
+
+    <!-- VIEW 6: FAQS -->
+    <div id="faqView" class="view-page">
+      <div class="header">
+        <h1>Internal FAQs</h1>
+        <p class="subtitle">Quick reference guide for common customer inquiry scenarios.</p>
+      </div>
+      <div class="form-container" style="text-align: center;">
+        <p>❓ FAQ documentation coming soon!</p>
+      </div>
+    </div>
+
+  </main>
 
   <script>
     // GLOBAL CONFIGURATION
@@ -242,6 +369,11 @@
     function showView(viewId) {
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
+
+      // Update sidebar active state
+      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick').includes(viewId));
+      if (activeLink) activeLink.classList.add('active');
     }
 
     // Google JWT Decoder
@@ -291,7 +423,7 @@
           localStorage.removeItem('user_session');
         }
       }
-      showView('loginView');
+      showView('dashboardView'); // Loads dashboard directly
     }
 
     // Form Submission Logic
@@ -340,7 +472,6 @@
       });
     });
 
-    // Run auth check on initialization
     initAuth();
   </script>
 </body>
