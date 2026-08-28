@@ -270,7 +270,13 @@
           <button onclick="showView('form4View')" class="btn">Open Form &rarr;</button>
         </div>
 
-       
+        <div class="card">
+          <div>
+            <h3>Replacement Bag Codes</h3>
+            <p>Search recall replacement bag codes and match lot numbers or product details.</p>
+          </div>
+          <button onclick="showView('bagCodeView')" class="btn">Search Bag Codes &rarr;</button>
+        </div>
       </div>
     </div>
 
@@ -481,31 +487,31 @@
       </div>
     </div>
 
-    <!-- VIEW 7: REPLACEMENT BAG CODES LOOKUP -->
+    <!-- VIEW 7: REPLACEMENT BAG CODES LOOKUP (WIDER + STICKY FROZEN HEADER) -->
     <div id="bagCodeView" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
-      <div class="form-container" style="max-width: 900px; width: 100%;">
-        <div class="header" style="margin-bottom: 1.5rem;">
+      <div class="form-container" style="max-width: 1200px; width: 100%;">
+        <div class="header" style="margin-bottom: 1.5rem; max-width: 100%;">
           <h1>Replacement Bag Codes</h1>
           <p class="subtitle">Search recall replacement bag codes from the ALL CODES sheet.</p>
         </div>
 
         <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
           <input type="text" id="bagCodeSearchInput" placeholder="Search bag code, order #, or lot details..." onkeyup="filterBagCodeData()" style="flex: 1;" />
-          <button onclick="fetchBagCodeData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Codes</button>
+          <button onclick="fetchBagCodeData(true)" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Refresh Codes</button>
         </div>
 
-        <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+        <div style="overflow-x: auto; max-height: 600px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; white-space: nowrap;">
             <thead>
-              <tr id="bagCodeTableHeader" style="border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
-                <th style="padding: 0.75rem;">Loading columns...</th>
+              <tr id="bagCodeTableHeader" style="position: sticky; top: 0; background-color: #FFFFFF; z-index: 10; border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
+                <th style="padding: 0.75rem 1rem; background-color: #FFFFFF;">Loading columns...</th>
               </tr>
             </thead>
             <tbody id="bagCodeTableBody">
               <tr>
-                <td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Codes" to pull bag codes.</td>
+                <td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Refresh Codes" to pull bag codes.</td>
               </tr>
             </tbody>
           </table>
@@ -586,6 +592,7 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
     let globalPortalData = [];
     let globalBagCodeData = [];
+    let bagCodeSearchTimeout;
 
     function formatOrderNumber(input) {
       const trimmed = input.trim();
@@ -662,9 +669,19 @@
       showView('loginView');
     }
 
-    // --- BAG CODE SEARCH ENGINE ---
-    function fetchBagCodeData() {
+    // --- OPTIMIZED BAG CODE SEARCH ENGINE WITH LOCALSTORAGE CACHING ---
+    function fetchBagCodeData(forceRefresh = false) {
       const tbody = document.getElementById('bagCodeTableBody');
+      const localData = localStorage.getItem('portal_bag_codes');
+      const cacheTime = localStorage.getItem('portal_bag_codes_time');
+      const tenMinutes = 10 * 60 * 1000;
+
+      if (!forceRefresh && localData && cacheTime && (Date.now() - cacheTime < tenMinutes)) {
+        globalBagCodeData = JSON.parse(localData);
+        renderBagCodeTable(globalBagCodeData);
+        return;
+      }
+
       tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching ALL CODES sheet...</td></tr>';
 
       fetch(`${SCRIPT_URL}?action=getBagCodes`)
@@ -672,6 +689,8 @@
         .then(response => {
           if (response.status === 'success') {
             globalBagCodeData = response.data;
+            localStorage.setItem('portal_bag_codes', JSON.stringify(response.data));
+            localStorage.setItem('portal_bag_codes_time', Date.now());
             renderBagCodeTable(globalBagCodeData);
           } else {
             tbody.innerHTML = `<tr><td style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load codes: ${response.message}</td></tr>`;
@@ -679,7 +698,7 @@
         })
         .catch(err => {
           console.error(err);
-          tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: #d9534f;">Error pulling bag codes. Ensure Apps Script has permissions.</td></tr>';
+          tbody.innerHTML = '<tr><td style="text-align: center; padding: 1.5rem; color: #d9534f;">Error pulling bag codes. Ensure Apps Script permissions are configured.</td></tr>';
         });
     }
 
@@ -697,17 +716,20 @@
       const keys = Object.keys(data[0]);
       keys.forEach(key => {
         const th = document.createElement('th');
-        th.style.padding = '0.75rem';
+        th.style.padding = '0.75rem 1rem';
+        th.style.backgroundColor = '#FFFFFF';
         th.innerText = key;
         thead.appendChild(th);
       });
 
-      data.forEach(row => {
+      const rowsToDisplay = data.slice(0, 150);
+
+      rowsToDisplay.forEach(row => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid var(--border-color)';
         keys.forEach(key => {
           const td = document.createElement('td');
-          td.style.padding = '0.75rem';
+          td.style.padding = '0.75rem 1rem';
           td.innerText = row[key] !== undefined ? row[key] : 'N/A';
           tr.appendChild(td);
         });
@@ -716,11 +738,14 @@
     }
 
     function filterBagCodeData() {
-      const query = document.getElementById('bagCodeSearchInput').value.toLowerCase();
-      const filtered = globalBagCodeData.filter(item => {
-        return Object.values(item).some(val => String(val).toLowerCase().includes(query));
-      });
-      renderBagCodeTable(filtered);
+      clearTimeout(bagCodeSearchTimeout);
+      bagCodeSearchTimeout = setTimeout(() => {
+        const query = document.getElementById('bagCodeSearchInput').value.toLowerCase();
+        const filtered = globalBagCodeData.filter(item => {
+          return Object.values(item).some(val => String(val).toLowerCase().includes(query));
+        });
+        renderBagCodeTable(filtered);
+      }, 200);
     }
 
     // --- REPORTS ENGINE ---
