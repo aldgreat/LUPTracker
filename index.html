@@ -485,7 +485,14 @@
 
       <div class="form-container" style="max-width: 900px; width: 100%;">
         <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-          <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 1;" />
+          <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 2;" />
+          <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 200px;">
+            <option value="all">All Form Categories</option>
+            <option value="Super Greens Relaunch Sheet">Super Greens Trends</option>
+            <option value="Replacement Tracking Sheet">Replacement Tracking</option>
+            <option value="Recall Order Refund Sheet">Recall Order Refunds</option>
+            <option value="Refund Others Sheet">Refund Others</option>
+          </select>
           <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
         </div>
 
@@ -645,8 +652,7 @@
         .then(response => {
           if (response.status === 'success') {
             globalPortalData = response.data;
-            renderReportMetrics(globalPortalData);
-            renderReportTable(globalPortalData);
+            filterReportData();
           } else {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load data: ${response.message}</td></tr>`;
           }
@@ -669,7 +675,7 @@
       tbody.innerHTML = '';
 
       if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found matching the selection.</td></tr>';
         return;
       }
 
@@ -701,9 +707,15 @@
 
     function filterReportData() {
       const query = document.getElementById('reportSearchInput').value.toLowerCase();
+      const category = document.getElementById('reportCategoryFilter').value;
+
       const filtered = globalPortalData.filter(item => {
-        return Object.values(item).some(val => String(val).toLowerCase().includes(query));
+        const matchesCategory = (category === 'all') || (item._sourceSheet === category);
+        const matchesSearch = Object.values(item).some(val => String(val).toLowerCase().includes(query));
+        return matchesCategory && matchesSearch;
       });
+
+      renderReportMetrics(filtered);
       renderReportTable(filtered);
     }
 
