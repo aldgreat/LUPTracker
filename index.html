@@ -488,10 +488,10 @@
           <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 2;" />
           <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 200px;">
             <option value="all">All Form Categories</option>
-            <option value="Super Greens Relaunch Sheet">Super Greens Trends</option>
-            <option value="Replacement Tracking Sheet">Replacement Tracking</option>
-            <option value="Recall Order Refund Sheet">Recall Order Refunds</option>
-            <option value="Refund Others Sheet">Refund Others</option>
+            <option value="Super Greens">Super Greens Trends</option>
+            <option value="Replacement Tracking">Replacement Tracking</option>
+            <option value="Recall Order Refund">Recall Order Refunds</option>
+            <option value="Refund Others">Refund Others</option>
           </select>
           <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
         </div>
@@ -665,7 +665,7 @@
 
     function renderReportMetrics(data) {
       document.getElementById('totalTicketCount').innerText = data.length;
-      const replacements = data.filter(d => d._sourceSheet === 'Replacement Tracking Sheet').length;
+      const replacements = data.filter(d => String(d._sourceSheet || '').toLowerCase().includes('replacement tracking')).length;
       document.getElementById('totalRefundCount').innerText = data.length - replacements;
       document.getElementById('totalReplacementsCount').innerText = replacements;
     }
@@ -707,11 +707,19 @@
 
     function filterReportData() {
       const query = document.getElementById('reportSearchInput').value.toLowerCase();
-      const category = document.getElementById('reportCategoryFilter').value;
+      const category = document.getElementById('reportCategoryFilter').value.toLowerCase();
 
       const filtered = globalPortalData.filter(item => {
-        const matchesCategory = (category === 'all') || (item._sourceSheet === category);
-        const matchesSearch = Object.values(item).some(val => String(val).toLowerCase().includes(query));
+        const sourceSheet = String(item._sourceSheet || '').toLowerCase();
+        
+        // Flexible partial string matching for categories
+        const matchesCategory = (category === 'all') || sourceSheet.includes(category);
+        
+        // Search bar query matching
+        const matchesSearch = Object.values(item).some(val => 
+          String(val).toLowerCase().includes(query)
+        );
+
         return matchesCategory && matchesSearch;
       });
 
