@@ -169,7 +169,6 @@
 </head>
 <body>
 
-  <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
@@ -194,17 +193,14 @@
     </ul>
   </aside>
 
-  <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
-    <!-- Top User Profile Bar -->
     <div id="userBar" class="user-bar">
       <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
       <span id="userEmail" class="user-email"></span>
       <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
-    <!-- VIEW 1: LOGIN -->
     <div id="loginView" class="view-page">
       <div class="form-container" style="text-align: center; max-width: 400px;">
         <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
@@ -223,7 +219,6 @@
       </div>
     </div>
 
-    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
     <div id="dashboardView" class="view-page">
       <div class="header">
         <div><span class="badge">Portal</span></div>
@@ -266,7 +261,6 @@
       </div>
     </div>
 
-    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
     <div id="form1View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -278,7 +272,7 @@
         <form id="ticketForm">
           <div class="form-group">
             <label for="sg_order_num">Order #</label>
-            <input type="text" id="sg_order_num" placeholder="e.g. #10452" required>
+            <input type="text" id="sg_order_num" placeholder="#10452" required>
           </div>
 
           <div class="form-group">
@@ -308,7 +302,6 @@
       </div>
     </div>
 
-    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
     <div id="form2View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -320,7 +313,7 @@
         <form id="replacementForm">
           <div class="form-group">
             <label for="rep_order_num">Order #</label>
-            <input type="text" id="rep_order_num" placeholder="e.g. #10452" required>
+            <input type="text" id="rep_order_num" placeholder="#10452" required>
           </div>
 
           <div class="form-group">
@@ -341,14 +334,13 @@
             </select>
           </div>
 
-          <!-- DYNAMIC CLAIM REMINDER BANNER -->
           <div id="claimReminder" class="alert-box">
             ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
           </div>
 
           <div class="form-group">
             <label for="rep_replacement_order">Replacement Order #</label>
-            <input type="text" id="rep_replacement_order" placeholder="e.g. #10452-R" required>
+            <input type="text" id="rep_replacement_order" placeholder="#10452-R" required>
           </div>
 
           <button type="submit" class="btn" id="submitBtn2">Submit Replacement</button>
@@ -357,7 +349,6 @@
       </div>
     </div>
 
-    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
     <div id="form3View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -369,7 +360,7 @@
         <form id="recallForm">
           <div class="form-group">
             <label for="recall_order_num">Order #</label>
-            <input type="text" id="recall_order_num" placeholder="e.g. #10452" required>
+            <input type="text" id="recall_order_num" placeholder="#10452" required>
           </div>
 
           <div class="form-group">
@@ -411,7 +402,6 @@
       </div>
     </div>
 
-    <!-- VIEW 6: FORM 4 (Refund Others) -->
     <div id="form4View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -423,7 +413,7 @@
         <form id="refundOthersForm">
           <div class="form-group">
             <label for="ro_order_num">Order #</label>
-            <input type="text" id="ro_order_num" placeholder="e.g. #10452" required>
+            <input type="text" id="ro_order_num" placeholder="#10452" required>
           </div>
 
           <div class="form-group">
@@ -474,7 +464,6 @@
       </div>
     </div>
 
-    <!-- VIEW 7: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -485,7 +474,6 @@
       </div>
     </div>
 
-    <!-- VIEW 8: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -496,7 +484,6 @@
       </div>
     </div>
 
-    <!-- VIEW 9: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -512,6 +499,13 @@
   <script>
     // GLOBAL CONFIGURATION
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+
+    // Helper: Enforce Leading '#' for Order Numbers
+    function formatOrderNumber(input) {
+      const trimmed = input.trim();
+      if (!trimmed) return '';
+      return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
+    }
 
     // Page Switcher Engine
     function showView(viewId) {
@@ -608,7 +602,7 @@
       const formData = {
         form_type: 'super_greens',
         submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        order_number: document.getElementById('sg_order_num').value,
+        order_number: formatOrderNumber(document.getElementById('sg_order_num').value),
         customer_email: document.getElementById('sg_customer_email').value,
         refund_amount: document.getElementById('sg_refund_amount').value,
         sub_status: document.getElementById('sg_sub_status').value
@@ -651,10 +645,10 @@
       const formData = {
         form_type: 'replacement_tracking',
         submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        order_number: document.getElementById('rep_order_num').value,
+        order_number: formatOrderNumber(document.getElementById('rep_order_num').value),
         customer_email: document.getElementById('rep_customer_email').value,
         reason: document.getElementById('rep_reason').value,
-        replacement_order_num: document.getElementById('rep_replacement_order').value
+        replacement_order_num: formatOrderNumber(document.getElementById('rep_replacement_order').value)
       };
 
       fetch(SCRIPT_URL, {
@@ -695,7 +689,7 @@
       const formData = {
         form_type: 'recall_order_refunds',
         submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        order_number: document.getElementById('recall_order_num').value,
+        order_number: formatOrderNumber(document.getElementById('recall_order_num').value),
         customer_email: document.getElementById('recall_customer_email').value,
         refund_amount: document.getElementById('recall_refund_amount').value,
         sub_status: document.getElementById('recall_sub_status').value,
@@ -739,7 +733,7 @@
       const formData = {
         form_type: 'refund_others',
         submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        order_number: document.getElementById('ro_order_num').value,
+        order_number: formatOrderNumber(document.getElementById('ro_order_num').value),
         customer_email: document.getElementById('ro_customer_email').value,
         refund_amount: document.getElementById('ro_refund_amount').value,
         sub_status: document.getElementById('ro_sub_status').value,
