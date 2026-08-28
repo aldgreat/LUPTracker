@@ -169,7 +169,6 @@
 </head>
 <body>
 
-  <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
@@ -197,17 +196,14 @@
     </ul>
   </aside>
 
-  <!-- MAIN WRAPPER -->
   <main class="main-wrapper">
 
-    <!-- Top User Profile Bar -->
     <div id="userBar" class="user-bar">
       <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
       <span id="userEmail" class="user-email"></span>
       <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
-    <!-- VIEW 1: LOGIN -->
     <div id="loginView" class="view-page">
       <div class="form-container" style="text-align: center; max-width: 400px;">
         <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
@@ -226,7 +222,6 @@
       </div>
     </div>
 
-    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
     <div id="dashboardView" class="view-page">
       <div class="header">
         <div><span class="badge">Portal</span></div>
@@ -269,7 +264,6 @@
       </div>
     </div>
 
-    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
     <div id="form1View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -311,7 +305,6 @@
       </div>
     </div>
 
-    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
     <div id="form2View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -344,7 +337,6 @@
             </select>
           </div>
 
-          <!-- DYNAMIC CLAIM REMINDER BANNER -->
           <div id="claimReminder" class="alert-box">
             ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
           </div>
@@ -360,7 +352,6 @@
       </div>
     </div>
 
-    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
     <div id="form3View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -414,7 +405,6 @@
       </div>
     </div>
 
-    <!-- VIEW 6: FORM 4 (Refund Others) -->
     <div id="form4View" class="view-page">
       <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
@@ -477,7 +467,6 @@
       </div>
     </div>
 
-    <!-- VIEW 7: SEARCH & REPORTS -->
     <div id="reportsView" class="view-page">
       <div class="header">
         <h1>Search & Analytics</h1>
@@ -490,7 +479,6 @@
           <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
         </div>
 
-        <!-- Summary Metrics -->
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
           <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
             <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Submissions</span>
@@ -506,7 +494,6 @@
           </div>
         </div>
 
-        <!-- Results Table -->
         <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
           <table id="reportsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
             <thead>
@@ -528,7 +515,6 @@
       </div>
     </div>
 
-    <!-- VIEW 8: PLAYBOOKS -->
     <div id="playbooksView" class="view-page">
       <div class="header">
         <h1>Team Playbooks</h1>
@@ -539,7 +525,6 @@
       </div>
     </div>
 
-    <!-- VIEW 9: MACRO GUIDES -->
     <div id="macroView" class="view-page">
       <div class="header">
         <h1>Macro Guides</h1>
@@ -550,7 +535,6 @@
       </div>
     </div>
 
-    <!-- VIEW 10: FAQS -->
     <div id="faqView" class="view-page">
       <div class="header">
         <h1>Internal FAQs</h1>
@@ -690,65 +674,43 @@
     }
 
     function renderReportTable(data) {
-  const tbody = document.getElementById('reportsTableBody');
-  tbody.innerHTML = '';
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '';
 
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
-    return;
-  }
-
-  data.forEach(item => {
-    const tr = document.createElement('tr');
-    tr.style.borderBottom = '1px solid var(--border-color)';
-    
-    // Get all key-value pairs returned for this row
-    const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
-    
-    // Map strictly by column order stored in row object:
-    // Col A (0): Timestamp
-    // Col B (1): Agent Email
-    // Col C (2): Order #
-    // Col D (3): Customer Email
-    // Col E (4): Refund Amount / Reason / Sub Status
-    const agent = item[keys[1]] || 'N/A';
-    const orderNo = item[keys[2]] || 'N/A';
-    const email = item[keys[3]] || 'N/A';
-    
-    // Grab remaining detail fields (Col E, F, G)
-    let detailsArr = [];
-    for (let i = 4; i < keys.length; i++) {
-      if (item[keys[i]]) detailsArr.push(item[keys[i]]);
-    }
-    const details = detailsArr.length > 0 ? detailsArr.join(' | ') : 'N/A';
-
-    tr.innerHTML = `
-      <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
-      <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
-      <td style="padding: 0.75rem;">${email}</td>
-      <td style="padding: 0.75rem;">${agent}</td>
-      <td style="padding: 0.75rem;">${details}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
+        return;
+      }
 
       data.forEach(item => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid var(--border-color)';
         
-        const keys = Object.keys(item);
-        const orderNo = item['Order #'] || item['Order_number'] || item[keys[2]] || 'N/A';
-        const email = item['Customer Email'] || item['customer_email'] || item[keys[3]] || 'N/A';
-        const agent = item['Agent Email'] || item['submitted_by_agent'] || item[keys[1]] || 'N/A';
-        const detail = item['Refund Reason'] || item['Replacement Reason'] || item['Reason'] || item['Sub Status'] || item[keys[4]] || 'N/A';
+        // Exclude internal tag to get real columns
+        const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
+        
+        // Strict positional mapping by column array index:
+        // Col A (0): Timestamp
+        // Col B (1): Agent Email
+        // Col C (2): Order #
+        // Col D (3): Customer Email
+        // Col E (4)+: Refund Amount / Sub Status / Reason
+        const agent = item[keys[1]] || 'N/A';
+        const orderNo = item[keys[2]] || 'N/A';
+        const email = item[keys[3]] || 'N/A';
+        
+        let detailsArr = [];
+        for (let i = 4; i < keys.length; i++) {
+          if (item[keys[i]]) detailsArr.push(item[keys[i]]);
+        }
+        const details = detailsArr.length > 0 ? detailsArr.join(' | ') : 'N/A';
 
         tr.innerHTML = `
           <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
           <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
           <td style="padding: 0.75rem;">${email}</td>
           <td style="padding: 0.75rem;">${agent}</td>
-          <td style="padding: 0.75rem;">${detail}</td>
+          <td style="padding: 0.75rem;">${details}</td>
         `;
         tbody.appendChild(tr);
       });
