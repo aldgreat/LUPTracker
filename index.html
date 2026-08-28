@@ -3,14 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recall Refund Playbook - Live It Up</title>
+  <title>Live It Up - Portal</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --bg-color: #F8F6F0;
       --card-bg: #FFFFFF;
+      --sidebar-bg: #0E3A2F;
+      --sidebar-text: #E8F2ED;
+      --sidebar-hover: #1B5E4B;
       --primary-green: #0E3A2F;
       --accent-green: #1B5E4B;
       --text-dark: #1A221E;
@@ -25,290 +30,763 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-dark);
-      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* LEFT SIDEBAR NAVIGATION */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.25rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 2.5rem;
+      filter: brightness(0) invert(1);
+    }
+
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(232, 242, 237, 0.6);
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+    }
+
+    .nav-list { list-style: none; margin-bottom: 2rem; }
+    .nav-item { margin-bottom: 0.35rem; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--sidebar-hover);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
       padding: 2rem;
+      overflow-y: auto;
     }
 
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    header {
-      background: var(--primary-green);
-      color: #FFFFFF;
-      padding: 2rem;
-      border-radius: 16px;
-      margin-bottom: 2rem;
-    }
-
-    header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-    header p { color: #E8F2ED; font-size: 0.95rem; }
-
-    .nav-bar {
-      position: sticky;
-      top: 1rem;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      padding: 0.75rem 1.25rem;
+    /* Top User Bar */
+    .user-bar {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
       border-radius: 50px;
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow);
-      display: flex;
-      gap: 1rem;
-      overflow-x: auto;
-      margin-bottom: 2rem;
-      z-index: 100;
     }
 
-    .nav-bar a {
-      color: var(--primary-green);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      padding: 0.35rem 0.85rem;
-      border-radius: 20px;
-      transition: background 0.2s;
-    }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .user-email { font-size: 0.85rem; font-weight: 600; color: var(--primary-green); }
+    .logout-btn { background: none; border: none; color: #d9534f; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
 
-    .nav-bar a:hover {
-      background: var(--border-color);
-    }
+    /* Page Visibility Controls */
+    .view-page { display: none; width: 100%; max-width: 950px; margin: 3rem auto 0 auto; flex-direction: column; align-items: center; }
+    .view-page.active { display: flex; }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow);
-    }
-
-    .card h2 {
-      color: var(--primary-green);
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.25rem;
-      font-size: 1.4rem;
-    }
-
-    .card h3 {
-      color: var(--accent-green);
-      margin: 1.25rem 0 0.5rem 0;
-      font-size: 1.1rem;
-    }
-
-    ul, ol { padding-left: 1.25rem; margin-bottom: 1rem; }
-    li { margin-bottom: 0.4rem; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-      font-size: 0.88rem;
-    }
-
-    th, td {
-      border: 1px solid var(--border-color);
-      padding: 0.75rem 1rem;
-      text-align: left;
-    }
-
-    th {
+    .header { text-align: center; max-width: 600px; margin-bottom: 2.5rem; }
+    
+    .badge {
+      display: inline-block;
       background-color: #E8F2ED;
       color: var(--primary-green);
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
     }
 
-    .macro-box {
-      background: #F0F4F2;
-      border-left: 4px solid var(--primary-green);
-      padding: 1rem 1.25rem;
-      border-radius: 0 8px 8px 0;
-      margin: 1rem 0;
-      font-family: inherit;
-      white-space: pre-line;
-      font-size: 0.9rem;
-    }
+    h1 { font-size: 2.2rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.5rem; }
+    p.subtitle { font-size: 1rem; color: var(--text-muted); }
 
-    .alert {
+    /* Cards Layout */
+    .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; width: 100%; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow); }
+    .card h3 { color: var(--primary-green); margin-bottom: 0.5rem; }
+    .card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Form Container */
+    .form-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 650px; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: #FAFAFA; }
+
+    /* Dynamic Alert Box */
+    .alert-box {
+      display: none;
       background-color: #FFF3CD;
       color: #856404;
       border: 1px solid #FFEEBA;
-      padding: 0.85rem 1rem;
       border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.9rem;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
       font-weight: 600;
+      margin-bottom: 1.25rem;
     }
+
+    .btn { display: inline-block; width: 100%; text-align: center; padding: 0.875rem; background-color: var(--primary-green); color: #ffffff; border: none; font-weight: 600; font-size: 0.95rem; border-radius: 50px; cursor: pointer; text-decoration: none; transition: background-color 0.2s; }
+    .btn:hover { background-color: var(--accent-green); }
+    .btn-back { background: transparent; color: var(--primary-green); border: 1px solid var(--border-color); margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.25rem; }
+
+    .status-msg { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>📕 Recall Refund Playbook</h1>
-      <p><strong>Last Updated:</strong> February 6, 2026 | Internal Customer Service Guidelines</p>
-    </header>
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
-    <div class="nav-bar">
-      <a href="#process">♻️ Process</a>
-      <a href="#criteria">✔️ Criteria</a>
-      <a href="#validation">👍 Validation</a>
-      <a href="#replacements">🛍️ Replacement Bags</a>
-      <a href="#store-credit">➕ Store Credit</a>
-      <a href="#cash">💰 Cash Refunds</a>
-      <a href="#amazon">🅰️ Amazon Orders</a>
-      <a href="#email-error">❌ Email Error Macros</a>
-      <a href="#automations">🤖 Automations</a>
+    <div class="sidebar-section-title">Portals</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('dashboardView')" class="nav-link active">📋 Ticket Forms</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('reportsView')" class="nav-link">📊 Search & Reports</a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Knowledge Base</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('playbooksView')" class="nav-link">📖 Playbooks</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('macroView')" class="nav-link">💬 Macro Guides</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('faqView')" class="nav-link">❓ Internal FAQs</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main-wrapper">
+
+    <!-- Top User Profile Bar -->
+    <div id="userBar" class="user-bar">
+      <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
+      <span id="userEmail" class="user-email"></span>
+      <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 
-    <!-- REFUND PROCESS -->
-    <div id="process" class="card">
-      <h2>♻️ Refund Process</h2>
-      <div class="alert">🔒 Attorney-Client Privilege</div>
-      <p>The Recall Refund Playbook supports our Customer Service team by outlining the refund workflow from intake to validation and completion[cite: 1].</p>
-
-      <h3>Customer Notification Channels</h3>
-      <ul>
-        <li>FDA press release (1/14) – Expiration dates 08/2026 to 01/2028 affected[cite: 1].</li>
-        <li>CDC press release / social media (1/14)[cite: 1].</li>
-        <li>Live It Up customer email outreach (Starting 1/15)[cite: 1].</li>
-        <li>Live It Up website footer & Super Greens PDP blog post (Starting 1/26)[cite: 1].</li>
-      </ul>
-
-      <h3>Customer Inquiry Methods</h3>
-      <p>Customers submit claims via <strong>Recall Refund Request Form A</strong> (requires Order # & Lot # Photo) or <strong>Form B</strong> (missing Order # / Lot #)[cite: 1]. Manual ticket submissions must be added directly to the refund tracking document[cite: 1].</p>
+    <!-- VIEW 1: LOGIN -->
+    <div id="loginView" class="view-page">
+      <div class="form-container" style="text-align: center; max-width: 400px;">
+        <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
+        <h1>Welcome Back</h1>
+        <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
+        
+        <div style="display: flex; justify-content: center;">
+          <div id="g_id_onload"
+               data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtgq07jhpe.apps.googleusercontent.com"
+               data-callback="handleCredentialResponse"
+               data-auto_select="false"
+               data-use_fedcm_for_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- REFUND CRITERIA -->
-    <div id="criteria" class="card">
-      <h2>✔️ Refund Criteria</h2>
-      <h3>Valid Refund Requirements</h3>
-      <ul>
-        <li>Lot Number starting with <strong>“A”</strong> or <strong>“3”</strong>[cite: 1].</li>
-        <li>Valid Email Address & Order Number[cite: 1].</li>
-        <li>Valid Picture: Package photo showing Lot Code/Exp Date OR canister/greens in storage[cite: 1].</li>
-      </ul>
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
+    <div id="dashboardView" class="view-page">
+      <div class="header">
+        <div><span class="badge">Portal</span></div>
+        <h1>Select Submission Type</h1>
+        <p class="subtitle">Choose the request type below to open the dedicated form.</p>
+      </div>
 
-      <h3>Refund Policy Rules</h3>
-      <ul>
-        <li>Applies to active/non-current subscribers and single-time purchasers[cite: 1].</li>
-        <li>Refund covers <strong>ONE bag</strong> of Super Greens (or unfinished bags from bulk packs)[cite: 1].</li>
-        <li>Full refund including original shipping and tax[cite: 1].</li>
-      </ul>
+      <div class="card-container">
+        <div class="card">
+          <div>
+            <h3>Super Greens Relaunch Ticket Trends</h3>
+            <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
+          </div>
+          <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Replacement Tracking</h3>
+            <p>Submit requests for shipment replacements and missing item fulfillments.</p>
+          </div>
+          <button onclick="showView('form2View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Recall Order Refunds</h3>
+            <p>Process customer refund requests and log recalled order details.</p>
+          </div>
+          <button onclick="showView('form3View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Refund Others</h3>
+            <p>Log refund requests for damaged items, lost shipments, and other issues.</p>
+          </div>
+          <button onclick="showView('form4View')" class="btn">Open Form &rarr;</button>
+        </div>
+      </div>
     </div>
 
-    <!-- VALIDATION -->
-    <div id="validation" class="card">
-      <h2>👍 Refund Request Validation</h2>
-      <ol>
-        <li>Log into the Vibe Refunding Portal, set Assignee to your name, filter Status to "New", and sort by Email[cite: 1].</li>
-        <li>Verify Lot #: Must start with "A" or "3"[cite: 1].</li>
-        <li>Look up Order # in Shopify to check unit counts[cite: 1].</li>
-        <li>Cross-check photo proof in Asana[cite: 1].</li>
-        <li>Update Status to Confirmed, Denied, or Follow-up (never leave as "New")[cite: 1].</li>
-      </ol>
+    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
+    <div id="form1View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
-      <h3>Bundle Refund Calculation Matrix</h3>
-      <table>
-        <thead>
-          <tr><th>Bundle Type</th><th># of Valid Units</th><th>% of Paid Amount to Refund</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Greens 2-pack</td><td>1 / 2</td><td>50% / 100%[cite: 1]</td></tr>
-          <tr><td>Greens 3-pack</td><td>1 / 2 / 3</td><td>33% / 66% / 100%[cite: 1]</td></tr>
-          <tr><td>Greens 6-pack</td><td>1 / 2 / 3 / 4 / 5 / 6</td><td>16.6% / 33% / 50% / 66% / 83.3% / 100%[cite: 1]</td></tr>
-          <tr><td>1 Greens + 1 GH / FTB</td><td>1</td><td>50%[cite: 1]</td></tr>
-          <tr><td>Ultimate Survival Pack</td><td>1</td><td>22%[cite: 1]</td></tr>
-          <tr><td>Day to Night Duo Pack</td><td>1</td><td>40%[cite: 1]</td></tr>
-        </tbody>
-      </table>
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Super Greens Ticket Trends</h1>
+        </div>
+
+        <form id="ticketForm">
+          <div class="form-group">
+            <label for="sg_order_num">Order #</label>
+            <input type="text" id="sg_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_customer_email">Customer Email</label>
+            <input type="email" id="sg_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_refund_amount">Refund Amount</label>
+            <input type="text" id="sg_refund_amount" placeholder="e.g. $49.99 or N/A" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_sub_status">Sub Status</label>
+            <select id="sg_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
+          <div id="statusMessage1" class="status-msg"></div>
+        </form>
+      </div>
     </div>
 
-    <!-- REPLACEMENT BAGS -->
-    <div id="replacements" class="card">
-      <h2>🛍️ Replacement Bags</h2>
-      <p>Applies to requests with Status: <strong>Confirmed</strong> and Type: <strong>Replacement Bag</strong>[cite: 1].</p>
-      <ul>
-        <li>Unique, single-use code sent via personalized redemption link[cite: 1].</li>
-        <li>All allotted bags must be claimed in a <strong>single order</strong>[cite: 1].</li>
-        <li>Super Greens items are pre-orders shipping Summer 2026; other products ship immediately[cite: 1].</li>
-      </ul>
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
+    <div id="form2View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
 
-      <h3>Replacement Bag Offer Macro</h3>
-      <div class="macro-box">Hi [first name],
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Replacement Tracking</h1>
+        </div>
 
-We’ve reviewed your Super Greens recall submission and your request for a replacement has been validated and approved. You’re now able to redeem [X] bag(s) of your choice.
+        <form id="replacementForm">
+          <div class="form-group">
+            <label for="rep_order_num">Order #</label>
+            <input type="text" id="rep_order_num" placeholder="#10452" required>
+          </div>
 
-To claim your bag(s):
-1. Visit your personalized Replacement Bag Redemption page [here].
-2. Select [X] bags from any of the available products.
-3. Your redemption code [code] will be automatically applied at checkout.
+          <div class="form-group">
+            <label for="rep_customer_email">Customer Email</label>
+            <input type="email" id="rep_customer_email" required>
+          </div>
 
-Please note: All bags must be added to your cart and claimed at once. Super Greens is currently available for pre-order and is expected to ship Summer 2026.
+          <div class="form-group">
+            <label for="rep_reason">Replacement Reason</label>
+            <select id="rep_reason" onchange="checkClaimReminder()" required>
+              <option value="">-- Select Reason --</option>
+              <option value="LIT">LIT (Lost in Transit)</option>
+              <option value="Damaged">Damaged</option>
+              <option value="Missing">Missing</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Delivered not Received">Delivered not Received</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-- The Team @ Live it Up[cite: 1]</div>
+          <div id="claimReminder" class="alert-box">
+            ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
+          </div>
+
+          <div class="form-group">
+            <label for="rep_replacement_order">Replacement Order #</label>
+            <input type="text" id="rep_replacement_order" placeholder="#10452-R" required>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn2">Submit Replacement</button>
+          <div id="statusMessage2" class="status-msg"></div>
+        </form>
+      </div>
     </div>
 
-    <!-- STORE CREDIT -->
-    <div id="store-credit" class="card">
-      <h2>➕ Store Credit</h2>
-      <h3>Active Subscribers (Recharge)</h3>
-      <p>Store credit is applied to Recharge accounts[cite: 1]. Subscribers toggle auto-apply in their account portal[cite: 1].</p>
+    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
+    <div id="form3View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Recall Order Refunds</h1>
+        </div>
+
+        <form id="recallForm">
+          <div class="form-group">
+            <label for="recall_order_num">Order #</label>
+            <input type="text" id="recall_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_customer_email">Customer Email</label>
+            <input type="email" id="recall_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_refund_amount">Refund Amount</label>
+            <input type="text" id="recall_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_sub_status">Sub Status</label>
+            <select id="recall_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_reason">Refund Reason</label>
+            <select id="recall_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Legal">Legal</option>
+              <option value="Health">Health</option>
+              <option value="BBB">BBB</option>
+              <option value="Multiple Follow ups">Multiple Follow ups</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn3">Submit Recall Refund</button>
+          <div id="statusMessage3" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 6: FORM 4 (Refund Others) -->
+    <div id="form4View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Refund Others</h1>
+        </div>
+
+        <form id="refundOthersForm">
+          <div class="form-group">
+            <label for="ro_order_num">Order #</label>
+            <input type="text" id="ro_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_customer_email">Customer Email</label>
+            <input type="email" id="ro_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_refund_amount">Refund Amount</label>
+            <input type="text" id="ro_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_sub_status">Sub Status</label>
+            <select id="ro_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_reason">Refund Reason</label>
+            <select id="ro_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Damaged Order">Damaged Order</option>
+              <option value="LIT">LIT</option>
+              <option value="Missing order">Missing order</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Taste">Taste</option>
+              <option value="Texture">Texture</option>
+              <option value="Health">Health</option>
+              <option value="Negative Reaction">Negative Reaction</option>
+              <option value="Quantity (too much)">Quantity (too much)</option>
+              <option value="Quality">Quality</option>
+              <option value="Testing & Safety">Testing & Safety</option>
+              <option value="CS">CS</option>
+              <option value="Complaint/BBB">Complaint/BBB</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn4">Submit Refund</button>
+          <div id="statusMessage4" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 7: SEARCH & REPORTS -->
+    <div id="reportsView" class="view-page">
+      <div class="header">
+        <h1>Search & Analytics</h1>
+        <p class="subtitle">Search records across all sheets and view live metrics.</p>
+      </div>
+
+      <div class="form-container" style="max-width: 900px; width: 100%;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+          <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 1;" />
+          <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Submissions</span>
+            <h2 id="totalTicketCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Refund Requests</span>
+            <h2 id="totalRefundCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Replacements</span>
+            <h2 id="totalReplacementsCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+          <table id="reportsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
+                <th style="padding: 0.75rem;">Source Sheet</th>
+                <th style="padding: 0.75rem;">Order #</th>
+                <th style="padding: 0.75rem;">Customer Email</th>
+                <th style="padding: 0.75rem;">Agent</th>
+                <th style="padding: 0.75rem;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Data" to fetch live spreadsheet records.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 8: PLAYBOOKS -->
+    <div id="playbooksView" class="view-page">
+      <div class="header">
+        <h1>Team Playbooks</h1>
+        <p class="subtitle">Access official CS workflows, guides, and standard operating procedures.</p>
+      </div>
       
-      <h3>Non-Subscribers (Shopify)</h3>
-      <p>Store credit is issued to Shopify[cite: 1]. Customers log in via the purple Shop icon at checkout to apply store credit[cite: 1].</p>
+      <div class="card-container">
+        <div class="card">
+          <div>
+            <h3>📕 Recall Refund Playbook</h3>
+            <p>Complete guide for intake, verification, replacement bag processing, and macro responses for the Super Greens recall.</p>
+          </div>
+          <a href="recall-playbook.html" target="_blank" class="btn">Open Playbook &rarr;</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- VIEW 9: MACRO GUIDES -->
+    <div id="macroView" class="view-page">
+      <div class="header"><h1>Macro Guides</h1></div>
+      <div class="form-container" style="text-align: center;"><p>💬 Gorgias Macros coming soon!</p></div>
     </div>
 
-    <!-- CASH REFUNDS -->
-    <div id="cash" class="card">
-      <h2>💰 Cash Refunds</h2>
-      <p>Cash refunds are remitted on a rolling schedule[cite: 1]. Customers receive confirmation emails once approved[cite: 1].</p>
+    <!-- VIEW 10: FAQS -->
+    <div id="faqView" class="view-page">
+      <div class="header"><h1>Internal FAQs</h1></div>
+      <div class="form-container" style="text-align: center;"><p>❓ FAQ documentation coming soon!</p></div>
     </div>
 
-    <!-- AMAZON ORDERS -->
-    <div id="amazon" class="card">
-      <h2>🅰️ Amazon Orders Protocol</h2>
-      <ul>
-        <li><strong>Official Amazon Store:</strong> Offer a replacement bag first[cite: 1]. If declined, post details in <code>#amazon-orders-recall</code> Slack channel for processing[cite: 1].</li>
-        <li><strong>3rd Party Resellers:</strong> Direct customer to retailer[cite: 1]. If escalated, require invoice + photo proof for manual PayPal/check refund[cite: 1].</li>
-      </ul>
-    </div>
+  </main>
 
-    <!-- EMAIL ERROR RESPONSE MACROS -->
-    <div id="email-error" class="card">
-      <h2>❌ Email Error Response Macros</h2>
-      <p>Macros for customer inquiries regarding the May 22, 2026 refund email error[cite: 1]:</p>
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+    let globalPortalData = [];
 
-      <h3>Macro: Unaware of Refund - Cash</h3>
-      <div class="macro-box">Hi [First Name],
+    function formatOrderNumber(input) {
+      const trimmed = input.trim();
+      if (!trimmed) return '';
+      return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
+    }
 
-We're sorry for any confusion caused by our recent emails. Your cash refund of [amount] was already issued and returned to your original payment method. Please note that if you have multiple orders they will show up as individual refunds, not a single transaction. If you haven't seen it yet, please allow 5–7 business days for it to appear.
+    function showView(viewId) {
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
 
-— The Team @ Live it Up[cite: 1]</div>
+      const sidebar = document.getElementById('sidebar');
+      const userBar = document.getElementById('userBar');
 
-      <h3>Macro: Denied Refund - Subscriber ($50 Credit Offer)</h3>
-      <div class="macro-box">Hi [First Name],
+      if (viewId === 'loginView') {
+        if (sidebar) sidebar.style.display = 'none';
+        if (userBar) userBar.style.display = 'none';
+      } else {
+        if (sidebar) sidebar.style.display = 'flex';
+        if (userBar) userBar.style.display = 'flex';
+        
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
+        if (activeLink) activeLink.classList.add('active');
 
-We apologize for any confusion our emails caused last week. After reviewing your request against our verification process, we were unable to verify your refund request as it contained invalid or missing information. However, we'd like to offer you a $50 store credit to use on a future order to make up for the back-and-forth.
+        if (viewId === 'reportsView' && globalPortalData.length === 0) fetchPortalData();
+      }
+    }
 
-To use your credit, sign into your account portal and toggle auto-apply on your next order.
+    function checkClaimReminder() {
+      const reason = document.getElementById('rep_reason').value;
+      const reminderBox = document.getElementById('claimReminder');
+      reminderBox.style.display = (reason === 'LIT' || reason === 'Damaged') ? 'block' : 'none';
+    }
 
-— The Team @ Live It Up[cite: 1]</div>
-    </div>
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      return JSON.parse(jsonPayload);
+    }
 
-    <!-- AUTOMATIONS -->
-    <div id="automations" class="card">
-      <h2>🤖 Portal Automations</h2>
-      <ul>
-        <li><strong>Auto-Approval:</strong> Valid Order # + Unique + &lt;$45 + Approved Lot Code + Order Date &gt; 2025-01-01 $\rightarrow$ Status: <code>Confirmed</code>[cite: 1].</li>
-        <li><strong>Amazon Filter:</strong> Order ID containing "111-", "112-", "113-", "114-", or "Amazon" $\rightarrow$ Status: <code>Denied</code>[cite: 1].</li>
-        <li><strong>Invalid Lot Code:</strong> Lot # starting with "P" $\rightarrow$ Status: <code>Denied</code>[cite: 1].</li>
-      </ul>
-    </div>
-  </div>
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+      initAuth();
+    }
 
+    function logout() {
+      localStorage.removeItem('user_session');
+      showView('loginView');
+    }
+
+    function initAuth() {
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        if (new Date().getTime() < session.expiry) {
+          document.getElementById('userEmail').innerText = session.email;
+          if (session.picture) document.getElementById('userAvatar').src = session.picture;
+          showView('dashboardView');
+          return;
+        } else {
+          localStorage.removeItem('user_session');
+        }
+      }
+      showView('loginView');
+    }
+
+    // --- REPORTS ENGINE ---
+    function fetchPortalData() {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching data...</td></tr>';
+
+      fetch(`${SCRIPT_URL}?action=getReports`)
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === 'success') {
+            globalPortalData = response.data;
+            renderReportMetrics(globalPortalData);
+            renderReportTable(globalPortalData);
+          } else {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load data: ${response.message}</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Error fetching reports.</td></tr>';
+        });
+    }
+
+    function renderReportMetrics(data) {
+      document.getElementById('totalTicketCount').innerText = data.length;
+      const replacements = data.filter(d => d._sourceSheet === 'Replacement Tracking Sheet').length;
+      document.getElementById('totalRefundCount').innerText = data.length - replacements;
+      document.getElementById('totalReplacementsCount').innerText = replacements;
+    }
+
+    function renderReportTable(data) {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found.</td></tr>';
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+        const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
+        
+        const agent = item[keys[1]] || 'N/A';
+        const orderNo = item[keys[2]] || 'N/A';
+        const email = item[keys[3]] || 'N/A';
+        
+        let detailsArr = [];
+        for (let i = 4; i < keys.length; i++) {
+          if (item[keys[i]]) detailsArr.push(item[keys[i]]);
+        }
+        const details = detailsArr.length > 0 ? detailsArr.join(' | ') : 'N/A';
+
+        tr.innerHTML = `
+          <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
+          <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
+          <td style="padding: 0.75rem;">${email}</td>
+          <td style="padding: 0.75rem;">${agent}</td>
+          <td style="padding: 0.75rem;">${details}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterReportData() {
+      const query = document.getElementById('reportSearchInput').value.toLowerCase();
+      const filtered = globalPortalData.filter(item => {
+        return Object.values(item).some(val => String(val).toLowerCase().includes(query));
+      });
+      renderReportTable(filtered);
+    }
+
+    // FORM LISTENERS
+    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('super_greens', {
+        order_number: formatOrderNumber(document.getElementById('sg_order_num').value),
+        customer_email: document.getElementById('sg_customer_email').value,
+        refund_amount: document.getElementById('sg_refund_amount').value,
+        sub_status: document.getElementById('sg_sub_status').value
+      }, 'submitBtn1', 'statusMessage1', 'ticketForm');
+    });
+
+    document.getElementById('replacementForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('replacement_tracking', {
+        order_number: formatOrderNumber(document.getElementById('rep_order_num').value),
+        customer_email: document.getElementById('rep_customer_email').value,
+        reason: document.getElementById('rep_reason').value,
+        replacement_order_num: formatOrderNumber(document.getElementById('rep_replacement_order').value)
+      }, 'submitBtn2', 'statusMessage2', 'replacementForm');
+    });
+
+    document.getElementById('recallForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('recall_order_refunds', {
+        order_number: formatOrderNumber(document.getElementById('recall_order_num').value),
+        customer_email: document.getElementById('recall_customer_email').value,
+        refund_amount: document.getElementById('recall_refund_amount').value,
+        sub_status: document.getElementById('recall_sub_status').value,
+        refund_reason: document.getElementById('recall_reason').value
+      }, 'submitBtn3', 'statusMessage3', 'recallForm');
+    });
+
+    document.getElementById('refundOthersForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('refund_others', {
+        order_number: formatOrderNumber(document.getElementById('ro_order_num').value),
+        customer_email: document.getElementById('ro_customer_email').value,
+        refund_amount: document.getElementById('ro_refund_amount').value,
+        sub_status: document.getElementById('ro_sub_status').value,
+        refund_reason: document.getElementById('ro_reason').value
+      }, 'submitBtn4', 'statusMessage4', 'refundOthersForm');
+    });
+
+    function submitFormData(formType, dataObj, btnId, msgId, formId) {
+      const submitBtn = document.getElementById(btnId);
+      const statusMsg = document.getElementById(msgId);
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const payload = Object.assign({
+        form_type: formType,
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent'
+      }, dataObj);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Recorded successfully!';
+        document.getElementById(formId).reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting entry.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit';
+      });
+    }
+
+    initAuth();
+  </script>
 </body>
 </html>
