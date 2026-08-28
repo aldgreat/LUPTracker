@@ -173,7 +173,7 @@
 <body>
 
   <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
+  <aside id="sidebar" class="sidebar">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
     <div class="sidebar-section-title">Portals</div>
@@ -216,7 +216,7 @@
         
         <div style="display: flex; justify-content: center;">
           <div id="g_id_onload"
-               data-client_id="YOUR_GOOGLE_CLIENT_ID"
+               data-client_id="726234757478-3amht3rvsc82rdea1mu4qtichaqfhjs4.apps.googleusercontent.com"
                data-callback="handleCredentialResponse">
           </div>
           <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
@@ -235,7 +235,7 @@
       <div class="card-container">
         <div class="card">
           <div>
-            <h3>Super Greens Relaunch</h3>
+            <h3>Super Greens Relaunch Ticket Trends</h3>
             <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
           </div>
           <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
@@ -426,9 +426,20 @@
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       document.getElementById(viewId).classList.add('active');
 
-      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-      const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick').includes(viewId));
-      if (activeLink) activeLink.classList.add('active');
+      const sidebar = document.getElementById('sidebar');
+      const userBar = document.getElementById('userBar');
+
+      if (viewId === 'loginView') {
+        if (sidebar) sidebar.style.display = 'none';
+        if (userBar) userBar.style.display = 'none';
+      } else {
+        if (sidebar) sidebar.style.display = 'flex';
+        if (userBar) userBar.style.display = 'flex';
+        
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
+        if (activeLink) activeLink.classList.add('active');
+      }
     }
 
     // Toggle Claim Reminder Box
@@ -470,30 +481,25 @@
 
     function logout() {
       localStorage.removeItem('user_session');
-      document.getElementById('userBar').style.display = 'none';
       showView('loginView');
     }
 
     // Check Session on Load
-   function initAuth() {
-  const sessionRaw = localStorage.getItem('user_session');
-  if (sessionRaw) {
-    const session = JSON.parse(sessionRaw);
-    if (new Date().getTime() < session.expiry) {
-      document.getElementById('userEmail').innerText = session.email;
-      if (session.picture) document.getElementById('userAvatar').src = session.picture;
-      document.getElementById('userBar').style.display = 'flex';
-      showView('dashboardView');
-      return;
-    } else {
-      localStorage.removeItem('user_session');
+    function initAuth() {
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        if (new Date().getTime() < session.expiry) {
+          document.getElementById('userEmail').innerText = session.email;
+          if (session.picture) document.getElementById('userAvatar').src = session.picture;
+          showView('dashboardView');
+          return;
+        } else {
+          localStorage.removeItem('user_session');
+        }
+      }
+      showView('loginView');
     }
-  }
-  
-  // Hide user bar and force redirect to Login view
-  document.getElementById('userBar').style.display = 'none';
-  showView('loginView');
-}
 
     // Form 1 Submission Logic (Super Greens)
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
