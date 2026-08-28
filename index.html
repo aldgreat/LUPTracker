@@ -462,50 +462,46 @@
 
     // Form 1 Submission Logic (Super Greens)
     document.getElementById('ticketForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitBtn1');
-      const statusMsg = document.getElementById('statusMessage1');
-      const userSession = JSON.parse(localStorage.getItem('user_session'));
-      
-      submitBtn.disabled = true;
-      submitBtn.innerText = 'Submitting...';
-      statusMsg.innerText = '';
+  e.preventDefault();
+  
+  const submitBtn = document.getElementById('submitBtn1');
+  const statusMsg = document.getElementById('statusMessage1');
+  const userSession = JSON.parse(localStorage.getItem('user_session'));
+  
+  submitBtn.disabled = true;
+  submitBtn.innerText = 'Submitting...';
+  statusMsg.innerText = '';
 
-      const formData = {
-        form_type: 'super_greens',
-        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
-        discount_20: document.getElementById('discount_20').checked ? 'True' : 'False',
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        gorgias_link: document.getElementById('gorgias_link').value,
-        request: document.getElementById('request').value,
-        sub_status: document.getElementById('sub_status').value,
-        order_status: document.getElementById('order_status').value,
-        notes: document.getElementById('notes').value
-      };
+  const formData = {
+    form_type: 'super_greens',
+    submitted_by_agent: userSession ? userSession.email : 'Unknown Agent',
+    order_number: document.getElementById('sg_order_num').value,
+    customer_email: document.getElementById('sg_customer_email').value,
+    refund_amount: document.getElementById('sg_refund_amount').value,
+    sub_status: document.getElementById('sg_sub_status').value
+  };
 
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      .then(() => {
-        statusMsg.style.color = '#0E3A2F';
-        statusMsg.innerText = 'Ticket successfully recorded!';
-        document.getElementById('ticketForm').reset();
-      })
-      .catch(error => {
-        statusMsg.style.color = '#d9534f';
-        statusMsg.innerText = 'Error submitting ticket.';
-        console.error('Error:', error);
-      })
-      .finally(() => {
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Ticket';
-      });
-    });
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+  })
+  .then(() => {
+    statusMsg.style.color = '#0E3A2F';
+    statusMsg.innerText = 'Ticket successfully recorded!';
+    document.getElementById('ticketForm').reset();
+  })
+  .catch(error => {
+    statusMsg.style.color = '#d9534f';
+    statusMsg.innerText = 'Error submitting ticket.';
+    console.error('Error:', error);
+  })
+  .finally(() => {
+    submitBtn.disabled = false;
+    submitBtn.innerText = 'Submit Ticket';
+  });
+});
 
     // Form 2 Submission Logic (Replacement Tracking)
     document.getElementById('replacementForm').addEventListener('submit', function(e) {
