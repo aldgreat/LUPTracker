@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live It Up - Portal</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --sidebar-bg: #0E3A2F;
+      --sidebar-text: #E8F2ED;
+      --sidebar-hover: #1B5E4B;
+      --primary-green: #0E3A2F;
+      --accent-green: #1B5E4B;
+      --text-dark: #1A221E;
+      --text-muted: #5C6B64;
+      --border-color: #E2ECE6;
+      --shadow: 0 10px 30px rgba(14, 58, 47, 0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* LEFT SIDEBAR NAVIGATION */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.25rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 2.5rem;
+      filter: brightness(0) invert(1);
+    }
+
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(232, 242, 237, 0.6);
+      margin-bottom: 0.75rem;
+      padding-left: 0.75rem;
+    }
+
+    .nav-list { list-style: none; margin-bottom: 2rem; }
+    .nav-item { margin-bottom: 0.35rem; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background-color: var(--sidebar-hover);
+      font-weight: 600;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    /* Top User Bar */
+    .user-bar {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--card-bg);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; }
+    .user-email { font-size: 0.85rem; font-weight: 600; color: var(--primary-green); }
+    .logout-btn { background: none; border: none; color: #d9534f; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+
+    /* Page Visibility Controls */
+    .view-page { display: none; width: 100%; max-width: 950px; margin: 3rem auto 0 auto; flex-direction: column; align-items: center; }
+    .view-page.active { display: flex; }
+
+    .header { text-align: center; max-width: 600px; margin-bottom: 2.5rem; }
+    
+    .badge {
+      display: inline-block;
+      background-color: #E8F2ED;
+      color: var(--primary-green);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.35rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    h1 { font-size: 2.2rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.5rem; }
+    p.subtitle { font-size: 1rem; color: var(--text-muted); }
+
+    /* Cards Layout */
+    .card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; width: 100%; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow); }
+    .card h3 { color: var(--primary-green); margin-bottom: 0.5rem; }
+    .card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    /* Form & Content Container */
+    .form-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 650px; box-shadow: var(--shadow); }
+    .content-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 850px; box-shadow: var(--shadow); }
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; font-weight: 600; font-size: 0.9rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    input[type="text"], input[type="email"], select, textarea { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: #FAFAFA; }
+
+    /* Dynamic Alert Box */
+    .alert-box {
+      display: none;
+      background-color: #FFF3CD;
+      color: #856404;
+      border: 1px solid #FFEEBA;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn { display: inline-block; width: 100%; text-align: center; padding: 0.875rem; background-color: var(--primary-green); color: #ffffff; border: none; font-weight: 600; font-size: 0.95rem; border-radius: 50px; cursor: pointer; text-decoration: none; transition: background-color 0.2s; }
+    .btn:hover { background-color: var(--accent-green); }
+    .btn-back { background: transparent; color: var(--primary-green); border: 1px solid var(--border-color); margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.25rem; }
+
+    .status-msg { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
+
+    /* POLICY STYLES */
+    .policy-section { margin-bottom: 2rem; }
+    .policy-section h2 { color: var(--primary-green); font-size: 1.25rem; margin-bottom: 0.75rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+    .policy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1rem 0; }
+    .policy-box { background: var(--bg-color); border-radius: 8px; padding: 1.25rem; border: 1px solid var(--border-color); }
+    .policy-box h4 { color: var(--primary-green); margin-bottom: 0.5rem; }
+    .tag-yes { background-color: #D4EDDA; color: #155724; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 0.5rem; }
+    .tag-no { background-color: #F8D7DA; color: #721C24; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; display: inline-block; margin-bottom: 0.5rem; }
+    .policy-list { list-style-type: square; margin-left: 1.25rem; color: var(--text-dark); font-size: 0.95rem; }
+    .policy-list li { margin-bottom: 0.5rem; }
+    .escalation-box { background-color: #E8F2ED; border-left: 4px solid var(--primary-green); padding: 1rem; border-radius: 0 8px 8px 0; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
+
+    <div class="sidebar-section-title">Portals</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('dashboardView')" class="nav-link active">📋 Ticket Forms</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('reportsView')" class="nav-link">📊 Search & Reports</a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Knowledge Base</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a onclick="showView('policyView')" class="nav-link">📢 Policy Updates & Offers</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('playbooksView')" class="nav-link">📖 Playbooks</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('macroView')" class="nav-link">💬 Macro Guides</a>
+      </li>
+      <li class="nav-item">
+        <a onclick="showView('faqView')" class="nav-link">❓ Internal FAQs</a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main-wrapper">
+
+    <!-- Top User Profile Bar -->
+    <div id="userBar" class="user-bar">
+      <img id="userAvatar" class="user-avatar" src="" alt="User Avatar" />
+      <span id="userEmail" class="user-email"></span>
+      <button onclick="logout()" class="logout-btn">Logout</button>
+    </div>
+
+    <!-- VIEW 1: LOGIN -->
+    <div id="loginView" class="view-page">
+      <div class="form-container" style="text-align: center; max-width: 400px;">
+        <img src="LiU_logo_green.png" alt="Live It Up Logo" style="max-width: 160px; margin-bottom: 1rem;" />
+        <h1>Welcome Back</h1>
+        <p class="subtitle" style="margin-bottom: 2rem;">Sign in with Google to access the portal.</p>
+        
+        <div style="display: flex; justify-content: center;">
+          <div id="g_id_onload"
+               data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtgq07jhpe.apps.googleusercontent.com"
+               data-callback="handleCredentialResponse"
+               data-auto_select="false"
+               data-use_fedcm_for_prompt="false">
+          </div>
+          <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: MAIN DASHBOARD (FORMS) -->
+    <div id="dashboardView" class="view-page">
+      <div class="header">
+        <div><span class="badge">Portal</span></div>
+        <h1>Select Submission Type</h1>
+        <p class="subtitle">Choose the request type below to open the dedicated form.</p>
+      </div>
+
+      <div class="card-container">
+        <div class="card">
+          <div>
+            <h3>Super Greens Relaunch Ticket Trends</h3>
+            <p>Log and track ticket trends, feedback, and inquiries for Super Greens.</p>
+          </div>
+          <button onclick="showView('form1View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Replacement Tracking</h3>
+            <p>Submit requests for shipment replacements and missing item fulfillments.</p>
+          </div>
+          <button onclick="showView('form2View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Recall Order Refunds</h3>
+            <p>Process customer refund requests and log recalled order details.</p>
+          </div>
+          <button onclick="showView('form3View')" class="btn">Open Form &rarr;</button>
+        </div>
+
+        <div class="card">
+          <div>
+            <h3>Refund Others</h3>
+            <p>Log refund requests for damaged items, lost shipments, and other issues.</p>
+          </div>
+          <button onclick="showView('form4View')" class="btn">Open Form &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: POLICY UPDATES & REMINDERS -->
+    <div id="policyView" class="view-page">
+      <div class="header">
+        <div><span class="badge">Effective Immediately</span></div>
+        <h1>Offers & Retention Policy Updates</h1>
+        <p class="subtitle">Important updates regarding Make It Right credits, qualifiers, and retention limits.</p>
+      </div>
+
+      <div class="content-container">
+        <!-- Make It Right Policy -->
+        <div class="policy-section">
+          <h2>1. Make It Right Credit Policy</h2>
+          <p style="margin-bottom: 1rem; color: var(--text-muted);">
+            We are shifting from discounts to account credits for fixed-price "Make It Right" resolutions. These apply <strong>only to issues that are our fault</strong>:
+          </p>
+          <div class="policy-grid">
+            <div class="policy-box">
+              <h4>1 Bag Issue</h4>
+              <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary-green);">$5 Credit</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Applied toward their next subscription order.</p>
+            </div>
+            <div class="policy-box">
+              <h4>2+ Products Issue</h4>
+              <p style="font-size: 1.25rem; font-weight: 700; color: var(--primary-green);">$8 Credit</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Applied toward their next subscription order.</p>
+            </div>
+          </div>
+
+          <div class="policy-grid">
+            <div class="policy-box">
+              <span class="tag-yes">QUALIFIES (YES)</span>
+              <ul class="policy-list">
+                <li>Damaged items or mispicks</li>
+                <li>Lost in transit</li>
+                <li>Return to Sender (RTS) due to transit damage or carrier address errors <em>(where address is correct on our side)</em></li>
+              </ul>
+            </div>
+            <div class="policy-box">
+              <span class="tag-no">DOES NOT QUALIFY (NO)</span>
+              <ul class="policy-list">
+                <li>RTS because the customer refused the package</li>
+                <li>Wrong address provided by the customer</li>
+                <li>Delivered but not received</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="escalation-box">
+            <h4 style="color: var(--primary-green); margin-bottom: 0.5rem;">⚠️ Important Steps & Escalations</h4>
+            <ul class="policy-list">
+              <li><strong>Apply Discounts:</strong> Once you add the credit to the customer's account, make sure to auto-apply the discount in the customer portal so it automatically deducts from their next order.</li>
+              <li><strong>100% Discount Requests:</strong> If a customer insists on a 100% discount for their next order, please escalate the request directly to <strong>Daisy</strong>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Retention Discounts -->
+        <div class="policy-section" style="margin-bottom: 0;">
+          <h2>2. Retention Discounts</h2>
+          <div class="policy-box">
+            <p>If you are offering a retention discount to prevent a cancellation, the allowable limit is now capped at <strong>$10–$15 max</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: FORM 1 (Super Greens Relaunch) -->
+    <div id="form1View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Super Greens Ticket Trends</h1>
+        </div>
+
+        <form id="ticketForm">
+          <div class="form-group">
+            <label for="sg_order_num">Order #</label>
+            <input type="text" id="sg_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_customer_email">Customer Email</label>
+            <input type="email" id="sg_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_refund_amount">Refund Amount</label>
+            <input type="text" id="sg_refund_amount" placeholder="e.g. $49.99 or N/A" required>
+          </div>
+
+          <div class="form-group">
+            <label for="sg_sub_status">Sub Status</label>
+            <select id="sg_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn1">Submit Ticket</button>
+          <div id="statusMessage1" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 4: FORM 2 (Replacement Tracking) -->
+    <div id="form2View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Replacement Tracking</h1>
+        </div>
+
+        <form id="replacementForm">
+          <div class="form-group">
+            <label for="rep_order_num">Order #</label>
+            <input type="text" id="rep_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="rep_customer_email">Customer Email</label>
+            <input type="email" id="rep_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="rep_reason">Replacement Reason</label>
+            <select id="rep_reason" onchange="checkClaimReminder()" required>
+              <option value="">-- Select Reason --</option>
+              <option value="LIT">LIT (Lost in Transit)</option>
+              <option value="Damaged">Damaged</option>
+              <option value="Missing">Missing</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Delivered not Received">Delivered not Received</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div id="claimReminder" class="alert-box">
+            ⚠️ <strong>Reminder:</strong> Please ensure you submit a shipping claim for LIT or Damaged orders before completing this replacement request!
+          </div>
+
+          <div class="form-group">
+            <label for="rep_replacement_order">Replacement Order #</label>
+            <input type="text" id="rep_replacement_order" placeholder="#10452-R" required>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn2">Submit Replacement</button>
+          <div id="statusMessage2" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 5: FORM 3 (Recall Order Refunds) -->
+    <div id="form3View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Recall Order Refunds</h1>
+        </div>
+
+        <form id="recallForm">
+          <div class="form-group">
+            <label for="recall_order_num">Order #</label>
+            <input type="text" id="recall_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_customer_email">Customer Email</label>
+            <input type="email" id="recall_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_refund_amount">Refund Amount</label>
+            <input type="text" id="recall_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_sub_status">Sub Status</label>
+            <select id="recall_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="recall_reason">Refund Reason</label>
+            <select id="recall_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Legal">Legal</option>
+              <option value="Health">Health</option>
+              <option value="BBB">BBB</option>
+              <option value="Multiple Follow ups">Multiple Follow ups</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn3">Submit Recall Refund</button>
+          <div id="statusMessage3" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 6: FORM 4 (Refund Others) -->
+    <div id="form4View" class="view-page">
+      <button onclick="showView('dashboardView')" class="btn btn-back">&larr; Back to Selection</button>
+
+      <div class="form-container">
+        <div class="header" style="margin-bottom: 1.5rem;">
+          <h1>Refund Others</h1>
+        </div>
+
+        <form id="refundOthersForm">
+          <div class="form-group">
+            <label for="ro_order_num">Order #</label>
+            <input type="text" id="ro_order_num" placeholder="#10452" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_customer_email">Customer Email</label>
+            <input type="email" id="ro_customer_email" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_refund_amount">Refund Amount</label>
+            <input type="text" id="ro_refund_amount" placeholder="e.g. $49.99" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_sub_status">Sub Status</label>
+            <select id="ro_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ro_reason">Refund Reason</label>
+            <select id="ro_reason" required>
+              <option value="">-- Select Refund Reason --</option>
+              <option value="Damaged Order">Damaged Order</option>
+              <option value="LIT">LIT</option>
+              <option value="Missing order">Missing order</option>
+              <option value="Incorrect Order">Incorrect Order</option>
+              <option value="Taste">Taste</option>
+              <option value="Texture">Texture</option>
+              <option value="Health">Health</option>
+              <option value="Negative Reaction">Negative Reaction</option>
+              <option value="Quantity (too much)">Quantity (too much)</option>
+              <option value="Quality">Quality</option>
+              <option value="Testing & Safety">Testing & Safety</option>
+              <option value="CS">CS</option>
+              <option value="Complaint/BBB">Complaint/BBB</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn4">Submit Refund</button>
+          <div id="statusMessage4" class="status-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- VIEW 7: SEARCH & REPORTS -->
+    <div id="reportsView" class="view-page">
+      <div class="header">
+        <h1>Search & Analytics</h1>
+        <p class="subtitle">Search records across all sheets and view live metrics.</p>
+      </div>
+
+      <div class="form-container" style="max-width: 900px; width: 100%;">
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+          <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 2;" />
+          <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 200px;">
+            <option value="all">All Form Categories</option>
+            <option value="sgrelaunch">Super Greens Trends</option>
+            <option value="replacement tracking">Replacement Tracking</option>
+            <option value="recall order refund">Recall Order Refunds</option>
+            <option value="refund others">Refund Others</option>
+          </select>
+          <button onclick="fetchPortalData()" class="btn" style="width: auto; padding: 0.75rem 1.5rem;">🔄 Load Data</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Submissions</span>
+            <h2 id="totalTicketCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Refund Requests</span>
+            <h2 id="totalRefundCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+          <div style="background: var(--bg-color); padding: 1rem; border-radius: 8px; text-align: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Replacements</span>
+            <h2 id="totalReplacementsCount" style="color: var(--primary-green); margin-top: 0.25rem;">0</h2>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+          <table id="reportsTable" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-color); color: var(--primary-green);">
+                <th style="padding: 0.75rem;">Source Sheet</th>
+                <th style="padding: 0.75rem;">Order #</th>
+                <th style="padding: 0.75rem;">Customer Email</th>
+                <th style="padding: 0.75rem;">Agent</th>
+                <th style="padding: 0.75rem;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Data" to fetch live spreadsheet records.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 8: PLAYBOOKS -->
+    <div id="playbooksView" class="view-page">
+      <div class="header">
+        <h1>Team Playbooks</h1>
+        <p class="subtitle">Access official CS workflows, guides, and standard operating procedures.</p>
+      </div>
+      
+      <div class="card-container">
+        <div class="card">
+          <div>
+            <h3>📕 Recall Refund Playbook</h3>
+            <p>Complete guide for intake, verification, replacement bag processing, and macro responses for the Super Greens recall.</p>
+          </div>
+          <a href="recall-playbook.html" target="_blank" class="btn">Open Playbook &rarr;</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- VIEW 9: MACRO GUIDES -->
+    <div id="macroView" class="view-page">
+      <div class="header"><h1>Macro Guides</h1></div>
+      <div class="form-container" style="text-align: center;"><p>💬 Gorgias Macros coming soon!</p></div>
+    </div>
+
+    <!-- VIEW 10: FAQS -->
+    <div id="faqView" class="view-page">
+      <div class="header"><h1>Internal FAQs</h1></div>
+      <div class="form-container" style="text-align: center;"><p>❓ FAQ documentation coming soon!</p></div>
+    </div>
+
+  </main>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+    let globalPortalData = [];
+
+    function formatOrderNumber(input) {
+      const trimmed = input.trim();
+      if (!trimmed) return '';
+      return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
+    }
+
+    function showView(viewId) {
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+      document.getElementById(viewId).classList.add('active');
+
+      const sidebar = document.getElementById('sidebar');
+      const userBar = document.getElementById('userBar');
+
+      if (viewId === 'loginView') {
+        if (sidebar) sidebar.style.display = 'none';
+        if (userBar) userBar.style.display = 'none';
+      } else {
+        if (sidebar) sidebar.style.display = 'flex';
+        if (userBar) userBar.style.display = 'flex';
+        
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
+        if (activeLink) activeLink.classList.add('active');
+
+        if (viewId === 'reportsView' && globalPortalData.length === 0) fetchPortalData();
+      }
+    }
+
+    function checkClaimReminder() {
+      const reason = document.getElementById('rep_reason').value;
+      const reminderBox = document.getElementById('claimReminder');
+      reminderBox.style.display = (reason === 'LIT' || reason === 'Damaged') ? 'block' : 'none';
+    }
+
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      return JSON.parse(jsonPayload);
+    }
+
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+      initAuth();
+    }
+
+    function logout() {
+      localStorage.removeItem('user_session');
+      showView('loginView');
+    }
+
+    function initAuth() {
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        if (new Date().getTime() < session.expiry) {
+          document.getElementById('userEmail').innerText = session.email;
+          if (session.picture) document.getElementById('userAvatar').src = session.picture;
+          showView('dashboardView');
+          return;
+        } else {
+          localStorage.removeItem('user_session');
+        }
+      }
+      showView('loginView');
+    }
+
+    // --- REPORTS ENGINE ---
+    function fetchPortalData() {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching data...</td></tr>';
+
+      fetch(`${SCRIPT_URL}?action=getReports`)
+        .then(res => res.json())
+        .then(response => {
+          if (response.status === 'success') {
+            globalPortalData = response.data;
+            filterReportData();
+          } else {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Failed to load data: ${response.message}</td></tr>`;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: #d9534f;">Error fetching reports.</td></tr>';
+        });
+    }
+
+    function renderReportMetrics(data) {
+      document.getElementById('totalTicketCount').innerText = data.length;
+      const replacements = data.filter(d => String(d._sourceSheet || '').toLowerCase().includes('replacement tracking')).length;
+      document.getElementById('totalRefundCount').innerText = data.length - replacements;
+      document.getElementById('totalReplacementsCount').innerText = replacements;
+    }
+
+    function renderReportTable(data) {
+      const tbody = document.getElementById('reportsTableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No records found matching the selection.</td></tr>';
+        return;
+      }
+
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+        const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
+        
+        const agent = item[keys[1]] || 'N/A';
+        const orderNo = item[keys[2]] || 'N/A';
+        const email = item[keys[3]] || 'N/A';
+        
+        let detailsArr = [];
+        for (let i = 4; i < keys.length; i++) {
+          if (item[keys[i]]) detailsArr.push(item[keys[i]]);
+        }
+        const details = detailsArr.length > 0 ? detailsArr.join(' | ') : 'N/A';
+
+        tr.innerHTML = `
+          <td style="padding: 0.75rem;"><span class="badge" style="font-size: 0.7rem; margin: 0;">${item._sourceSheet}</span></td>
+          <td style="padding: 0.75rem; font-weight: 600;">${orderNo}</td>
+          <td style="padding: 0.75rem;">${email}</td>
+          <td style="padding: 0.75rem;">${agent}</td>
+          <td style="padding: 0.75rem;">${details}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterReportData() {
+      const query = document.getElementById('reportSearchInput').value.toLowerCase();
+      const category = document.getElementById('reportCategoryFilter').value.toLowerCase();
+
+      const filtered = globalPortalData.filter(item => {
+        const sourceSheet = String(item._sourceSheet || '').toLowerCase();
+        
+        let matchesCategory = false;
+        if (category === 'all') {
+          matchesCategory = true;
+        } else if (category === 'sgrelaunch') {
+          matchesCategory = sourceSheet.includes('sgrelaunch') || sourceSheet.includes('super greens');
+        } else {
+          matchesCategory = sourceSheet.includes(category);
+        }
+        
+        const matchesSearch = Object.values(item).some(val => 
+          String(val).toLowerCase().includes(query)
+        );
+
+        return matchesCategory && matchesSearch;
+      });
+
+      renderReportMetrics(filtered);
+      renderReportTable(filtered);
+    }
+
+    // FORM LISTENERS
+    document.getElementById('ticketForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('super_greens', {
+        order_number: formatOrderNumber(document.getElementById('sg_order_num').value),
+        customer_email: document.getElementById('sg_customer_email').value,
+        refund_amount: document.getElementById('sg_refund_amount').value,
+        sub_status: document.getElementById('sg_sub_status').value
+      }, 'submitBtn1', 'statusMessage1', 'ticketForm');
+    });
+
+    document.getElementById('replacementForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('replacement_tracking', {
+        order_number: formatOrderNumber(document.getElementById('rep_order_num').value),
+        customer_email: document.getElementById('rep_customer_email').value,
+        reason: document.getElementById('rep_reason').value,
+        replacement_order_num: formatOrderNumber(document.getElementById('rep_replacement_order').value)
+      }, 'submitBtn2', 'statusMessage2', 'replacementForm');
+    });
+
+    document.getElementById('recallForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('recall_order_refunds', {
+        order_number: formatOrderNumber(document.getElementById('recall_order_num').value),
+        customer_email: document.getElementById('recall_customer_email').value,
+        refund_amount: document.getElementById('recall_refund_amount').value,
+        sub_status: document.getElementById('recall_sub_status').value,
+        refund_reason: document.getElementById('recall_reason').value
+      }, 'submitBtn3', 'statusMessage3', 'recallForm');
+    });
+
+    document.getElementById('refundOthersForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitFormData('refund_others', {
+        order_number: formatOrderNumber(document.getElementById('ro_order_num').value),
+        customer_email: document.getElementById('ro_customer_email').value,
+        refund_amount: document.getElementById('ro_refund_amount').value,
+        sub_status: document.getElementById('ro_sub_status').value,
+        refund_reason: document.getElementById('ro_reason').value
+      }, 'submitBtn4', 'statusMessage4', 'refundOthersForm');
+    });
+
+    function submitFormData(formType, dataObj, btnId, msgId, formId) {
+      const submitBtn = document.getElementById(btnId);
+      const statusMsg = document.getElementById(msgId);
+      const userSession = JSON.parse(localStorage.getItem('user_session'));
+      
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Submitting...';
+      statusMsg.innerText = '';
+
+      const payload = Object.assign({
+        form_type: formType,
+        submitted_by_agent: userSession ? userSession.email : 'Unknown Agent'
+      }, dataObj);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        statusMsg.style.color = '#0E3A2F';
+        statusMsg.innerText = 'Recorded successfully!';
+        document.getElementById(formId).reset();
+      })
+      .catch(error => {
+        statusMsg.style.color = '#d9534f';
+        statusMsg.innerText = 'Error submitting entry.';
+        console.error('Error:', error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit';
+      });
+    }
+
+    initAuth();
+  </script>
+</body>
+</html>
