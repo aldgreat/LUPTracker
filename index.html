@@ -165,6 +165,101 @@
     .btn-back { background: transparent; color: var(--primary-green); border: 1px solid var(--border-color); margin-bottom: 1.5rem; width: auto; padding: 0.5rem 1.25rem; }
 
     .status-msg { margin-top: 1rem; text-align: center; font-size: 0.95rem; font-weight: 600; }
+
+    /* POPUP MODAL STYLES */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(14, 58, 47, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .modal-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 550px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      border: 1px solid var(--border-color);
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      color: var(--primary-green);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .credit-badge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .credit-box {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .credit-amount {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary-green);
+    }
+
+    .modal-list {
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      padding-left: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-list li {
+      margin-bottom: 0.35rem;
+    }
+
+    .escalation-note {
+      background: #E8F2ED;
+      border-left: 4px solid var(--primary-green);
+      padding: 0.75rem;
+      border-radius: 0 6px 6px 0;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
   </style>
 </head>
 <body>
@@ -333,7 +428,7 @@
 
           <div class="form-group">
             <label for="rep_reason">Replacement Reason</label>
-            <select id="rep_reason" onchange="checkClaimReminder()" required>
+            <select id="rep_reason" onchange="handleReasonChange()" required>
               <option value="">-- Select Reason --</option>
               <option value="LIT">LIT (Lost in Transit)</option>
               <option value="Damaged">Damaged</option>
@@ -564,6 +659,48 @@
 
   </main>
 
+  <!-- MAKE IT RIGHT POLICY POPUP MODAL -->
+  <div id="policyModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>📢 Make It Right Credit Policy</h2>
+        <button onclick="closeModal()" class="modal-close">&times;</button>
+      </div>
+
+      <p style="font-size: 0.9rem; color: var(--text-muted);">
+        Effective immediately: We now issue account credits instead of discounts for fixed-price "Make It Right" resolutions on company faults.
+      </p>
+
+      <div class="credit-badge-grid">
+        <div class="credit-box">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">1 Bag</div>
+          <div class="credit-amount">$5 Credit</div>
+        </div>
+        <div class="credit-box">
+          <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted);">2+ Products</div>
+          <div class="credit-amount">$8 Credit</div>
+        </div>
+      </div>
+
+      <p style="font-size: 0.88rem; font-weight: 700; color: var(--primary-green); margin-bottom: 0.35rem;">Qualifying Issues:</p>
+      <ul class="modal-list">
+        <li>Damaged items or mispicks</li>
+        <li>Lost in transit (LIT)</li>
+        <li>RTS due to transit damage or carrier address errors</li>
+      </ul>
+
+      <div class="escalation-note">
+        <strong>Important Checklist:</strong>
+        <ul style="padding-left: 1rem; margin-top: 0.35rem;">
+          <li>Auto-apply the discount in the customer portal after adding credits.</li>
+          <li>If a customer demands a 100% discount, escalate directly to <strong>Daisy</strong>.</li>
+        </ul>
+      </div>
+
+      <button onclick="closeModal()" class="btn">Understood, Got It</button>
+    </div>
+  </div>
+
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
     let globalPortalData = [];
@@ -596,10 +733,23 @@
       }
     }
 
-    function checkClaimReminder() {
+    /* POPUP & REMINDER HANDLER */
+    function handleReasonChange() {
       const reason = document.getElementById('rep_reason').value;
       const reminderBox = document.getElementById('claimReminder');
+      const modal = document.getElementById('policyModal');
+
+      // Show in-line shipping claim box
       reminderBox.style.display = (reason === 'LIT' || reason === 'Damaged') ? 'block' : 'none';
+
+      // Open Policy Modal when Damaged or LIT is selected
+      if (reason === 'LIT' || reason === 'Damaged') {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('policyModal').style.display = 'none';
     }
 
     function parseJwt(token) {
