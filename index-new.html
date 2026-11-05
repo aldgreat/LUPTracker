@@ -6,7 +6,7 @@
   <title>Live It Up - Portal & Refund Management</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Supabase UMD Client -->
@@ -511,9 +511,7 @@
       color: var(--text-dark);
     }
 	
-	/* ============================================================ */
-    /* MODERNIZED TICKET FORMS GUI STYLES                           */
-    /* ============================================================ */
+    /* MODERN TICKET FORMS GUI STYLES */
     .ticket-cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -677,9 +675,7 @@
       transform: translateX(3px);
     }
 	
-	/* ============================================================ */
-    /* KNOWLEDGE BASE NOTION / ZENDESK STYLE GUI                    */
-    /* ============================================================ */
+    /* KNOWLEDGE BASE NOTION / ZENDESK STYLE GUI */
     .kb-container {
       display: grid;
       grid-template-columns: 280px 1fr;
@@ -777,7 +773,6 @@
       color: var(--text-muted);
     }
 
-    /* Article Reader Panel */
     .kb-reader-panel {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -828,7 +823,6 @@
       margin-bottom: 0.35rem;
     }
 
-    /* Copyable Macro Box */
     .kb-macro-block {
       background: var(--input-bg);
       border: 1px solid var(--border-color);
@@ -859,14 +853,13 @@
       color: var(--text-dark);
       line-height: 1.5;
     }
-	
   </style>
 </head>
 <body>
 
   <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
-    <div class="brand-title">Live it Up</div>
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
     <div class="sidebar-section-title">Portals</div>
     <ul class="nav-list">
@@ -894,13 +887,11 @@
       </li>
     </ul>
 	  
-	  <div class="sidebar-section-title">Admin</div>
+    <div class="sidebar-section-title">Admin</div>
     <ul class="nav-list">
       <li class="nav-item">
         <a onclick="showView('announcementsManagerView')" class="nav-link">📢 Manage Updates</a>
       </li>
-    </ul>
-	
     </ul>
   </aside>
 
@@ -1075,10 +1066,9 @@
         </div>
       </div>
 
-<!-- VIEW 3: TICKET FORMS (MODERNIZED DASHBOARD GUI) -->
+      <!-- VIEW 3: TICKET FORMS (MODERNIZED DASHBOARD GUI) -->
       <div id="dashboardView" class="view-page" style="max-width: 1050px;">
         
-        <!-- Header & Quick Nav -->
         <div style="width: 100%; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
             <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Customer Support Intake Portals</h2>
@@ -1091,7 +1081,6 @@
           </span>
         </div>
 
-        <!-- 2x2 Interactive Card Grid -->
         <div class="ticket-cards-grid">
           
           <!-- Card 1: Super Greens Relaunch -->
@@ -1255,7 +1244,7 @@
         </div>
       </div>
 
-     <!-- VIEW: UNIFIED KNOWLEDGE BASE (NOTION / ZENDESK STYLE) -->
+      <!-- VIEW 5: UNIFIED KNOWLEDGE BASE (NOTION / ZENDESK STYLE) -->
       <div id="knowledgeBaseView" class="view-page full-width" style="margin-top: 0; padding-top: 0;">
         <div class="kb-container">
           
@@ -1288,7 +1277,6 @@
               </button>
             </div>
 
-            <!-- Articles List -->
             <ul id="kbArticlesList" class="kb-articles-list">
               <li style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>
             </ul>
@@ -1309,12 +1297,10 @@
               </div>
             </div>
 
-            <!-- Markdown / HTML Content Rendered Here -->
             <div id="kbCurrentArticleBody" class="kb-reader-body">
               <p style="color: var(--text-muted); font-size: 0.88rem;">Select an article from the left navigation pane to view details.</p>
             </div>
 
-            <!-- Canned Macro Box (Shows only if article is a macro) -->
             <div id="kbMacroContainer" class="kb-macro-block" style="display: none;">
               <div class="kb-macro-header">
                 <span>Gorgias Canned Response</span>
@@ -1329,10 +1315,9 @@
         </div>
       </div>
 
-	<!-- VIEW: ANNOUNCEMENTS MANAGER (MODERATOR PANEL) -->
+      <!-- VIEW 6: ANNOUNCEMENTS MANAGER (MODERATOR PANEL) -->
       <div id="announcementsManagerView" class="view-page" style="max-width: 950px;">
         
-        <!-- Create Announcement Card -->
         <div class="portal-card" style="margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.25rem; color: var(--primary-green); margin-bottom: 0.25rem;">Broadcast Team Announcement</h2>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
@@ -1364,7 +1349,6 @@
           </form>
         </div>
 
-        <!-- Active Announcements & Audit Table -->
         <div class="portal-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div>
@@ -1490,191 +1474,186 @@
     </div>
   </dialog>
 
-	  <!-- FORM 3 MODAL (Sheet Tab: Recall Order Refunds) -->
-	  <dialog id="form3Modal">
-		<div class="modal-box">
-		  <div class="modal-header">
-			<h2>Recall Order Refunds Intake</h2>
-			<button class="modal-close-btn" onclick="closeFormModal('form3Modal')">✕</button>
-		  </div>
-		  <form id="recallForm" onsubmit="handleFormSubmit(event, 'form3Modal', 'recall_order_refunds')" class="modal-body-scroll">
-			<div class="vibe-row">
-			  <span class="vibe-label">Order #</span>
-			  <div class="vibe-input-wrap"><input type="text" id="recall_order_num" placeholder="#1607319" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Customer Email</span>
-			  <div class="vibe-input-wrap"><input type="email" id="recall_customer_email" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Refund Amount</span>
-			  <div class="vibe-input-wrap"><input type="text" id="recall_refund_amount" placeholder="$43.49" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Sub Status</span>
-			  <div class="vibe-input-wrap">
-				<select id="recall_sub_status" required>
-				  <option value="">-- Select Sub Status --</option>
-				  <option value="Canceled">Canceled</option>
-				  <option value="Active">Active</option>
-				  <option value="One-Time">One-Time</option>
-				  <option value="Paused">Paused</option>
-				  <option value="TBD">TBD</option>
-				</select>
-			  </div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Refund Reason</span>
-			  <div class="vibe-input-wrap">
-				<select id="recall_reason" required>
-				  <option value="">-- Select Reason --</option>
-				  <option value="Recall Refund">Recall Refund</option>
-				  <option value="Complaint">Complaint</option>
-				  <option value="Legal">Legal</option>
-				  <option value="Health">Health</option>
-				  <option value="BBB">BBB</option>
-				  <option value="Unfulfilled">Unfulfilled</option>
-				  <option value="Multiple Follow ups">Multiple Follow ups</option>
-				</select>
-			  </div>
-			</div>
-			<div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent; border-top: none;">
-			  <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormModal('form3Modal')">Cancel</button>
-			  <button type="submit" class="btn btn-sm">Log Recall Refund</button>
-			</div>
-		  </form>
-		</div>
-	  </dialog>
+  <!-- FORM 3 MODAL (Sheet Tab: Recall Order Refunds) -->
+  <dialog id="form3Modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Recall Order Refunds Intake</h2>
+        <button class="modal-close-btn" onclick="closeFormModal('form3Modal')">✕</button>
+      </div>
+      <form id="recallForm" onsubmit="handleFormSubmit(event, 'form3Modal', 'recall_order_refunds')" class="modal-body-scroll">
+        <div class="vibe-row">
+          <span class="vibe-label">Order #</span>
+          <div class="vibe-input-wrap"><input type="text" id="recall_order_num" placeholder="#1607319" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Customer Email</span>
+          <div class="vibe-input-wrap"><input type="email" id="recall_customer_email" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Refund Amount</span>
+          <div class="vibe-input-wrap"><input type="text" id="recall_refund_amount" placeholder="$43.49" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Sub Status</span>
+          <div class="vibe-input-wrap">
+            <select id="recall_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="One-Time">One-Time</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Refund Reason</span>
+          <div class="vibe-input-wrap">
+            <select id="recall_reason" required>
+              <option value="">-- Select Reason --</option>
+              <option value="Recall Refund">Recall Refund</option>
+              <option value="Complaint">Complaint</option>
+              <option value="Legal">Legal</option>
+              <option value="Health">Health</option>
+              <option value="BBB">BBB</option>
+              <option value="Unfulfilled">Unfulfilled</option>
+              <option value="Multiple Follow ups">Multiple Follow ups</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent; border-top: none;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormModal('form3Modal')">Cancel</button>
+          <button type="submit" class="btn btn-sm">Log Recall Refund</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 
-	  <!-- FORM 4 MODAL (Sheet Tab: Refund Others) -->
-	  <dialog id="form4Modal">
-		<div class="modal-box">
-		  <div class="modal-header">
-			<h2>Refund Others Intake</h2>
-			<button class="modal-close-btn" onclick="closeFormModal('form4Modal')">✕</button>
-		  </div>
-		  <form id="refundOthersForm" onsubmit="handleFormSubmit(event, 'form4Modal', 'refund_others')" class="modal-body-scroll">
-			<div class="vibe-row">
-			  <span class="vibe-label">Order #</span>
-			  <div class="vibe-input-wrap"><input type="text" id="ro_order_num" placeholder="#1611764" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Customer Email</span>
-			  <div class="vibe-input-wrap"><input type="email" id="ro_customer_email" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Refund Amount</span>
-			  <div class="vibe-input-wrap"><input type="text" id="ro_refund_amount" placeholder="$34.75" required></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Sub Status</span>
-			  <div class="vibe-input-wrap">
-				<select id="ro_sub_status" required>
-				  <option value="">-- Select Sub Status --</option>
-				  <option value="Canceled">Canceled</option>
-				  <option value="Active">Active</option>
-				  <option value="Paused">Paused</option>
-				  <option value="TBD">TBD</option>
-				</select>
-			  </div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Refund Reason</span>
-			  <div class="vibe-input-wrap">
-				<select id="ro_reason" required>
-				  <option value="">-- Select Reason --</option>
-				  <option value="Other">Other</option>
-				  <option value="Negative Reaction">Negative Reaction</option>
-				  <option value="CS">CS</option>
-				  <option value="Complaint/BBB">Complaint/BBB</option>
-				  <option value="Damaged Order">Damaged Order</option>
-				  <option value="Missing order">Missing order</option>
-				  <option value="Unfulfilled">Unfulfilled</option>
-				  <option value="LIT">LIT (Lost In Transit)</option>
-				  <option value="Delivered Not Received">Delivered Not Received</option>
-				  <option value="Mispicks">Mispicks</option>
-				  <option value="Taste">Taste</option>
-				  <option value="Texture">Texture</option>
-				  <option value="Health">Health</option>
-				  <option value="Quantity (too much)">Quantity (too much)</option>
-				  <option value="Quality">Quality</option>
-				  <option value="Testing & Safety">Testing & Safety</option>
-				  <option value="RTS">RTS</option>
-				</select>
-			  </div>
-			</div>
-			<div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent; border-top: none;">
-			  <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormModal('form4Modal')">Cancel</button>
-			  <button type="submit" class="btn btn-sm">Log Refund Request</button>
-			</div>
-		  </form>
-		</div>
-	  </dialog>
+  <!-- FORM 4 MODAL (Sheet Tab: Refund Others) -->
+  <dialog id="form4Modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Refund Others Intake</h2>
+        <button class="modal-close-btn" onclick="closeFormModal('form4Modal')">✕</button>
+      </div>
+      <form id="refundOthersForm" onsubmit="handleFormSubmit(event, 'form4Modal', 'refund_others')" class="modal-body-scroll">
+        <div class="vibe-row">
+          <span class="vibe-label">Order #</span>
+          <div class="vibe-input-wrap"><input type="text" id="ro_order_num" placeholder="#1611764" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Customer Email</span>
+          <div class="vibe-input-wrap"><input type="email" id="ro_customer_email" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Refund Amount</span>
+          <div class="vibe-input-wrap"><input type="text" id="ro_refund_amount" placeholder="$34.75" required></div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Sub Status</span>
+          <div class="vibe-input-wrap">
+            <select id="ro_sub_status" required>
+              <option value="">-- Select Sub Status --</option>
+              <option value="Canceled">Canceled</option>
+              <option value="Active">Active</option>
+              <option value="Paused">Paused</option>
+              <option value="TBD">TBD</option>
+            </select>
+          </div>
+        </div>
+        <div class="vibe-row">
+          <span class="vibe-label">Refund Reason</span>
+          <div class="vibe-input-wrap">
+            <select id="ro_reason" required>
+              <option value="">-- Select Reason --</option>
+              <option value="Other">Other</option>
+              <option value="Negative Reaction">Negative Reaction</option>
+              <option value="CS">CS</option>
+              <option value="Complaint/BBB">Complaint/BBB</option>
+              <option value="Damaged Order">Damaged Order</option>
+              <option value="Missing order">Missing order</option>
+              <option value="Unfulfilled">Unfulfilled</option>
+              <option value="LIT">LIT (Lost In Transit)</option>
+              <option value="Delivered Not Received">Delivered Not Received</option>
+              <option value="Mispicks">Mispicks</option>
+              <option value="Taste">Taste</option>
+              <option value="Texture">Texture</option>
+              <option value="Health">Health</option>
+              <option value="Quantity (too much)">Quantity (too much)</option>
+              <option value="Quality">Quality</option>
+              <option value="Testing & Safety">Testing & Safety</option>
+              <option value="RTS">RTS</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer" style="padding: 1rem 0 0 0; background: transparent; border-top: none;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeFormModal('form4Modal')">Cancel</button>
+          <button type="submit" class="btn btn-sm">Log Refund Request</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 	
-	<!-- ============================================================ -->
-	<!-- KNOWLEDGE BASE INLINE ARTICLE EDITOR MODAL                   -->
-	<!-- ============================================================ -->
-	  <dialog id="kbEditorModal">
-		<div class="modal-box" style="max-width: 680px;">
-		  <div class="modal-header">
-			<h2 id="kbEditorModalTitle">Create Knowledge Base Guide</h2>
-			<button class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
-		  </div>
+  <!-- KNOWLEDGE BASE INLINE ARTICLE EDITOR MODAL -->
+  <dialog id="kbEditorModal">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h2 id="kbEditorModalTitle">Create Knowledge Base Guide</h2>
+        <button class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
+      </div>
 
-		  <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll">
-			<input type="hidden" id="kb_edit_id" />
+      <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll">
+        <input type="hidden" id="kb_edit_id" />
 
-			<div class="vibe-row">
-			  <span class="vibe-label">Category</span>
-			  <div class="vibe-input-wrap">
-				<select id="kb_edit_category" required onchange="toggleMacroFieldVisibility(this.value)">
-				  <option value="playbook">📖 Playbook (Standard Operating Procedure)</option>
-				  <option value="macro">💬 Macro (Gorgias Canned Reply)</option>
-				  <option value="faq">❓ Internal FAQ</option>
-				</select>
-			  </div>
-			</div>
+        <div class="vibe-row">
+          <span class="vibe-label">Category</span>
+          <div class="vibe-input-wrap">
+            <select id="kb_edit_category" required onchange="toggleMacroFieldVisibility(this.value)">
+              <option value="playbook">📖 Playbook (Standard Operating Procedure)</option>
+              <option value="macro">💬 Macro (Gorgias Canned Reply)</option>
+              <option value="faq">❓ Internal FAQ</option>
+            </select>
+          </div>
+        </div>
 
-			<div class="vibe-row">
-			  <span class="vibe-label">Article Title</span>
-			  <div class="vibe-input-wrap">
-				<input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required />
-			  </div>
-			</div>
+        <div class="vibe-row">
+          <span class="vibe-label">Article Title</span>
+          <div class="vibe-input-wrap">
+            <input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required />
+          </div>
+        </div>
 
-			<div class="vibe-row">
-			  <span class="vibe-label">Tags (comma-separated)</span>
-			  <div class="vibe-input-wrap">
-				<input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" />
-			  </div>
-			</div>
+        <div class="vibe-row">
+          <span class="vibe-label">Tags (comma-separated)</span>
+          <div class="vibe-input-wrap">
+            <input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" />
+          </div>
+        </div>
 
-			<div class="vibe-row align-start">
-			  <span class="vibe-label" style="margin-top: 5px;">Guide Content (Markdown)</span>
-			  <div class="vibe-input-wrap">
-				<textarea id="kb_edit_content" rows="6" placeholder="Write guide details. Use ### for subheadings and - for bullet points..." required></textarea>
-			  </div>
-			</div>
+        <div class="vibe-row align-start">
+          <span class="vibe-label" style="margin-top: 5px;">Guide Content (Markdown)</span>
+          <div class="vibe-input-wrap">
+            <textarea id="kb_edit_content" rows="6" placeholder="Write guide details. Use ### for subheadings and - for bullet points..." required></textarea>
+          </div>
+        </div>
 
-			<!-- Macro text field (shows when category is 'macro') -->
-			<div class="vibe-row align-start" id="kb_macro_field_row" style="display: none;">
-			  <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
-			  <div class="vibe-input-wrap">
-				<textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias response template here..."></textarea>
-			  </div>
-			</div>
-		  </form>
+        <div class="vibe-row align-start" id="kb_macro_field_row" style="display: none;">
+          <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
+          <div class="vibe-input-wrap">
+            <textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias response template here..."></textarea>
+          </div>
+        </div>
+      </form>
 
-		  <div class="modal-footer">
-			<button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
-			<button type="submit" form="kbEditorForm" class="btn btn-sm">Save & Publish Guide</button>
-		  </div>
-		</div>
-	  </dialog>	
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
+        <button type="submit" form="kbEditorForm" class="btn btn-sm">Save & Publish Guide</button>
+      </div>
+    </div>
+  </dialog>	
 	
-	<!-- ============================================================ -->
-	<!-- MANDATORY AGENT ANNOUNCEMENT VERIFICATION MODAL              -->
-	<!-- ============================================================ -->
+  <!-- MANDATORY AGENT ANNOUNCEMENT VERIFICATION MODAL -->
   <dialog id="mandatoryUpdateModal" style="max-width: 520px; border-radius: 14px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
     <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
       
@@ -1687,7 +1666,6 @@
       </div>
 
       <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 200px; overflow-y: auto;">
-        <!-- Announcement body text loads here -->
       </div>
 
       <div>
@@ -1946,13 +1924,12 @@
       return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
     }
 	
-	function formatCurrency(input) {
-	const trimmed = String(input || '').trim();
-	if (!trimmed || trimmed.toUpperCase() === 'N/A') return trimmed || 'N/A';
-	// Strip any existing '$' or whitespace, then add '$'
-	const cleanNum = trimmed.replace(/[^0-9.]/g, '');
-	return cleanNum ? `$${cleanNum}` : '';
-	}
+    function formatCurrency(input) {
+      const trimmed = String(input || '').trim();
+      if (!trimmed || trimmed.toUpperCase() === 'N/A') return trimmed || 'N/A';
+      const cleanNum = trimmed.replace(/[^0-9.]/g, '');
+      return cleanNum ? `$${cleanNum}` : '';
+    }
 
     function formatDateInput(d) {
       if (!d) return "";
@@ -1983,7 +1960,7 @@
         const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
         if (activeLink) activeLink.classList.add('active');
 
-		if (viewId === 'refundsQueueView') {
+        if (viewId === 'refundsQueueView') {
           heading.innerText = 'Refund Requests';
           executeQueueFetch(0);
         } else if (viewId === 'dashboardView') {
@@ -2000,6 +1977,8 @@
         } else {
           heading.innerText = 'Portal';
         }
+
+        checkForUnreadAnnouncements();
       }
     };
 
@@ -2020,16 +1999,7 @@
       }
     }
 
-// ============================================================
     // UPDATED FORM DISPATCHER: AUTO-FORMAT '#' & '$' + SMART SYNC
-    // ============================================================
-    function formatCurrency(input) {
-      const trimmed = String(input || '').trim();
-      if (!trimmed || trimmed.toUpperCase() === 'N/A') return trimmed || 'N/A';
-      const cleanNum = trimmed.replace(/[^0-9.]/g, '');
-      return cleanNum ? `$${cleanNum}` : '';
-    }
-
     window.handleFormSubmit = async function(e, modalId, formType) {
       e.preventDefault();
       const form = e.target;
@@ -2042,14 +2012,13 @@
       const agentEmail = userSession.email || 'alvin@artofenso.com';
       const now = new Date();
       const nowIso = now.toISOString();
-      const todayDate = nowIso.split('T')[0]; // Format: YYYY-MM-DD
+      const todayDate = nowIso.split('T')[0];
 
       let sheetPayload = { form_type: formType, submitted_by_agent: agentEmail };
       let matchNotification = "";
 
       try {
         if (formType === 'super_greens') {
-          // Tab: SGRelaunch
           const orderNum = formatOrderNumber(document.getElementById('sg_order_num').value);
           const custEmail = document.getElementById('sg_customer_email').value.trim();
           const refundAmt = formatCurrency(document.getElementById('sg_refund_amount').value);
@@ -2074,7 +2043,6 @@
           }
 
         } else if (formType === 'replacement_tracking') {
-          // Tab: Replacement Tracking Sheet
           const orderNum = formatOrderNumber(document.getElementById('rep_order_num').value);
           const custEmail = document.getElementById('rep_customer_email').value.trim();
           const repReason = document.getElementById('rep_reason').value;
@@ -2105,10 +2073,9 @@
           const cleanOrderNum = orderNum.replace('#', '').trim();
           
           const custEmail = (isRecall ? document.getElementById('recall_customer_email').value : document.getElementById('ro_customer_email').value).trim();
-          
           const rawAmount = isRecall ? document.getElementById('recall_refund_amount').value : document.getElementById('ro_refund_amount').value;
-          const refundAmtWithSymbol = formatCurrency(rawAmount); // e.g., $43.49
-          const cleanRefundAmt = refundAmtWithSymbol.replace(/[^0-9.]/g, ''); // e.g., 43.49
+          const refundAmtWithSymbol = formatCurrency(rawAmount);
+          const cleanRefundAmt = refundAmtWithSymbol.replace(/[^0-9.]/g, '');
           
           const subStatus = isRecall ? document.getElementById('recall_sub_status').value : document.getElementById('ro_sub_status').value;
           const refReason = isRecall ? document.getElementById('recall_reason').value : document.getElementById('ro_reason').value;
@@ -2122,7 +2089,6 @@
           });
 
           if (db) {
-            // 1. Log to the dedicated tracker table with '$' and '#'
             const targetTable = isRecall ? 'tracker_recall_refunds' : 'tracker_refund_others';
             await db.from(targetTable).insert([{
               timestamp: nowIso,
@@ -2134,7 +2100,6 @@
               refund_reason: refReason
             }]);
 
-            // 2. Search for existing record in refunds table
             const { data: matchedRecords, error: searchErr } = await db
               .from('refunds')
               .select('task_id, order_number, notes, status')
@@ -2163,7 +2128,6 @@
           }
         }
 
-        // Send to Google Spreadsheet endpoint
         fetch(SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -2186,8 +2150,40 @@
         executeQueueFetch(queueCurrentPage);
       }
     };
-	
-	// FORM DISPATCHER: AUTO-FORMAT '#' & '$' + SMART SYNC
+
+    // AUTH HANDLERS & SESSION MANAGEMENT
+    window.bypassLocalAuth = function() {
+      const fallbackSession = {
+        email: "alvin@artofenso.com",
+        name: "Alvin",
+        picture: "",
+        expiry: new Date().getTime() + (365 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(fallbackSession));
+      initAuth();
+    };
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        return JSON.parse(jsonPayload);
+      } catch(e) { return null; }
+    }
+
+    window.handleCredentialResponse = function(response) {
+      const user = parseJwt(response.credential);
+      if (!user) return;
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+      initAuth();
+    };
 
     window.logout = function() {
       localStorage.removeItem('user_session');
@@ -2216,6 +2212,7 @@
         document.getElementById('userEmail').innerText = session.email;
         initDropdownOptions();
         showView('refundsQueueView');
+        checkForUnreadAnnouncements();
       } else {
         showView('loginView');
       }
@@ -2310,8 +2307,7 @@
         }
 
         queueTotalRecords = count || 0;
-        const totalText = `TOTAL RECORDS: ${queueTotalRecords.toLocaleString()}`;
-        document.getElementById('queueTotalBadge').textContent = totalText;
+        document.getElementById('queueTotalBadge').textContent = `TOTAL RECORDS: ${queueTotalRecords.toLocaleString()}`;
         
         const totalPages = Math.ceil(queueTotalRecords / QUEUE_PAGE_SIZE) || 1;
         const pageText = `Page ${queueCurrentPage + 1} of ${totalPages}`;
@@ -2636,9 +2632,7 @@
       renderReportTable(filtered);
     };
 	
-	// ============================================================
     // ANNOUNCEMENT IN-APP MANAGER (CREATE, TOGGLE, AUDIT)
-    // ============================================================
     window.createAnnouncementFromUI = async function(e) {
       e.preventDefault();
       if (!db) return;
@@ -2649,7 +2643,7 @@
       btn.innerText = 'Publishing...';
 
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
-      const agentEmail = userSession.email || 'moderator@artofenso.com';
+      const agentEmail = userSession.email || 'alvin@artofenso.com';
 
       const title = document.getElementById('ann_create_title').value.trim();
       const body = document.getElementById('ann_create_body').value.trim();
@@ -2681,7 +2675,6 @@
       const tbody = document.getElementById('announcementsTableBody');
       tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching...</td></tr>';
 
-      // 1. Fetch announcements
       const { data: list, error } = await db
         .from('portal_announcements')
         .select('*')
@@ -2692,7 +2685,6 @@
         return;
       }
 
-      // 2. Fetch all verified reads to compute counts
       const { data: reads } = await db.from('announcement_reads').select('announcement_id, agent_email');
 
       tbody.innerHTML = '';
@@ -2746,9 +2738,7 @@
       alert('Verified Agents:\n\n• ' + emails.join('\n• '));
     };
 		
-	// ============================================================
     // MANDATORY ANNOUNCEMENT VERIFICATION ENGINE
-    // ============================================================
     let currentActiveAnnouncement = null;
 
     async function checkForUnreadAnnouncements() {
@@ -2807,7 +2797,7 @@
 
       errorMsg.style.display = 'none';
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
-      const agentEmail = userSession.email || 'agent@artofenso.com';
+      const agentEmail = userSession.email || 'alvin@artofenso.com';
 
       const { error } = await db.from('announcement_reads').insert([{
         announcement_id: currentActiveAnnouncement.id,
@@ -2823,9 +2813,7 @@
       }
     };
 	
-	// ============================================================
     // KNOWLEDGE BASE ENGINE (NOTION/ZENDESK INTERACTIVE HUB)
-    // ============================================================
     let globalKbArticles = [];
     let currentKbCategory = 'all';
     let currentSelectedArticle = null;
@@ -2865,7 +2853,6 @@
       globalKbArticles = data;
       filterKnowledgeBaseArticles();
 
-      // Auto-select first article if none selected
       if (!currentSelectedArticle && globalKbArticles.length > 0) {
         renderSelectedArticle(globalKbArticles[0]);
       }
@@ -2923,7 +2910,7 @@
 
     function renderSelectedArticle(article) {
       currentSelectedArticle = article;
-      filterKnowledgeBaseArticles(); // Highlights selected item
+      filterKnowledgeBaseArticles();
 
       document.getElementById('kbCurrentCategoryBadge').innerText = article.category.toUpperCase();
       document.getElementById('kbCurrentArticleTitle').innerText = article.title;
@@ -2958,7 +2945,7 @@
       });
     };
 
-    // --- ARTICLE EDITOR MODAL LOGIC ---
+    // ARTICLE EDITOR MODAL LOGIC
     window.openArticleEditorModal = function(article) {
       const modal = document.getElementById('kbEditorModal');
       const form = document.getElementById('kbEditorForm');
@@ -3010,7 +2997,7 @@
       const macroText = document.getElementById('kb_edit_macro_text').value.trim();
 
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
-      const agentEmail = userSession.email || 'agent@artofenso.com';
+      const agentEmail = userSession.email || 'alvin@artofenso.com';
 
       const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
 
