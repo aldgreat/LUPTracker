@@ -94,7 +94,7 @@
       padding-left: 0.5rem;
     }
 
-	.sidebar-logo {
+    .sidebar-logo {
       width: 140px;
       height: auto;
       margin-bottom: 2.5rem;
@@ -780,7 +780,7 @@
       color: var(--text-muted);
     }
 
-    .kb-reader-panel {
+	.kb-reader-panel {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -789,6 +789,7 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
+      max-height: 100%;
     }
 
     .kb-reader-header {
@@ -812,7 +813,7 @@
       font-size: 0.9rem;
       line-height: 1.6;
       color: var(--text-dark);
-      flex: 1;
+      flex: 0 0 auto;
     }
 
     .kb-reader-body h3 {
@@ -830,11 +831,13 @@
       margin-bottom: 0.35rem;
     }
 
-    .kb-macro-block {
+	.kb-macro-block {
       background: var(--input-bg);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       margin-top: 1.25rem;
+      margin-bottom: 2rem;
+      flex-shrink: 0;
       overflow: hidden;
     }
 
@@ -1607,10 +1610,10 @@
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
         <h2 id="kbEditorModalTitle">Create Knowledge Base Guide</h2>
-        <button class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
+        <button type="button" class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
       </div>
 
-      <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll">
+      <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll" style="display:flex; flex-direction:column; gap:0.75rem;">
         <input type="hidden" id="kb_edit_id" />
 
         <div class="vibe-row">
@@ -1639,7 +1642,7 @@
         </div>
 
         <div class="vibe-row align-start">
-          <span class="vibe-label" style="margin-top: 5px;">Guide Content (Markdown)</span>
+          <span class="vibe-label" style="margin-top: 5px;">Guide Content (Markdown / HTML)</span>
           <div class="vibe-input-wrap">
             <textarea id="kb_edit_content" rows="6" placeholder="Write guide details. Use ### for subheadings and - for bullet points..." required></textarea>
           </div>
@@ -1651,12 +1654,31 @@
             <textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias response template here..."></textarea>
           </div>
         </div>
-      </form>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
-        <button type="submit" form="kbEditorForm" class="btn btn-sm">Save & Publish Guide</button>
-      </div>
+        <!-- AUTO-ANNOUNCE TOGGLE -->
+        <div style="margin-top: 0.5rem; padding: 0.85rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 0.82rem; color: var(--text-dark);">
+            <input type="checkbox" id="kb_auto_announce" onchange="toggleAutoAnnounceFields(this.checked)" style="width: 16px; height: 16px; accent-color: var(--primary-green);" />
+            📢 Broadcast to Team as Mandatory Announcement
+          </label>
+          
+          <div id="kb_announce_fields_wrap" style="display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color);">
+            <label style="display: block; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">
+              Required Verification Keyword
+            </label>
+            <input type="text" id="kb_announce_keyword" placeholder="e.g. Super Greens" style="width: 100%; font-size: 0.82rem;" />
+            <small style="display: block; margin-top: 4px; font-size: 0.72rem; color: var(--text-muted);">
+              Agents will see the article summary and cannot use the portal until they enter this keyword.
+            </small>
+          </div>
+        </div>
+
+        <!-- MODAL FOOTER BUTTONS (Inside form for reliable submission) -->
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
+          <button type="submit" class="btn btn-sm">Save & Publish Guide</button>
+        </div>
+      </form>
     </div>
   </dialog>	
 	
@@ -1690,7 +1712,7 @@
     </div>
   </dialog>
   
-  <!-- EDIT MODAL -->
+  <!-- EDIT REFUND MODAL -->
   <dialog id="editRefundModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -2775,7 +2797,7 @@
         if (!readRecord) {
           currentActiveAnnouncement = latest;
           document.getElementById('announcementTitle').innerText = latest.title;
-          document.getElementById('announcementBody').innerText = latest.body;
+          document.getElementById('announcementBody').innerHTML = latest.body;
           document.getElementById('verificationKeywordInput').value = '';
           document.getElementById('verificationErrorMsg').style.display = 'none';
           
@@ -2904,8 +2926,16 @@
       });
     };
 
-    function simpleMarkdownParser(text) {
+	function simpleMarkdownParser(text) {
       if (!text) return '';
+      const trimmed = text.trim();
+      
+      // If the content is written in HTML, don't corrupt it with regex line breaks
+      if (trimmed.startsWith('<')) {
+        return trimmed;
+      }
+
+      // Standard markdown conversion for plain text
       return text
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -2914,7 +2944,7 @@
         .replace(/\n\n/gim, '<p></p>')
         .replace(/\n/gim, '<br>');
     }
-
+	
     function renderSelectedArticle(article) {
       currentSelectedArticle = article;
       filterKnowledgeBaseArticles();
@@ -2928,9 +2958,11 @@
       document.getElementById('kbEditArticleBtn').style.display = 'inline-flex';
       document.getElementById('kbCurrentArticleBody').innerHTML = simpleMarkdownParser(article.content);
 
-      const macroBox = document.getElementById('kbMacroContainer');
+     const macroBox = document.getElementById('kbMacroContainer');
       const macroContent = document.getElementById('kbMacroContent');
-      if (article.category === 'macro' && article.macro_text) {
+      const isMacro = String(article.category || '').toLowerCase().trim() === 'macro';
+      
+      if (isMacro && article.macro_text && article.macro_text.trim() !== '') {
         macroBox.style.display = 'block';
         macroContent.innerText = article.macro_text;
       } else {
@@ -2952,49 +2984,76 @@
       });
     };
 
-    // ARTICLE EDITOR MODAL LOGIC
+    // Auto-announce visibility toggle
+    window.toggleAutoAnnounceFields = function(isChecked) {
+      const wrap = document.getElementById('kb_announce_fields_wrap');
+      if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
+      const kwInput = document.getElementById('kb_announce_keyword');
+      if (kwInput) kwInput.required = isChecked;
+    };
+
+    // Macro textarea field visibility toggle
+    window.toggleMacroFieldVisibility = function(category) {
+      const row = document.getElementById('kb_macro_field_row');
+      if (row) {
+        row.style.display = (category === 'macro') ? 'grid' : 'none';
+      }
+    };
+
+    // Close the Knowledge Base Editor Modal
+    window.closeArticleEditorModal = function() {
+      const modal = document.getElementById('kbEditorModal');
+      if (modal) modal.close();
+    };
+
+    // Open Editor to Edit currently selected article
+    window.editCurrentSelectedArticle = function() {
+      if (!currentSelectedArticle) {
+        alert('Please select an article from the list first.');
+        return;
+      }
+      openArticleEditorModal(currentSelectedArticle);
+    };
+
+    // Open Editor Modal (New or Edit)
     window.openArticleEditorModal = function(article) {
       const modal = document.getElementById('kbEditorModal');
       const form = document.getElementById('kbEditorForm');
       form.reset();
 
+      const autoAnnounceCheck = document.getElementById('kb_auto_announce');
+      if (autoAnnounceCheck) {
+        autoAnnounceCheck.checked = false;
+        toggleAutoAnnounceFields(false);
+      }
+
       if (article) {
         document.getElementById('kbEditorModalTitle').innerText = 'Edit Knowledge Base Guide';
-        document.getElementById('kb_edit_id').value = article.id;
-        document.getElementById('kb_edit_category').value = article.category;
-        document.getElementById('kb_edit_title').value = article.title;
+        document.getElementById('kb_edit_id').value = article.id || '';
+        document.getElementById('kb_edit_category').value = article.category || 'playbook';
+        document.getElementById('kb_edit_title').value = article.title || '';
         document.getElementById('kb_edit_tags').value = (article.tags || []).join(', ');
-        document.getElementById('kb_edit_content').value = article.content;
+        document.getElementById('kb_edit_content').value = article.content || '';
         document.getElementById('kb_edit_macro_text').value = article.macro_text || '';
         toggleMacroFieldVisibility(article.category);
       } else {
         document.getElementById('kbEditorModalTitle').innerText = 'Create Knowledge Base Guide';
         document.getElementById('kb_edit_id').value = '';
-        document.getElementById('kb_edit_category').value = currentKbCategory !== 'all' ? currentKbCategory : 'playbook';
-        toggleMacroFieldVisibility(document.getElementById('kb_edit_category').value);
+        const defaultCategory = (currentKbCategory && currentKbCategory !== 'all') ? currentKbCategory : 'playbook';
+        document.getElementById('kb_edit_category').value = defaultCategory;
+        toggleMacroFieldVisibility(defaultCategory);
       }
 
-      modal.showModal();
+      if (modal) modal.showModal();
     };
 
-    window.editCurrentSelectedArticle = function() {
-      if (currentSelectedArticle) {
-        openArticleEditorModal(currentSelectedArticle);
-      }
-    };
-
-    window.closeArticleEditorModal = function() {
-      document.getElementById('kbEditorModal').close();
-    };
-
-    window.toggleMacroFieldVisibility = function(category) {
-      const row = document.getElementById('kb_macro_field_row');
-      if (row) row.style.display = (category === 'macro') ? 'grid' : 'none';
-    };
-
+    // Save Article (Insert or Update)
     window.saveKnowledgeBaseArticle = async function(e) {
       e.preventDefault();
-      if (!db) return;
+      if (!db) {
+        alert('Database client not connected.');
+        return;
+      }
 
       const editId = document.getElementById('kb_edit_id').value;
       const category = document.getElementById('kb_edit_category').value;
@@ -3003,9 +3062,16 @@
       const content = document.getElementById('kb_edit_content').value.trim();
       const macroText = document.getElementById('kb_edit_macro_text').value.trim();
 
+      const shouldAnnounce = document.getElementById('kb_auto_announce').checked;
+      const keyword = (document.getElementById('kb_announce_keyword').value || '').trim();
+
+      if (shouldAnnounce && !keyword) {
+        alert('Please specify a verification keyword so agents can verify having read this update.');
+        return;
+      }
+
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const agentEmail = userSession.email || 'alvin@artofenso.com';
-
       const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
 
       const payload = {
@@ -3018,23 +3084,57 @@
         updated_at: new Date().toISOString()
       };
 
-      if (editId) {
-        const { error } = await db.from('knowledge_base').update(payload).eq('id', editId);
-        if (error) {
-          alert('Failed to update guide: ' + error.message);
-          return;
+      try {
+        let savedArticle = null;
+        if (editId) {
+          const { data, error } = await db.from('knowledge_base').update(payload).eq('id', editId).select();
+          if (error) throw error;
+          savedArticle = data && data[0];
+        } else {
+          const { data, error } = await db.from('knowledge_base').insert([payload]).select();
+          if (error) throw error;
+          savedArticle = data && data[0];
         }
-      } else {
-        const { error } = await db.from('knowledge_base').insert([payload]);
-        if (error) {
-          alert('Failed to create guide: ' + error.message);
-          return;
-        }
-      }
 
-      closeArticleEditorModal();
-      await loadKnowledgeBaseArticles();
-      alert('Guide saved and published successfully!');
+        // AUTO-BROADCAST IF CHECKED
+        if (shouldAnnounce) {
+          const categoryIcon = category === 'playbook' ? '📖 SOP Update' : category === 'macro' ? '💬 New Macro' : '❓ FAQ Update';
+          
+          const announcementBody = `
+<div style="font-family: inherit; line-height: 1.55;">
+  <p style="margin-bottom: 8px;"><strong>${categoryIcon}:</strong> A new guide has been published to the Knowledge Base:</p>
+  <div style="background: var(--card-bg); border-left: 3px solid var(--primary-green); padding: 8px 12px; margin-bottom: 10px; border-radius: 4px;">
+    <h4 style="margin: 0; color: var(--primary-green);">${title}</h4>
+    <p style="margin: 4px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">${content.slice(0, 160)}...</p>
+  </div>
+  <p style="font-size: 0.8rem; margin: 0;">Please review this update in the Knowledge Base. To confirm you have read this notice, enter the verification keyword below.</p>
+</div>`.trim();
+
+          await db.from('portal_announcements').insert([{
+            title: `KB Update: ${title}`,
+            body: announcementBody,
+            verification_keyword: keyword,
+            created_by: agentEmail,
+            is_active: true
+          }]);
+        }
+
+        closeArticleEditorModal();
+        await loadKnowledgeBaseArticles();
+        
+        if (savedArticle) {
+          renderSelectedArticle(savedArticle);
+        }
+
+        if (shouldAnnounce) {
+          alert(`Guide saved and broadcasted to all agents with keyword "${keyword}"!`);
+        } else {
+          alert('Guide saved and published successfully!');
+        }
+
+      } catch (err) {
+        alert('Failed to save article: ' + err.message);
+      }
     };
 	
     initTheme();
