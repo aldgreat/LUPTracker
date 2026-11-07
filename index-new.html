@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Supabase UMD Client -->
+  <!-- Supabase UMD Client (v2) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   
   <style>
@@ -38,7 +38,7 @@
     }
 
     body.dark-mode {
-      /* VIBE HIGH-CONTRAST DARK THEME */
+      /* VIBE DARK THEME */
       --bg-color: #0b1411;
       --card-bg: #121e1a;
       --sidebar-bg: #08110e;
@@ -74,7 +74,7 @@
 
     /* SIDEBAR */
     .sidebar {
-      width: 230px;
+      width: 240px;
       background-color: var(--sidebar-bg);
       color: var(--sidebar-text);
       display: flex;
@@ -85,19 +85,10 @@
       overflow-y: auto;
     }
 
-    .brand-title {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 1.75rem;
-      letter-spacing: -0.5px;
-      padding-left: 0.5rem;
-    }
-
     .sidebar-logo {
       width: 140px;
       height: auto;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       filter: brightness(0) invert(1);
     }
 	  
@@ -240,7 +231,7 @@
       margin: 0;
     }
 
-    input[type="text"], input[type="email"], input[type="number"], input[type="date"], input[type="search"], select, textarea { 
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="search"], select, textarea { 
       width: 100%; 
       padding: 0.45rem 0.65rem; 
       border: 1px solid var(--border-color); 
@@ -299,7 +290,6 @@
       font-weight: 600;
     }
 
-    /* VIBE FIXED BUTTON WIDTHS */
     .actions-cell-wrap {
       display: inline-flex;
       align-items: center;
@@ -518,7 +508,7 @@
       color: var(--text-dark);
     }
 	
-    /* MODERN TICKET FORMS GUI STYLES */
+    /* TICKET FORMS GUI */
     .ticket-cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -527,9 +517,7 @@
     }
 
     @media (max-width: 820px) {
-      .ticket-cards-grid {
-        grid-template-columns: 1fr;
-      }
+      .ticket-cards-grid { grid-template-columns: 1fr; }
     }
 
     .intake-card {
@@ -543,7 +531,7 @@
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
     .intake-card::before {
@@ -564,12 +552,10 @@
     .intake-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-      border-color: rgba(14, 58, 47, 0.2);
     }
 
     body.dark-mode .intake-card:hover {
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
-      border-color: rgba(255, 255, 255, 0.12);
     }
 
     .intake-card-header {
@@ -589,11 +575,7 @@
       font-size: 1.25rem;
     }
 
-    .intake-chips-wrap {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
+    .intake-chips-wrap { display: flex; gap: 5px; flex-wrap: wrap; }
 
     .intake-meta-chip {
       font-size: 0.68rem;
@@ -607,16 +589,11 @@
       color: var(--text-muted);
     }
 
-    .intake-card-body {
-      margin-bottom: 1.2rem;
-    }
-
     .intake-card-title {
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-dark);
       margin-bottom: 0.35rem;
-      letter-spacing: -0.2px;
     }
 
     .intake-card-desc {
@@ -631,13 +608,10 @@
       align-items: center;
       padding-top: 0.85rem;
       border-top: 1px solid var(--border-color);
+      margin-top: 1rem;
     }
 
-    .intake-footer-note {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
+    .intake-footer-note { font-size: 0.72rem; color: var(--text-muted); }
     .intake-footer-note code {
       font-family: inherit;
       background: var(--input-bg);
@@ -659,7 +633,6 @@
       font-size: 0.78rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .intake-launch-btn:hover {
@@ -673,19 +646,11 @@
       color: #0b1411;
       border-color: #22c55e;
     }
-
-    .launch-arrow {
-      transition: transform 0.15s ease;
-    }
-
-    .intake-launch-btn:hover .launch-arrow {
-      transform: translateX(3px);
-    }
 	
     /* KNOWLEDGE BASE NOTION / ZENDESK STYLE GUI */
     .kb-container {
       display: grid;
-      grid-template-columns: 280px 1fr;
+      grid-template-columns: 290px 1fr;
       gap: 1.25rem;
       width: 100%;
       height: calc(100vh - 120px);
@@ -705,10 +670,6 @@
       flex-direction: column;
       box-shadow: var(--shadow);
       overflow: hidden;
-    }
-
-    .kb-search-box {
-      margin-bottom: 0.75rem;
     }
 
     .kb-category-tabs {
@@ -732,7 +693,6 @@
       border-radius: 4px;
       cursor: pointer;
       text-align: center;
-      transition: all 0.15s ease;
     }
 
     .kb-tab-btn.active {
@@ -748,39 +708,42 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding-right: 2px;
     }
 
     .kb-article-item {
-      padding: 0.6rem 0.75rem;
+      padding: 0.65rem 0.75rem;
       border-radius: 6px;
       cursor: pointer;
       border: 1px solid transparent;
-      transition: all 0.15s ease;
     }
-
-    .kb-article-item:hover {
-      background: var(--input-bg);
-    }
-
-    .kb-article-item.active {
-      background: var(--input-bg);
-      border-color: var(--primary-green);
-    }
+    .kb-article-item:hover { background: var(--input-bg); }
+    .kb-article-item.active { background: var(--input-bg); border-color: var(--primary-green); }
 
     .kb-article-item-title {
       font-size: 0.84rem;
       font-weight: 600;
       color: var(--text-dark);
-      margin-bottom: 2px;
+      margin-bottom: 4px;
     }
 
-    .kb-article-item-meta {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+    .kb-chip-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(14, 58, 47, 0.08);
+      color: var(--primary-green);
+      margin-right: 4px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    body.dark-mode .kb-chip-tag {
+      background: rgba(34, 197, 94, 0.15);
+      color: #86efac;
     }
 
-	.kb-reader-panel {
+    .kb-reader-panel {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -789,7 +752,6 @@
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      max-height: 100%;
     }
 
     .kb-reader-header {
@@ -799,6 +761,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      gap: 12px;
     }
 
     .kb-reader-title {
@@ -813,31 +776,14 @@
       font-size: 0.9rem;
       line-height: 1.6;
       color: var(--text-dark);
-      flex: 0 0 auto;
     }
 
-    .kb-reader-body h3 {
-      font-size: 1.05rem;
-      color: var(--primary-green);
-      margin: 1.25rem 0 0.5rem 0;
-    }
-
-    .kb-reader-body ul, .kb-reader-body ol {
-      padding-left: 1.25rem;
-      margin-bottom: 1rem;
-    }
-
-    .kb-reader-body li {
-      margin-bottom: 0.35rem;
-    }
-
-	.kb-macro-block {
+    .kb-macro-block {
       background: var(--input-bg);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       margin-top: 1.25rem;
       margin-bottom: 2rem;
-      flex-shrink: 0;
       overflow: hidden;
     }
 
@@ -852,20 +798,53 @@
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .kb-macro-content {
       padding: 1rem;
-      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-family: monospace;
       font-size: 0.84rem;
       white-space: pre-wrap;
       color: var(--text-dark);
       line-height: 1.5;
     }
+
+    /* TOAST NOTIFICATION CONTAINER */
+    #portalToastContainer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .portal-toast {
+      pointer-events: auto;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary-green);
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+      max-width: 380px;
+    }
+    .portal-toast.error { border-left-color: #ef4444; }
+    .portal-toast.info { border-left-color: #0284c7; }
   </style>
 </head>
 <body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="portalToastContainer"></div>
 
   <!-- LEFT SIDEBAR -->
   <aside id="sidebar" class="sidebar">
@@ -874,13 +853,33 @@
     <div class="sidebar-section-title">Portals</div>
     <ul class="nav-list">
       <li class="nav-item">
-        <a onclick="showView('refundsQueueView')" class="nav-link active">📋 Refund Queue</a>
+        <a href="#vibe" id="nav-vibe-refunds" class="nav-link" onclick="switchView('refundsQueueView'); return false;">
+          <span class="nav-icon">🔄</span>
+          <span class="nav-label">Vibe Refunding</span>
+        </a>
       </li>
       <li class="nav-item">
-        <a onclick="showView('dashboardView')" class="nav-link">🎫 Ticket Forms</a>
+        <a onclick="switchView('dashboardView')" class="nav-link">🎫 Ticket Forms</a>
       </li>
       <li class="nav-item">
-        <a onclick="showView('reportsView')" class="nav-link">📊 Search & Reports</a>
+        <a onclick="switchView('reportsView')" class="nav-link">📊 Search &amp; Reports</a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Collaboration</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="#messenger" class="nav-link" id="nav-messenger" onclick="switchView('messengerView'); return false;">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Team Messenger</span>
+          <span id="unread-chat-badge" style="display:none; font-size: 0.65rem; background: #ef4444; color: #fff; padding: 2px 6px; border-radius: 10px; margin-left: auto; font-weight: 800;">NEW</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#profile" class="nav-link" id="nav-profile" onclick="switchView('profileView'); return false;">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Profile &amp; Account</span>
+        </a>
       </li>
     </ul>
 
@@ -900,7 +899,13 @@
     <div class="sidebar-section-title">Admin</div>
     <ul class="nav-list">
       <li class="nav-item">
-        <a onclick="showView('announcementsManagerView')" class="nav-link">📢 Manage Updates</a>
+        <a onclick="switchView('announcementsManagerView')" class="nav-link">📢 Manage Updates</a>
+      </li>
+      <li class="nav-item admin-only" style="display: none;">
+        <a href="#admin-settings" class="nav-link" id="nav-admin-settings" onclick="switchView('adminSettingsView'); return false;">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-label">Admin Settings</span>
+        </a>
       </li>
     </ul>
   </aside>
@@ -913,10 +918,13 @@
       <h1 class="top-page-heading" id="topPageHeading">Refund Requests</h1>
       
       <div id="userBar" class="user-pill">
+        <button onclick="openAgentNoticeBoard()" class="theme-toggle-btn" title="View Team Announcements Notice Board">
+          📢 <span style="font-size:0.75rem;">Notices</span>
+        </button>
         <button onclick="toggleDarkMode()" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeToggleIcon">🌙</span> <span id="themeToggleText">Dark</span>
         </button>
-        <div class="user-avatar" style="background:#0ea5e9; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">A</div>
+        <div class="user-avatar" id="topNavAvatar" style="background:#0ea5e9; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">A</div>
         <span id="userEmail" class="user-email">alvin@artofenso.com</span>
         <button onclick="logout()" class="logout-btn">Logout</button>
       </div>
@@ -944,7 +952,7 @@
       </div>
 
       <!-- VIEW 2: REFUND QUEUE -->
-      <div id="refundsQueueView" class="view-page active">
+      <div id="refundsQueueView" class="view-page">
         <div class="portal-card">
 
           <div class="search-row">
@@ -1028,7 +1036,6 @@
             </div>
           </div>
 
-          <!-- TOP PAGINATION -->
           <div class="status-summary-bar">
             <span id="queueTotalBadge" class="badge-v1">TOTAL RECORDS: ...</span>
             
@@ -1039,7 +1046,6 @@
             </div>
           </div>
 
-          <!-- TABLE -->
           <div class="table-responsive">
             <table class="refund-table">
               <thead>
@@ -1062,7 +1068,6 @@
             </table>
           </div>
 
-          <!-- BOTTOM PAGINATION -->
           <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
             <span id="queueTotalBadgeBottom" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">Showing records</span>
             
@@ -1076,9 +1081,8 @@
         </div>
       </div>
 
-      <!-- VIEW 3: TICKET FORMS (MODERNIZED DASHBOARD GUI) -->
-      <div id="dashboardView" class="view-page" style="max-width: 1050px;">
-        
+      <!-- VIEW 3: TICKET FORMS -->
+	<div id="dashboardView" class="view-page active" style="max-width: 1050px;">
         <div style="width: 100%; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
             <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Customer Support Intake Portals</h2>
@@ -1092,117 +1096,78 @@
         </div>
 
         <div class="ticket-cards-grid">
-          
-          <!-- Card 1: Super Greens Relaunch -->
           <div class="intake-card intake-card-emerald">
             <div class="intake-card-header">
-              <div class="intake-icon-pill" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-                🥬
-              </div>
+              <div class="intake-icon-pill" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">🥬</div>
               <div class="intake-chips-wrap">
                 <span class="intake-meta-chip">Tab: SGRelaunch</span>
                 <span class="intake-meta-chip">Trends Log</span>
               </div>
             </div>
-            
             <div class="intake-card-body">
               <h3 class="intake-card-title">Super Greens Ticket Trends</h3>
-              <p class="intake-card-desc">
-                Log customer feedback, inquiries, cancellation trends, and taste/texture tickets regarding the Super Greens relaunch formula.
-              </p>
+              <p class="intake-card-desc">Log customer feedback, inquiries, cancellation trends, and taste/texture tickets regarding the Super Greens relaunch formula.</p>
             </div>
-
             <div class="intake-card-footer">
               <span class="intake-footer-note">Syncs to <code>tracker_sgrelaunch</code></span>
-              <button onclick="openFormModal('form1Modal')" class="intake-launch-btn">
-                Launch Intake <span class="launch-arrow">&rarr;</span>
-              </button>
+              <button onclick="openFormModal('form1Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
             </div>
           </div>
 
-          <!-- Card 2: Replacement Tracking -->
           <div class="intake-card intake-card-blue">
             <div class="intake-card-header">
-              <div class="intake-icon-pill" style="background: rgba(2, 132, 199, 0.12); color: #0284c7;">
-                📦
-              </div>
+              <div class="intake-icon-pill" style="background: rgba(2, 132, 199, 0.12); color: #0284c7;">📦</div>
               <div class="intake-chips-wrap">
                 <span class="intake-meta-chip">Tab: Replacement Tracking</span>
                 <span class="intake-meta-chip" style="color: #0284c7;">Shipping Claims</span>
               </div>
             </div>
-            
             <div class="intake-card-body">
               <h3 class="intake-card-title">Replacement Tracking</h3>
-              <p class="intake-card-desc">
-                Submit requests for missing items, lost-in-transit (LIT), transit damage, mispicks, or return-to-sender fulfillments.
-              </p>
+              <p class="intake-card-desc">Submit requests for missing items, lost-in-transit (LIT), transit damage, mispicks, or return-to-sender fulfillments.</p>
             </div>
-
             <div class="intake-card-footer">
               <span class="intake-footer-note">Includes Make-It-Right check</span>
-              <button onclick="openFormModal('form2Modal')" class="intake-launch-btn">
-                Launch Intake <span class="launch-arrow">&rarr;</span>
-              </button>
+              <button onclick="openFormModal('form2Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
             </div>
           </div>
 
-          <!-- Card 3: Recall Order Refunds -->
           <div class="intake-card intake-card-amber">
             <div class="intake-card-header">
-              <div class="intake-icon-pill" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
-                ⚠️
-              </div>
+              <div class="intake-icon-pill" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">⚠️</div>
               <div class="intake-chips-wrap">
                 <span class="intake-meta-chip">Tab: Recall Order Refunds</span>
                 <span class="intake-meta-chip" style="color: #f59e0b;">Smart Match</span>
               </div>
             </div>
-            
             <div class="intake-card-body">
               <h3 class="intake-card-title">Recall Order Refunds</h3>
-              <p class="intake-card-desc">
-                Intake customer refund requests for recalled batches. Automatically resolves matching Vibe tasks to "Refunded" with date stamping.
-              </p>
+              <p class="intake-card-desc">Intake customer refund requests for recalled batches. Automatically resolves matching Vibe tasks to "Refunded" with date stamping.</p>
             </div>
-
             <div class="intake-card-footer">
               <span class="intake-footer-note">Updates Vibe queue automatically</span>
-              <button onclick="openFormModal('form3Modal')" class="intake-launch-btn">
-                Launch Intake <span class="launch-arrow">&rarr;</span>
-              </button>
+              <button onclick="openFormModal('form3Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
             </div>
           </div>
 
-          <!-- Card 4: Refund Others -->
           <div class="intake-card intake-card-purple">
             <div class="intake-card-header">
-              <div class="intake-icon-pill" style="background: rgba(168, 85, 247, 0.12); color: #a855f7;">
-                💳
-              </div>
+              <div class="intake-icon-pill" style="background: rgba(168, 85, 247, 0.12); color: #a855f7;">💳</div>
               <div class="intake-chips-wrap">
                 <span class="intake-meta-chip">Tab: Refund Others</span>
                 <span class="intake-meta-chip" style="color: #a855f7;">General CS</span>
               </div>
             </div>
-            
             <div class="intake-card-body">
               <h3 class="intake-card-title">Refund Others</h3>
-              <p class="intake-card-desc">
-                Process general refund claims for damaged packages, quality disputes, BBB complaints, and customer satisfaction escalations.
-              </p>
+              <p class="intake-card-desc">Process general refund claims for damaged packages, quality disputes, BBB complaints, and customer satisfaction escalations.</p>
             </div>
-
             <div class="intake-card-footer">
               <span class="intake-footer-note">Updates Vibe queue automatically</span>
-              <button onclick="openFormModal('form4Modal')" class="intake-launch-btn">
-                Launch Intake <span class="launch-arrow">&rarr;</span>
-              </button>
+              <button onclick="openFormModal('form4Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
             </div>
           </div>
-
         </div>
-
       </div>
 
       <!-- VIEW 4: REPORTS -->
@@ -1254,56 +1219,45 @@
         </div>
       </div>
 
-      <!-- VIEW 5: UNIFIED KNOWLEDGE BASE (NOTION / ZENDESK STYLE) -->
-      <div id="knowledgeBaseView" class="view-page full-width" style="margin-top: 0; padding-top: 0;">
+      <!-- VIEW 5: KNOWLEDGE BASE -->
+      <div id="knowledgeBaseView" class="view-page full-width">
         <div class="kb-container">
-          
-          <!-- Left Column: Search & Article Navigator -->
           <div class="kb-sidebar-panel">
             <div class="kb-search-box">
               <input 
                 type="search" 
                 id="kbSearchInput" 
-                placeholder="Search playbooks, macros, FAQs..." 
+                placeholder="Search playbooks, macros, #tags..." 
                 onkeyup="filterKnowledgeBaseArticles()" 
                 style="padding: 0.45rem 0.65rem; font-size: 0.82rem;"
               />
             </div>
-
-            <!-- Category Switcher Tabs -->
             <div class="kb-category-tabs">
               <button class="kb-tab-btn active" id="kbTabAll" onclick="selectKbCategory('all')">All</button>
               <button class="kb-tab-btn" id="kbTabPlaybook" onclick="selectKbCategory('playbook')">📖 Playbooks</button>
               <button class="kb-tab-btn" id="kbTabMacro" onclick="selectKbCategory('macro')">💬 Macros</button>
               <button class="kb-tab-btn" id="kbTabFaq" onclick="selectKbCategory('faq')">❓ FAQs</button>
             </div>
-
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; padding: 0 4px;">
-              <span id="kbArticlesCountBadge" style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
-                Articles
-              </span>
-              <button onclick="openArticleEditorModal(null)" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 0.72rem;">
-                + New Guide
-              </button>
+              <span id="kbArticlesCountBadge" style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Articles</span>
+              <button onclick="openArticleEditorModal(null)" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 0.72rem;">+ New Guide</button>
             </div>
-
             <ul id="kbArticlesList" class="kb-articles-list">
               <li style="text-align: center; padding: 2rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>
             </ul>
           </div>
 
-          <!-- Right Column: Reader & Copy Workspace -->
           <div class="kb-reader-panel" id="kbReaderPanel">
             <div class="kb-reader-header">
               <div>
                 <span id="kbCurrentCategoryBadge" class="badge-v1" style="font-size: 0.68rem; margin-bottom: 0.4rem;">Category</span>
                 <h2 id="kbCurrentArticleTitle" class="kb-reader-title">Select an article</h2>
                 <div id="kbCurrentArticleMeta" style="font-size: 0.74rem; color: var(--text-muted);">Select any guide from the left to read documentation.</div>
+                <div id="kbCurrentArticleTags" style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;"></div>
               </div>
               <div style="display: flex; gap: 6px;">
-                <button id="kbEditArticleBtn" class="btn btn-secondary btn-sm" onclick="editCurrentSelectedArticle()" style="display: none;">
-                  ✏️ Edit Guide
-                </button>
+                <button id="kbEditArticleBtn" class="btn btn-secondary btn-sm" onclick="editCurrentSelectedArticle()" style="display: none;">✏️ Edit Guide</button>
+                <button id="kbDeleteArticleBtn" class="btn btn-secondary btn-sm" onclick="deleteCurrentSelectedArticle()" style="display: none; color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">🗑️ Delete</button>
               </div>
             </div>
 
@@ -1314,46 +1268,36 @@
             <div id="kbMacroContainer" class="kb-macro-block" style="display: none;">
               <div class="kb-macro-header">
                 <span>Gorgias Canned Response</span>
-                <button onclick="copyCurrentMacroText()" id="copyMacroBtn" class="btn btn-blue btn-sm" style="padding: 2px 8px; font-size: 0.72rem;">
-                  📋 Copy Macro
-                </button>
+                <button onclick="copyCurrentMacroText()" id="copyMacroBtn" class="btn btn-blue btn-sm" style="padding: 2px 8px; font-size: 0.72rem;">📋 Copy Macro</button>
               </div>
               <div id="kbMacroContent" class="kb-macro-content"></div>
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- VIEW 6: ANNOUNCEMENTS MANAGER (MODERATOR PANEL) -->
+      <!-- VIEW 6: ANNOUNCEMENTS MANAGER -->
       <div id="announcementsManagerView" class="view-page" style="max-width: 950px;">
-        
         <div class="portal-card" style="margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.25rem; color: var(--primary-green); margin-bottom: 0.25rem;">Broadcast Team Announcement</h2>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">
-            Post a required update. Agents will be locked out of the portal until they read it and confirm with your verification keyword.
-          </p>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Post a required update. Agents will be locked out until they read and confirm with your verification keyword.</p>
 
           <form id="newAnnouncementForm" onsubmit="createAnnouncementFromUI(event)">
             <div style="margin-bottom: 0.75rem;">
               <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Announcement Title</label>
               <input type="text" id="ann_create_title" placeholder="e.g. New LIT Policy Update" required />
             </div>
-
             <div style="margin-bottom: 0.75rem;">
               <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Announcement Message / Note</label>
-              <textarea id="ann_create_body" rows="4" placeholder="Write the update details here. Mention the keyword agents must remember..." required></textarea>
+              <textarea id="ann_create_body" rows="4" placeholder="Write update details here. Mention the keyword agents must remember..." required></textarea>
             </div>
-
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
               <div>
                 <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Verification Keyword / Phrase</label>
                 <input type="text" id="ann_create_keyword" placeholder="e.g. Super Greens" required />
               </div>
               <div style="display: flex; align-items: flex-end;">
-                <button type="submit" class="btn" id="broadcastAnnBtn" style="width: 100%; height: 34px;">
-                  🚀 Publish & Lock For Agents
-                </button>
+                <button type="submit" class="btn" id="broadcastAnnBtn" style="width: 100%; height: 34px;">🚀 Publish &amp; Lock For Agents</button>
               </div>
             </div>
           </form>
@@ -1362,7 +1306,7 @@
         <div class="portal-card">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
             <div>
-              <h3 style="font-size: 1.05rem; color: var(--primary-green);">Announcement History & Verification Audit</h3>
+              <h3 style="font-size: 1.05rem; color: var(--primary-green);">Announcement History &amp; Verification Audit</h3>
               <p style="font-size: 0.8rem; color: var(--text-muted);">Monitor read receipts and active status.</p>
             </div>
             <button onclick="fetchAnnouncementsList()" class="btn btn-secondary btn-sm">🔄 Refresh List</button>
@@ -1386,17 +1330,126 @@
             </table>
           </div>
         </div>
+      </div>
 
+      <!-- VIEW 7: IN-PORTAL MESSENGER (MODULE 5) -->
+      <div id="messengerView" class="view-page" style="height: calc(100vh - 100px); max-width: 1100px;">
+        <div style="display: flex; height: 100%; border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; background: var(--card-bg); box-shadow: var(--shadow);">
+          <!-- Channel Navigator -->
+          <div style="width: 230px; border-right: 1px solid var(--border-color); background: var(--input-bg); display: flex; flex-direction: column;">
+            <div style="padding: 14px 16px; border-bottom: 1px solid var(--border-color); font-weight: 800; font-size: 0.88rem; color: var(--text-dark);">Channels</div>
+            <div id="chat-channel-list" style="display: flex; flex-direction: column; gap: 4px; padding: 8px;">
+              <button onclick="selectChatChannel('general')" id="chan-general" class="chan-btn" style="text-align: left; padding: 8px 12px; border-radius: 6px; border: none; font-size: 0.84rem; cursor: pointer; background: rgba(34, 197, 94, 0.15); color: var(--primary-green); font-weight: 700;"># general</button>
+              <button onclick="selectChatChannel('cx-escalations')" id="chan-cx-escalations" class="chan-btn" style="text-align: left; padding: 8px 12px; border-radius: 6px; border: none; font-size: 0.84rem; cursor: pointer; background: transparent; color: var(--text-dark);"># cx-escalations</button>
+              <button onclick="selectChatChannel('qa-feedback')" id="chan-qa-feedback" class="chan-btn" style="text-align: left; padding: 8px 12px; border-radius: 6px; border: none; font-size: 0.84rem; cursor: pointer; background: transparent; color: var(--text-dark);"># qa-feedback</button>
+            </div>
+          </div>
+
+          <!-- Chat Messages Area -->
+          <div style="flex: 1; display: flex; flex-direction: column; background: var(--card-bg);">
+            <div style="padding: 12px 18px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+              <span id="active-channel-title" style="font-weight: 800; font-size: 0.95rem; color: var(--text-dark);"># general</span>
+              <span style="font-size: 0.76rem; color: var(--text-muted);">Realtime Supabase Sync</span>
+            </div>
+            <div id="chat-messages-container" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;"></div>
+            <form id="chat-send-form" onsubmit="sendChatMessage(event)" style="padding: 12px 16px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--input-bg);">
+              <input type="text" id="chat-message-input" placeholder="Message #general..." style="flex: 1; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark); font-size: 0.85rem;" autocomplete="off" required />
+              <button type="submit" class="btn btn-sm" style="padding: 0 18px;">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 8: USER PROFILE & PASSWORD (MODULE 3) -->
+      <div id="profileView" class="view-page" style="max-width: 680px;">
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <h3 style="margin-bottom: 4px; font-size: 1.15rem; color: var(--primary-green);">Profile Settings</h3>
+          <p style="margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted);">Manage your portal display details and email credentials.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Email Address</label>
+              <input type="email" id="profile-email" disabled style="color: var(--text-muted);" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Full Name / Display Name</label>
+              <input type="text" id="profile-fullname" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Assigned Role</label>
+              <input type="text" id="profile-role" disabled style="color: var(--text-muted); text-transform: uppercase;" />
+            </div>
+            <button onclick="updateUserProfile()" class="btn btn-sm" style="width: fit-content; margin-top: 6px;">Save Profile</button>
+          </div>
+        </div>
+
+        <div class="portal-card">
+          <h3 style="margin-bottom: 4px; font-size: 1.05rem; color: var(--primary-green);">Change Password</h3>
+          <p style="margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted);">Must be at least 6 characters long.</p>
+          <form onsubmit="handlePasswordChange(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">New Password</label>
+              <input type="password" id="profile-new-password" required minlength="6" />
+            </div>
+            <button type="submit" class="btn btn-blue btn-sm" style="width: fit-content;">Update Password</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW 9: ADMIN SETTINGS & RBAC (MODULE 2 & 3) -->
+      <div id="adminSettingsView" class="view-page" style="max-width: 860px;">
+        <!-- Maintenance Switch Control -->
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <div style="font-weight: 800; font-size: 1rem; color: var(--text-dark);">Vibe Refunding Maintenance Mode</div>
+              <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; max-width: 520px;">
+                When active, the Vibe sidebar item and direct route (<code style="background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 4px;">#vibe</code>) are completely hidden from regular agents. Admins retain full bypass access.
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span id="maint-status-indicator" class="badge-v1" style="background: rgba(239, 68, 68, 0.15); color: #ef4444;">ACTIVE</span>
+              <button id="btn-toggle-maint" onclick="toggleVibeMaintenanceAction()" class="btn btn-sm">Toggle Mode</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RBAC User Management -->
+        <div class="portal-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div>
+              <h3 style="margin: 0; font-size: 1.05rem; color: var(--primary-green);">Team Roles &amp; Permissions</h3>
+              <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">Assign agent, moderator, or admin privileges across team accounts.</p>
+            </div>
+            <button onclick="loadUserProfilesTable()" class="btn btn-secondary btn-sm">Refresh List</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-table-body">
+                <tr><td colspan="4" style="padding: 14px; text-align: center; color: var(--text-muted);">Loading team profiles...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 	  
     </div>
   </main>
 
   <!-- ============================================================ -->
-  <!-- VIBE-STYLE MODALS FOR THE 4 SHEET TABS                       -->
+  <!-- MODALS                                                       -->
   <!-- ============================================================ -->
 
-  <!-- FORM 1 MODAL (Sheet Tab: SGRelaunch) -->
+  <!-- FORM 1 MODAL (SGRelaunch) -->
   <dialog id="form1Modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -1436,7 +1489,7 @@
     </div>
   </dialog>
 
-  <!-- FORM 2 MODAL (Sheet Tab: Replacement Tracking Sheet) -->
+  <!-- FORM 2 MODAL (Replacement Tracking) -->
   <dialog id="form2Modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -1484,7 +1537,7 @@
     </div>
   </dialog>
 
-  <!-- FORM 3 MODAL (Sheet Tab: Recall Order Refunds) -->
+  <!-- FORM 3 MODAL (Recall Order Refunds) -->
   <dialog id="form3Modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -1540,7 +1593,7 @@
     </div>
   </dialog>
 
-  <!-- FORM 4 MODAL (Sheet Tab: Refund Others) -->
+  <!-- FORM 4 MODAL (Refund Others) -->
   <dialog id="form4Modal">
     <div class="modal-box">
       <div class="modal-header">
@@ -1605,17 +1658,15 @@
     </div>
   </dialog>
 	
-  <!-- KNOWLEDGE BASE INLINE ARTICLE EDITOR MODAL -->
+  <!-- KB EDITOR MODAL -->
   <dialog id="kbEditorModal">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
         <h2 id="kbEditorModalTitle">Create Knowledge Base Guide</h2>
         <button type="button" class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
       </div>
-
       <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll" style="display:flex; flex-direction:column; gap:0.75rem;">
         <input type="hidden" id="kb_edit_id" />
-
         <div class="vibe-row">
           <span class="vibe-label">Category</span>
           <div class="vibe-input-wrap">
@@ -1626,66 +1677,33 @@
             </select>
           </div>
         </div>
-
         <div class="vibe-row">
           <span class="vibe-label">Article Title</span>
-          <div class="vibe-input-wrap">
-            <input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required />
-          </div>
+          <div class="vibe-input-wrap"><input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required /></div>
         </div>
-
         <div class="vibe-row">
           <span class="vibe-label">Tags (comma-separated)</span>
-          <div class="vibe-input-wrap">
-            <input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" />
-          </div>
+          <div class="vibe-input-wrap"><input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" /></div>
         </div>
-
         <div class="vibe-row align-start">
-          <span class="vibe-label" style="margin-top: 5px;">Guide Content (Markdown / HTML)</span>
-          <div class="vibe-input-wrap">
-            <textarea id="kb_edit_content" rows="6" placeholder="Write guide details. Use ### for subheadings and - for bullet points..." required></textarea>
-          </div>
+          <span class="vibe-label" style="margin-top: 5px;">Guide Content (HTML)</span>
+          <div class="vibe-input-wrap"><textarea id="kb_edit_content" rows="6" placeholder="Paste formatted SOP HTML content..." required></textarea></div>
         </div>
-
         <div class="vibe-row align-start" id="kb_macro_field_row" style="display: none;">
           <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
-          <div class="vibe-input-wrap">
-            <textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias response template here..."></textarea>
-          </div>
+          <div class="vibe-input-wrap"><textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias template here..."></textarea></div>
         </div>
-
-        <!-- AUTO-ANNOUNCE TOGGLE -->
-        <div style="margin-top: 0.5rem; padding: 0.85rem; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px;">
-          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; font-size: 0.82rem; color: var(--text-dark);">
-            <input type="checkbox" id="kb_auto_announce" onchange="toggleAutoAnnounceFields(this.checked)" style="width: 16px; height: 16px; accent-color: var(--primary-green);" />
-            📢 Broadcast to Team as Mandatory Announcement
-          </label>
-          
-          <div id="kb_announce_fields_wrap" style="display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color);">
-            <label style="display: block; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">
-              Required Verification Keyword
-            </label>
-            <input type="text" id="kb_announce_keyword" placeholder="e.g. Super Greens" style="width: 100%; font-size: 0.82rem;" />
-            <small style="display: block; margin-top: 4px; font-size: 0.72rem; color: var(--text-muted);">
-              Agents will see the article summary and cannot use the portal until they enter this keyword.
-            </small>
-          </div>
-        </div>
-
-        <!-- MODAL FOOTER BUTTONS (Inside form for reliable submission) -->
         <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
           <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
-          <button type="submit" class="btn btn-sm">Save & Publish Guide</button>
+          <button type="submit" class="btn btn-sm">Save &amp; Publish Guide</button>
         </div>
       </form>
     </div>
   </dialog>	
 	
-  <!-- MANDATORY AGENT ANNOUNCEMENT VERIFICATION MODAL -->
+  <!-- ANNOUNCEMENT VERIFICATION MODAL -->
   <dialog id="mandatoryUpdateModal" style="max-width: 520px; border-radius: 14px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
     <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-      
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 1.5rem;">📢</span>
         <div>
@@ -1693,22 +1711,28 @@
           <h3 id="announcementTitle" style="margin-top: 4px; font-size: 1.15rem; color: var(--primary-green);">Important Team Update</h3>
         </div>
       </div>
-
-      <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 200px; overflow-y: auto;">
-      </div>
-
+      <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 200px; overflow-y: auto;"></div>
       <div>
-        <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">
-          Verification Keyword (Read note above to locate):
-        </label>
-        <input type="text" id="verificationKeywordInput" placeholder="Enter keyword here..." style="width: 100%; padding: 0.55rem; font-size: 0.88rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);" autocomplete="off" />
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Verification Keyword:</label>
+        <input type="text" id="verificationKeywordInput" placeholder="Enter keyword here..." autocomplete="off" />
         <span id="verificationErrorMsg" style="color: #ef4444; font-size: 0.78rem; display: none; margin-top: 4px; font-weight: 600;">Incorrect keyword. Please read the note carefully.</span>
       </div>
-
       <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
-        <button onclick="confirmAnnouncementRead()" class="btn btn-sm" style="width: 100%; padding: 0.65rem;">I Have Read & Understood This Update</button>
+        <button onclick="confirmAnnouncementRead()" class="btn btn-sm" style="width: 100%; padding: 0.65rem;">I Have Read &amp; Understood This Update</button>
       </div>
+    </div>
+  </dialog>
 
+  <!-- AGENT NOTICE BOARD -->
+  <dialog id="agentNoticeBoardModal" style="max-width: 600px; border-radius: 12px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>📢 Team Notice Board &amp; Updates</h2>
+        <button class="modal-close-btn" onclick="document.getElementById('agentNoticeBoardModal').close()">✕</button>
+      </div>
+      <div class="modal-body-scroll" id="agentNoticeBoardList">
+        <p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:1.5rem;">Loading announcements...</p>
+      </div>
     </div>
   </dialog>
   
@@ -1722,7 +1746,6 @@
 
       <form id="editRefundForm" onsubmit="saveRefundRecord(event)" class="modal-body-scroll">
         <input type="hidden" id="edit_task_id" />
-
         <div class="vibe-row">
           <span class="vibe-label">Status</span>
           <div class="vibe-input-wrap">
@@ -1737,14 +1760,10 @@
             </select>
           </div>
         </div>
-
         <div class="vibe-row">
           <span class="vibe-label">Product</span>
-          <div class="vibe-input-wrap">
-            <select id="edit_product"><option value="">—</option></select>
-          </div>
+          <div class="vibe-input-wrap"><select id="edit_product"><option value="">—</option></select></div>
         </div>
-
         <div class="vibe-row">
           <span class="vibe-label">Refund options</span>
           <div class="vibe-input-wrap">
@@ -1757,7 +1776,6 @@
             </select>
           </div>
         </div>
-
         <div class="vibe-row">
           <span class="vibe-label">Channel</span>
           <div class="vibe-input-wrap">
@@ -1770,12 +1788,7 @@
             </select>
           </div>
         </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Order number</span>
-          <div class="vibe-input-wrap"><input type="text" id="edit_order_number" /></div>
-        </div>
-
+        <div class="vibe-row"><span class="vibe-label">Order number</span><div class="vibe-input-wrap"><input type="text" id="edit_order_number" /></div></div>
         <div class="vibe-row align-start">
           <span class="vibe-label" style="margin-top: 5px;">Customer email</span>
           <div class="vibe-input-wrap">
@@ -1783,17 +1796,8 @@
             <a id="edit_shopify_customer_link" href="#" target="_blank" class="field-link" style="display: none;">Open in Shopify &rarr;</a>
           </div>
         </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">First name</span>
-          <div class="vibe-input-wrap"><input type="text" id="edit_first_name" /></div>
-        </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Last name</span>
-          <div class="vibe-input-wrap"><input type="text" id="edit_last_name" /></div>
-        </div>
-
+        <div class="vibe-row"><span class="vibe-label">First name</span><div class="vibe-input-wrap"><input type="text" id="edit_first_name" /></div></div>
+        <div class="vibe-row"><span class="vibe-label">Last name</span><div class="vibe-input-wrap"><input type="text" id="edit_last_name" /></div></div>
         <div class="vibe-row align-start">
           <span class="vibe-label" style="margin-top: 5px;">Name (task)</span>
           <div class="vibe-input-wrap">
@@ -1801,61 +1805,14 @@
             <a id="edit_asana_link" href="#" target="_blank" class="field-link" style="display: none;">Open in Asana &rarr;</a>
           </div>
         </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Refund amount</span>
-          <div class="vibe-input-wrap"><input type="text" id="edit_refund_amount" /></div>
-        </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Original order amount</span>
-          <div class="vibe-input-wrap"><span id="edit_original_order_amount" class="read-only-text">—</span></div>
-        </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Number of units</span>
-          <div class="vibe-input-wrap"><input type="number" id="edit_number_of_units" /></div>
-        </div>
-
-        <div class="vibe-row align-start">
-          <span class="vibe-label" style="margin-top: 5px;">Notes</span>
-          <div class="vibe-input-wrap"><textarea id="edit_notes" rows="3"></textarea></div>
-        </div>
-
+        <div class="vibe-row"><span class="vibe-label">Refund amount</span><div class="vibe-input-wrap"><input type="text" id="edit_refund_amount" /></div></div>
+        <div class="vibe-row"><span class="vibe-label">Original order amount</span><div class="vibe-input-wrap"><span id="edit_original_order_amount" class="read-only-text">—</span></div></div>
+        <div class="vibe-row"><span class="vibe-label">Number of units</span><div class="vibe-input-wrap"><input type="number" id="edit_number_of_units" /></div></div>
+        <div class="vibe-row align-start"><span class="vibe-label" style="margin-top: 5px;">Notes</span><div class="vibe-input-wrap"><textarea id="edit_notes" rows="3"></textarea></div></div>
         <div id="edit_last_modified_banner" class="last-modified-banner"></div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Assignee</span>
-          <div class="vibe-input-wrap"><select id="edit_assignee_email"><option value="">— Unassigned —</option></select></div>
-        </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Validation reason</span>
-          <div class="vibe-input-wrap">
-            <select id="edit_validation_reason">
-              <option value="">—</option>
-              <option value="Duplicate">Duplicate</option>
-              <option value="Invalid Email or Order Number">Invalid Email or Order Number</option>
-              <option value="Invalid Picture - requires more">Invalid Picture - requires more</option>
-              <option value="Invalid Picture - missing LOT">Invalid Picture - missing LOT</option>
-              <option value="Amazon Purchase">Amazon Purchase</option>
-              <option value="Uncertain refund amount">Uncertain refund amount</option>
-              <option value="Invalid LOT">Invalid LOT</option>
-              <option value="Invalid product">Invalid product</option>
-              <option value="Multiple Orders">Multiple Orders</option>
-              <option value="Alternate form used">Alternate form used</option>
-              <option value="Already Refunded">Already Refunded</option>
-              <option value="Legal">Legal</option>
-              <option value="Valid">Valid</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="vibe-row">
-          <span class="vibe-label">Failed refund reason</span>
-          <div class="vibe-input-wrap"><span id="edit_failed_refund_reason" class="read-only-text">—</span></div>
-        </div>
-
+        <div class="vibe-row"><span class="vibe-label">Assignee</span><div class="vibe-input-wrap"><select id="edit_assignee_email"><option value="">— Unassigned —</option></select></div></div>
+        <div class="vibe-row"><span class="vibe-label">Validation reason</span><div class="vibe-input-wrap"><select id="edit_validation_reason"><option value="">—</option><option value="Duplicate">Duplicate</option><option value="Invalid Email or Order Number">Invalid Email or Order Number</option><option value="Invalid Picture - requires more">Invalid Picture - requires more</option><option value="Invalid Picture - missing LOT">Invalid Picture - missing LOT</option><option value="Amazon Purchase">Amazon Purchase</option><option value="Uncertain refund amount">Uncertain refund amount</option><option value="Invalid LOT">Invalid LOT</option><option value="Invalid product">Invalid product</option><option value="Multiple Orders">Multiple Orders</option><option value="Alternate form used">Alternate form used</option><option value="Already Refunded">Already Refunded</option><option value="Legal">Legal</option><option value="Valid">Valid</option></select></div></div>
+        <div class="vibe-row"><span class="vibe-label">Failed refund reason</span><div class="vibe-input-wrap"><span id="edit_failed_refund_reason" class="read-only-text">—</span></div></div>
         <h3 class="dates-header">Dates</h3>
         <div class="vibe-row"><span class="vibe-label">created at</span><div class="vibe-input-wrap"><input type="date" id="edit_created_at" /></div></div>
         <div class="vibe-row"><span class="vibe-label">completed at</span><div class="vibe-input-wrap"><input type="date" id="edit_completed_at" /></div></div>
@@ -1898,18 +1855,20 @@
     </div>
   </dialog>
 
+  <!-- ============================================================ -->
+  <!-- JAVASCRIPT LOGIC                                             -->
+  <!-- ============================================================ -->
   <script>
     const SUPABASE_URL = "https://bazjggephinnwqgrzkep.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhempnZ2VwaGlubndxZ3J6a2VwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MDcwOTAsImV4cCI6MjEwOTM4MzA5MH0.jWXe1KSgWhL9mHf68o6p6h26VTjmvtteW5lS_khBGHo";
     
-    const supabaseClientBuilder = (window.supabase && window.supabase.createClient) || (typeof supabase !== 'undefined' && supabase.createClient);
+    const supabaseClientBuilder = (window.supabase && window.supabase.createClient);
     let db = null;
     if (supabaseClientBuilder) {
       db = supabaseClientBuilder(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
-
     const ASANA_BASE = "https://app.asana.com/1/1178573996924741/project/1212819193341041/task";
     const SHOPIFY_ORDERS = "https://admin.shopify.com/store/artofenso/orders/";
     const SHOPIFY_CUSTOMERS = "https://admin.shopify.com/store/artofenso/customers/";
@@ -1920,6 +1879,26 @@
     let queueTotalRecords = 0;
     let currentEditingRecord = null;
     let currentActiveTaskId = null;
+
+    // RBAC, Maintenance & Chat State
+    let currentUserProfile = { role: 'agent', full_name: 'Agent' };
+    let isVibeInMaintenance = true;
+    let currentChatChannel = 'general';
+    let chatChannelSubscription = null;
+
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('portalToastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `portal-toast ${type}`;
+      const icon = type === 'error' ? '⚠️' : type === 'info' ? 'ℹ️' : '✓';
+      toast.innerHTML = `<span style="font-size:1.05rem;">${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    };
 
     function initTheme() {
       const savedTheme = localStorage.getItem('theme_preference') || 'light';
@@ -1948,7 +1927,7 @@
     }
 
     function formatOrderNumber(input) {
-      const trimmed = input.trim();
+      const trimmed = String(input || '').trim();
       if (!trimmed) return '';
       return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
     }
@@ -1969,7 +1948,16 @@
       return String(d).slice(0, 10);
     }
 
-    window.showView = function(viewId) {
+    // UNIFIED VIEW ROUTER (Hard Maintenance Guard & Admin Permissions)
+    window.switchView = function(viewId) {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdmin = (currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com');
+
+      if (viewId === 'refundsQueueView' && isVibeInMaintenance && !isAdmin) {
+        showToast('Vibe Refunding is currently offline for maintenance.', 'error');
+        viewId = 'dashboardView';
+      }
+
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       const target = document.getElementById(viewId);
       if (target) target.classList.add('active');
@@ -2003,32 +1991,295 @@
         } else if (viewId === 'knowledgeBaseView') {
           heading.innerText = 'Knowledge Base & Playbooks';
           loadKnowledgeBaseArticles();
-        } else {
-          heading.innerText = 'Portal';
+        } else if (viewId === 'messengerView') {
+          heading.innerText = 'Team Messenger';
+          selectChatChannel(currentChatChannel);
+        } else if (viewId === 'profileView') {
+          heading.innerText = 'Account Profile';
+        } else if (viewId === 'adminSettingsView') {
+          heading.innerText = 'Admin Settings';
+          loadUserProfilesTable();
         }
 
         checkForUnreadAnnouncements();
       }
     };
 
-    window.openFormModal = function(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) modal.showModal();
-    };
+    // ============================================================
+    // MODULE 2: MAINTENANCE MODE
+    // ============================================================
+    async function loadMaintenanceSettings() {
+      if (!db) return;
+      try {
+        const { data } = await db.from('app_settings').select('value').eq('key', 'vibe_maintenance').single();
+        if (data) isVibeInMaintenance = (data.value === true);
+      } catch (err) {
+        isVibeInMaintenance = true;
+      }
+      applyVibeMaintenanceState();
+    }
 
-    window.closeFormModal = function(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) modal.close();
-    };
+    function applyVibeMaintenanceState() {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdmin = (currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com');
+      const vibeNav = document.getElementById('nav-vibe-refunds');
+      const indicator = document.getElementById('maint-status-indicator');
 
-    function checkPolicyReminder(val) {
-      const alertBox = document.getElementById('replacementPolicyAlert');
-      if (alertBox) {
-        alertBox.style.display = (val === 'LIT' || val === 'Damaged') ? 'block' : 'none';
+      if (indicator) {
+        indicator.textContent = isVibeInMaintenance ? 'ACTIVE (OFFLINE)' : 'INACTIVE (ONLINE)';
+        indicator.style.color = isVibeInMaintenance ? '#ef4444' : '#16a34a';
+        indicator.style.background = isVibeInMaintenance ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)';
+      }
+
+      if (vibeNav) {
+        if (isVibeInMaintenance) {
+          if (!isAdmin) {
+            vibeNav.style.display = 'none';
+          } else {
+            vibeNav.style.display = 'flex';
+            let tag = vibeNav.querySelector('.maintenance-tag');
+            if (!tag) {
+              tag = document.createElement('span');
+              tag.className = 'maintenance-tag';
+              tag.style = 'font-size: 0.65rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 6px; border-radius: 4px; margin-left: auto; font-weight: 700;';
+              tag.textContent = 'MAINT';
+              vibeNav.appendChild(tag);
+            }
+          }
+        } else {
+          vibeNav.style.display = 'flex';
+          const tag = vibeNav.querySelector('.maintenance-tag');
+          if (tag) tag.remove();
+        }
       }
     }
 
-    // UPDATED FORM DISPATCHER: AUTO-FORMAT '#' & '$' + SMART SYNC
+    window.toggleVibeMaintenanceAction = async function() {
+      if (!db) return;
+      const next = !isVibeInMaintenance;
+      const { error } = await db.from('app_settings').update({ value: next, updated_at: new Date().toISOString() }).eq('key', 'vibe_maintenance');
+      if (error) {
+        showToast('Failed to update maintenance: ' + error.message, 'error');
+      } else {
+        isVibeInMaintenance = next;
+        applyVibeMaintenanceState();
+        showToast(`Maintenance mode set to ${next ? 'Active' : 'Offline'}!`, 'info');
+      }
+    };
+
+    // ============================================================
+    // MODULE 3: AUTH, PROFILES & RBAC
+    // ============================================================
+    async function loadUserProfile(email) {
+      if (!db || !email) return;
+      try {
+        const { data, error } = await db.from('profiles').select('*').eq('email', email).single();
+        if (!error && data) {
+          currentUserProfile = data;
+        } else {
+          currentUserProfile = {
+            email: email,
+            full_name: email.split('@')[0],
+            role: email === 'alvin@artofenso.com' ? 'admin' : 'agent'
+          };
+        }
+      } catch (e) {
+        currentUserProfile = { email: email, full_name: 'Agent', role: 'agent' };
+      }
+
+      const pEmail = document.getElementById('profile-email');
+      const pName = document.getElementById('profile-fullname');
+      const pRole = document.getElementById('profile-role');
+      if (pEmail) pEmail.value = currentUserProfile.email || '';
+      if (pName) pName.value = currentUserProfile.full_name || '';
+      if (pRole) pRole.value = currentUserProfile.role || 'agent';
+
+      // Show/Hide Admin links based on RBAC
+      const isAdmin = currentUserProfile.role === 'admin';
+      document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'block' : 'none');
+      applyVibeMaintenanceState();
+    }
+
+    window.updateUserProfile = async function() {
+      if (!db) return;
+      const name = document.getElementById('profile-fullname').value.trim();
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const { error } = await db.from('profiles').update({ full_name: name, updated_at: new Date().toISOString() }).eq('email', userSession.email);
+      if (error) {
+        showToast('Failed to save profile: ' + error.message, 'error');
+      } else {
+        currentUserProfile.full_name = name;
+        showToast('Profile updated!', 'success');
+      }
+    };
+
+    window.handlePasswordChange = async function(e) {
+      e.preventDefault();
+      if (!db) return;
+      const pwd = document.getElementById('profile-new-password').value;
+      if (pwd.length < 6) {
+        showToast('Password must be 6+ characters.', 'error');
+        return;
+      }
+      try {
+        const { error } = await db.auth.updateUser({ password: pwd });
+        if (error) throw error;
+        showToast('Password updated successfully!', 'success');
+        document.getElementById('profile-new-password').value = '';
+      } catch (err) {
+        showToast('Error updating password: ' + err.message, 'error');
+      }
+    };
+
+    window.loadUserProfilesTable = async function() {
+      const tbody = document.getElementById('admin-user-table-body');
+      if (!tbody || !db) return;
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px;">Loading profiles...</td></tr>';
+
+      const { data: profiles, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
+      if (error || !profiles || profiles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">No profiles recorded yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = profiles.map(p => `
+        <tr style="border-bottom: 1px solid var(--border-color);">
+          <td style="font-weight: 700;">${p.full_name || 'Agent'}</td>
+          <td>${p.email}</td>
+          <td>
+            <select onchange="updateUserRole('${p.id}', this.value)" style="padding: 3px 6px; font-size: 0.78rem;">
+              <option value="agent" ${p.role === 'agent' ? 'selected' : ''}>Agent</option>
+              <option value="moderator" ${p.role === 'moderator' ? 'selected' : ''}>Moderator</option>
+              <option value="admin" ${p.role === 'admin' ? 'selected' : ''}>Admin</option>
+            </select>
+          </td>
+          <td><span style="color:#16a34a; font-weight:700; font-size:0.75rem;">ACTIVE</span></td>
+        </tr>
+      `).join('');
+    };
+
+    window.updateUserRole = async function(userId, newRole) {
+      if (!db) return;
+      const { error } = await db.from('profiles').update({ role: newRole }).eq('id', userId);
+      if (error) showToast('Failed to update role: ' + error.message, 'error');
+      else showToast('User role updated!', 'success');
+    };
+
+    // ============================================================
+    // MODULE 5: IN-PORTAL TEAM MESSENGER
+    // ============================================================
+    window.selectChatChannel = function(channelId) {
+      currentChatChannel = channelId;
+      document.querySelectorAll('.chan-btn').forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-dark)';
+        btn.style.fontWeight = 'normal';
+      });
+      const activeBtn = document.getElementById('chan-' + channelId);
+      if (activeBtn) {
+        activeBtn.style.background = 'rgba(34, 197, 94, 0.15)';
+        activeBtn.style.color = 'var(--primary-green)';
+        activeBtn.style.fontWeight = '700';
+      }
+      document.getElementById('active-channel-title').textContent = '#' + channelId;
+      document.getElementById('chat-message-input').placeholder = `Message #${channelId}...`;
+      loadChannelMessages(channelId);
+    };
+
+    async function loadChannelMessages(channelId) {
+      const container = document.getElementById('chat-messages-container');
+      container.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:var(--text-muted);">Loading conversation...</div>';
+
+      if (!db) return;
+      const { data: messages } = await db.from('chat_messages').select('*').eq('channel_id', channelId).order('created_at', { ascending: true }).limit(80);
+
+      container.innerHTML = '';
+      if (messages && messages.length > 0) {
+        messages.forEach(renderChatMessage);
+      } else {
+        container.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:2rem;">No messages in this channel yet. Say hello! 👋</div>';
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderChatMessage(msg) {
+      const container = document.getElementById('chat-messages-container');
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isSelf = userSession.email && msg.user_email === userSession.email;
+      const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const msgDiv = document.createElement('div');
+      msgDiv.style = `display:flex; flex-direction:column; max-width:75%; align-self:${isSelf ? 'flex-end' : 'flex-start'};`;
+      msgDiv.innerHTML = `
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 2px; align-self: ${isSelf ? 'flex-end' : 'flex-start'};">
+          <strong style="color: ${isSelf ? 'var(--primary-green)' : 'var(--text-dark)'};">${msg.user_name || msg.user_email}</strong> • ${time}
+        </div>
+        <div style="background: ${isSelf ? 'var(--primary-green)' : 'var(--input-bg)'}; color: ${isSelf ? '#ffffff' : 'var(--text-dark)'}; padding: 9px 13px; border-radius: 8px; font-size: 0.84rem; line-height: 1.4; border: 1px solid var(--border-color); word-break: break-word;">
+          ${escapeHtml(msg.content)}
+        </div>
+      `;
+      container.appendChild(msgDiv);
+    }
+
+    window.sendChatMessage = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-message-input');
+      const content = input.value.trim();
+      if (!content || !db) return;
+      input.value = '';
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email || 'alvin@artofenso.com';
+      const senderName = currentUserProfile.full_name || agentEmail.split('@')[0];
+
+      // Temporary ID placeholder
+      const tempUserId = "00000000-0000-0000-0000-000000000000";
+
+      const { error } = await db.from('chat_messages').insert([{
+        channel_id: currentChatChannel,
+        user_id: currentUserProfile.id || tempUserId,
+        user_name: senderName,
+        user_email: agentEmail,
+        content: content
+      }]);
+
+      if (error) {
+        showToast('Failed to send: ' + error.message, 'error');
+      }
+    };
+
+    function initChatRealtime() {
+      if (!db) return;
+      chatChannelSubscription = db
+        .channel('public:chat_messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
+          const newMsg = payload.new;
+          if (newMsg.channel_id === currentChatChannel) {
+            renderChatMessage(newMsg);
+            const container = document.getElementById('chat-messages-container');
+            if (container) container.scrollTop = container.scrollHeight;
+          } else {
+            const badge = document.getElementById('unread-chat-badge');
+            if (badge) badge.style.display = 'inline-block';
+          }
+        })
+        .subscribe();
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // ============================================================
+    // INTAKE FORMS DISPATCHER
+    // ============================================================
+    window.openFormModal = function(id) { document.getElementById(id)?.showModal(); };
+    window.closeFormModal = function(id) { document.getElementById(id)?.close(); };
+    function checkPolicyReminder(val) {
+      const alertBox = document.getElementById('replacementPolicyAlert');
+      if (alertBox) alertBox.style.display = (val === 'LIT' || val === 'Damaged') ? 'block' : 'none';
+    }
+
     window.handleFormSubmit = async function(e, modalId, formType) {
       e.preventDefault();
       const form = e.target;
@@ -2053,250 +2304,69 @@
           const refundAmt = formatCurrency(document.getElementById('sg_refund_amount').value);
           const subStatus = document.getElementById('sg_sub_status').value;
 
-          Object.assign(sheetPayload, {
-            order_number: orderNum,
-            customer_email: custEmail,
-            refund_amount: refundAmt,
-            sub_status: subStatus
-          });
-
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus });
           if (db) {
-            await db.from('tracker_sgrelaunch').insert([{
-              timestamp: nowIso,
-              agent_email: agentEmail,
-              order_number: orderNum,
-              customer_email: custEmail,
-              refund_amount: refundAmt,
-              sub_status: subStatus
-            }]);
+            await db.from('tracker_sgrelaunch').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus }]);
           }
-
         } else if (formType === 'replacement_tracking') {
           const orderNum = formatOrderNumber(document.getElementById('rep_order_num').value);
           const custEmail = document.getElementById('rep_customer_email').value.trim();
           const repReason = document.getElementById('rep_reason').value;
           const repOrderNum = formatOrderNumber(document.getElementById('rep_replacement_order').value);
 
-          Object.assign(sheetPayload, {
-            order_number: orderNum,
-            customer_email: custEmail,
-            reason: repReason,
-            replacement_order_num: repOrderNum
-          });
-
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, reason: repReason, replacement_order_num: repOrderNum });
           if (db) {
-            await db.from('tracker_replacements').insert([{
-              timestamp: nowIso,
-              agent_email: agentEmail,
-              order_number: orderNum,
-              customer_email: custEmail,
-              replacement_reason: repReason,
-              replacement_order_number: repOrderNum
-            }]);
+            await db.from('tracker_replacements').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, replacement_reason: repReason, replacement_order_number: repOrderNum }]);
           }
-
         } else if (formType === 'recall_order_refunds' || formType === 'refund_others') {
           const isRecall = formType === 'recall_order_refunds';
-          const orderNumRaw = isRecall ? document.getElementById('recall_order_num').value : document.getElementById('ro_order_num').value;
-          const orderNum = formatOrderNumber(orderNumRaw);
+          const orderNum = formatOrderNumber(isRecall ? document.getElementById('recall_order_num').value : document.getElementById('ro_order_num').value);
           const cleanOrderNum = orderNum.replace('#', '').trim();
-          
           const custEmail = (isRecall ? document.getElementById('recall_customer_email').value : document.getElementById('ro_customer_email').value).trim();
-          const rawAmount = isRecall ? document.getElementById('recall_refund_amount').value : document.getElementById('ro_refund_amount').value;
-          const refundAmtWithSymbol = formatCurrency(rawAmount);
+          const refundAmtWithSymbol = formatCurrency(isRecall ? document.getElementById('recall_refund_amount').value : document.getElementById('ro_refund_amount').value);
           const cleanRefundAmt = refundAmtWithSymbol.replace(/[^0-9.]/g, '');
-          
           const subStatus = isRecall ? document.getElementById('recall_sub_status').value : document.getElementById('ro_sub_status').value;
           const refReason = isRecall ? document.getElementById('recall_reason').value : document.getElementById('ro_reason').value;
 
-          Object.assign(sheetPayload, {
-            order_number: orderNum,
-            customer_email: custEmail,
-            refund_amount: refundAmtWithSymbol,
-            sub_status: subStatus,
-            refund_reason: refReason
-          });
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason });
 
           if (db) {
             const targetTable = isRecall ? 'tracker_recall_refunds' : 'tracker_refund_others';
-            await db.from(targetTable).insert([{
-              timestamp: nowIso,
-              agent_email: agentEmail,
-              order_number: orderNum,
-              customer_email: custEmail,
-              refund_amount: refundAmtWithSymbol,
-              sub_status: subStatus,
-              refund_reason: refReason
-            }]);
+            await db.from(targetTable).insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason }]);
 
-            const { data: matchedRecords, error: searchErr } = await db
-              .from('refunds')
-              .select('task_id, order_number, notes, status')
-              .ilike('your_email_address', custEmail)
-              .or(`order_number.eq.${cleanOrderNum},order_number.eq.#${cleanOrderNum}`)
-              .limit(5);
+            const { data: matchedRecords } = await db.from('refunds').select('task_id, order_number, notes').ilike('your_email_address', custEmail).or(`order_number.eq.${cleanOrderNum},order_number.eq.#${cleanOrderNum}`).limit(5);
 
-            if (!searchErr && matchedRecords && matchedRecords.length > 0) {
+            if (matchedRecords && matchedRecords.length > 0) {
               for (const record of matchedRecords) {
-                const appendNote = `\n[${todayDate}] Updated to Refunded ($${cleanRefundAmt}) via Tracker (${isRecall ? 'Recall Refund' : 'Refund Others'}) by ${agentEmail}`;
-                const updatedNotes = (record.notes || '') + appendNote;
-
-                await db.from('refunds').update({
-                  status: 'Refunded',
-                  refund_amount: cleanRefundAmt,
-                  refund_date: todayDate,
-                  last_modified: nowIso,
-                  last_modified_by: agentEmail,
-                  notes: updatedNotes
-                }).eq('task_id', record.task_id);
+                const appendNote = `\n[${todayDate}] Updated to Refunded ($${cleanRefundAmt}) via Tracker by ${agentEmail}`;
+                await db.from('refunds').update({ status: 'Refunded', refund_amount: cleanRefundAmt, refund_date: todayDate, last_modified: nowIso, last_modified_by: agentEmail, notes: (record.notes || '') + appendNote }).eq('task_id', record.task_id);
               }
-              matchNotification = `\n✨ Found matching Vibe refund task #${matchedRecords[0].task_id}. Updated status to "Refunded", set refund date to ${todayDate}, and updated amount to $${cleanRefundAmt}.`;
-            } else {
-              matchNotification = `\n(No matching task found in Vibe refund queue; logged to tracker only).`;
+              matchNotification = ` Matched & updated task #${matchedRecords[0].task_id} to Refunded.`;
             }
           }
         }
 
-        fetch(SCRIPT_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(sheetPayload)
-        }).catch(err => console.warn('Spreadsheet sync notice:', err));
-
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sheetPayload) }).catch(console.warn);
+        showToast(`Intake logged successfully!${matchNotification}`, 'success');
       } catch (err) {
-        console.warn('Form processing error:', err);
+        showToast('Error recording intake: ' + err.message, 'error');
       }
 
       submitBtn.disabled = false;
       submitBtn.innerText = originalText;
       form.reset();
       closeFormModal(modalId);
-      
-      alert(`Recorded successfully!${matchNotification}`);
-      
-      if (document.getElementById('refundsQueueView').classList.contains('active')) {
-        executeQueueFetch(queueCurrentPage);
-      }
+      executeQueueFetch(queueCurrentPage);
     };
 
-    // AUTH HANDLERS & SESSION MANAGEMENT
-    window.bypassLocalAuth = function() {
-      const fallbackSession = {
-        email: "alvin@artofenso.com",
-        name: "Alvin",
-        picture: "",
-        expiry: new Date().getTime() + (365 * 24 * 60 * 60 * 1000)
-      };
-      localStorage.setItem('user_session', JSON.stringify(fallbackSession));
-      initAuth();
-    };
-
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-        return JSON.parse(jsonPayload);
-      } catch(e) { return null; }
-    }
-
-    window.handleCredentialResponse = function(response) {
-      const user = parseJwt(response.credential);
-      if (!user) return;
-      const sessionData = {
-        email: user.email,
-        name: user.name,
-        picture: user.picture,
-        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
-      };
-      localStorage.setItem('user_session', JSON.stringify(sessionData));
-      initAuth();
-    };
-
-    window.logout = function() {
-      localStorage.removeItem('user_session');
-      showView('loginView');
-    };
-
-    function initAuth() {
-      let session = null;
-      const sessionRaw = localStorage.getItem('user_session');
-      if (sessionRaw) {
-        try {
-          session = JSON.parse(sessionRaw);
-          if (new Date().getTime() > session.expiry) {
-            localStorage.removeItem('user_session');
-            session = null;
-          }
-        } catch(e) { session = null; }
-      }
-
-      if (!session && window.location.protocol === 'file:') {
-        bypassLocalAuth();
-        return;
-      }
-
-      if (session) {
-        document.getElementById('userEmail').innerText = session.email;
-        initDropdownOptions();
-        showView('refundsQueueView');
-        checkForUnreadAnnouncements();
-      } else {
-        showView('loginView');
-      }
-    }
-
-    async function initDropdownOptions() {
-      if (!db) return;
-      try {
-        const { data: users } = await db.from('users').select('email').order('email', { ascending: true });
-        if (users && users.length > 0) {
-          const filterSelect = document.getElementById('queueAssigneeFilter');
-          const editSelect = document.getElementById('edit_assignee_email');
-
-          filterSelect.innerHTML = '<option value="">— All</option><option value="__unassigned__">Unassigned</option>';
-          editSelect.innerHTML = '<option value="">— Unassigned —</option>';
-
-          users.forEach(u => {
-            const opt1 = document.createElement('option');
-            opt1.value = u.email;
-            opt1.textContent = u.email;
-            filterSelect.appendChild(opt1);
-
-            const opt2 = document.createElement('option');
-            opt2.value = u.email;
-            opt2.textContent = u.email;
-            editSelect.appendChild(opt2);
-          });
-        }
-
-        const { data: prods } = await db.from('refunds').select('product').not('product', 'is', null).limit(1000);
-        if (prods) {
-          const unique = [...new Set(prods.map(p => p.product).filter(Boolean))].sort();
-          const pSelect = document.getElementById('edit_product');
-          pSelect.innerHTML = '<option value="">—</option>';
-          unique.forEach(prod => {
-            const opt = document.createElement('option');
-            opt.value = prod;
-            opt.textContent = prod;
-            pSelect.appendChild(opt);
-          });
-        }
-      } catch (err) {
-        console.warn("Dropdown init notice:", err);
-      }
-    }
-
+    // ============================================================
+    // VIBE QUEUE DATA TABLE
+    // ============================================================
     window.executeQueueFetch = async function(pageIndex = 0) {
       queueCurrentPage = pageIndex;
       const tbody = document.getElementById('queueTableBody');
       tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 1.5rem;">Loading live database records...</td></tr>';
-
-      if (!db) {
-        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Supabase Client Not Connected.</td></tr>';
-        return;
-      }
+      if (!db) return;
 
       const search = document.getElementById('queueSearchInput').value.trim();
       const status = document.getElementById('queueStatusFilter').value;
@@ -2308,54 +2378,31 @@
 
       try {
         let query = db.from('refunds').select('*', { count: 'exact' });
-
         if (status) query = query.eq('status', status);
         if (method) query = query.eq('validation_mechanism', method);
         if (reason) query = query.eq('validation_reason', reason);
+        if (assignee === '__unassigned__') query = query.or('assignee_email.is.null,assignee_email.eq.""');
+        else if (assignee) query = query.eq('assignee_email', assignee);
 
-        if (assignee === '__unassigned__') {
-          query = query.or('assignee_email.is.null,assignee_email.eq.""');
-        } else if (assignee) {
-          query = query.eq('assignee_email', assignee);
-        }
-
-        if (search) {
-          query = query.or(`your_email_address.ilike.%${search}%,order_number.ilike.%${search}%,task_id.ilike.%${search}%,name.ilike.%${search}%`);
-        }
+        if (search) query = query.or(`your_email_address.ilike.%${search}%,order_number.ilike.%${search}%,task_id.ilike.%${search}%,name.ilike.%${search}%`);
 
         const from = queueCurrentPage * QUEUE_PAGE_SIZE;
         const to = from + QUEUE_PAGE_SIZE - 1;
 
-        const { data, count, error } = await query
-          .order(sortBy, { ascending: sortOrder, nullsFirst: false })
-          .range(from, to);
-
-        if (error) {
-          tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Query Error: ${error.message}</td></tr>`;
-          return;
-        }
+        const { data, count, error } = await query.order(sortBy, { ascending: sortOrder, nullsFirst: false }).range(from, to);
+        if (error) throw error;
 
         queueTotalRecords = count || 0;
         document.getElementById('queueTotalBadge').textContent = `TOTAL RECORDS: ${queueTotalRecords.toLocaleString()}`;
-        
         const totalPages = Math.ceil(queueTotalRecords / QUEUE_PAGE_SIZE) || 1;
         const pageText = `Page ${queueCurrentPage + 1} of ${totalPages}`;
-        
         document.getElementById('queuePageIndicator').textContent = pageText;
         document.getElementById('queuePageIndicatorBottom').textContent = pageText;
 
-        const isFirst = (queueCurrentPage === 0);
-        const isLast = ((queueCurrentPage + 1) * QUEUE_PAGE_SIZE >= queueTotalRecords);
-
-        document.getElementById('queuePrevBtn').disabled = isFirst;
-        document.getElementById('queuePrevBtnBottom').disabled = isFirst;
-
-        document.getElementById('queueNextBtn').disabled = isLast;
-        document.getElementById('queueNextBtnBottom').disabled = isLast;
-
-        const startIdx = queueTotalRecords === 0 ? 0 : from + 1;
-        const endIdx = Math.min(to + 1, queueTotalRecords);
-        document.getElementById('queueTotalBadgeBottom').textContent = `Showing ${startIdx}–${endIdx} of ${queueTotalRecords.toLocaleString()} records`;
+        document.getElementById('queuePrevBtn').disabled = (queueCurrentPage === 0);
+        document.getElementById('queuePrevBtnBottom').disabled = (queueCurrentPage === 0);
+        document.getElementById('queueNextBtn').disabled = ((queueCurrentPage + 1) * QUEUE_PAGE_SIZE >= queueTotalRecords);
+        document.getElementById('queueNextBtnBottom').disabled = ((queueCurrentPage + 1) * QUEUE_PAGE_SIZE >= queueTotalRecords);
 
         if (!data || data.length === 0) {
           tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 1.5rem;">No refund records found matching your filters.</td></tr>';
@@ -2369,7 +2416,6 @@
           const asanaLink = row.task_id ? `<a class="link-tag" href="${ASANA_BASE}/${row.task_id}" target="_blank">${shortTaskId} &nearr;</a>` : '—';
           const shopifyOrder = row.shopify_order_id ? `<a class="link-tag" href="${SHOPIFY_ORDERS}${row.shopify_order_id}" target="_blank">${row.order_number || '—'} &nearr;</a>` : (row.order_number || '—');
           const shopifyCustomer = row.shopify_customer_id ? `<a class="link-tag" href="${SHOPIFY_CUSTOMERS}${row.shopify_customer_id}" target="_blank">${row.your_email_address || '—'} &nearr;</a>` : (row.your_email_address || '—');
-
           const safeRowJson = JSON.stringify(row).replace(/'/g, "&apos;");
           const commentCount = Number(row.comment_count) || 0;
           const commentBadge = commentCount > 0 ? `<span class="comments-count-badge">${commentCount > 99 ? '99+' : commentCount}</span>` : '';
@@ -2397,7 +2443,7 @@
           tbody.appendChild(tr);
         });
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Network error: ${e.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Query Error: ${e.message}</td></tr>`;
       }
     };
 
@@ -2507,17 +2553,16 @@
 
       const { error } = await db.from('refunds').update(updates).eq('task_id', taskId);
       if (error) {
-        alert('Failed to update record: ' + error.message);
+        showToast('Failed to update record: ' + error.message, 'error');
       } else {
+        showToast(`Record #${taskId} updated!`, 'success');
         closeEditModal();
         executeQueueFetch(queueCurrentPage);
       }
     };
 
     window.openCommentsFromEdit = function() {
-      if (currentEditingRecord && currentEditingRecord.task_id) {
-        openCommentsModal(currentEditingRecord.task_id);
-      }
+      if (currentEditingRecord && currentEditingRecord.task_id) openCommentsModal(currentEditingRecord.task_id);
     };
 
     window.openCommentsModal = async function(taskId) {
@@ -2539,7 +2584,6 @@
         feed.innerHTML = '<p style="font-size: 0.82rem; color: var(--text-muted);">No comments logged yet.</p>';
         return;
       }
-
       feed.innerHTML = '';
       comments.forEach(c => {
         const item = document.createElement('div');
@@ -2576,12 +2620,16 @@
 
       if (!error && data) {
         textInput.value = '';
+        showToast('Comment posted', 'info');
         openCommentsModal(currentActiveTaskId);
       } else {
-        alert('Failed to post comment.');
+        showToast('Failed to post comment', 'error');
       }
     };
 
+    // ============================================================
+    // REPORTS TAB
+    // ============================================================
     window.fetchPortalData = function() {
       const tbody = document.getElementById('reportsTableBody');
       tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1rem; color: var(--text-muted);">Fetching data...</td></tr>';
@@ -2592,11 +2640,12 @@
           if (response.status === 'success') {
             globalPortalData = response.data;
             filterReportData();
+            showToast('Reports refreshed successfully', 'success');
           } else {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1rem; color: #d9534f;">Failed to load: ${response.message}</td></tr>`;
           }
         })
-        .catch(err => {
+        .catch(() => {
           tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1rem; color: #d9534f;">Error fetching reports.</td></tr>';
         });
     };
@@ -2660,8 +2709,10 @@
       renderReportMetrics(filtered);
       renderReportTable(filtered);
     };
-	
-    // ANNOUNCEMENT IN-APP MANAGER (CREATE, TOGGLE, AUDIT)
+
+    // ============================================================
+    // ANNOUNCEMENTS ENGINE
+    // ============================================================
     window.createAnnouncementFromUI = async function(e) {
       e.preventDefault();
       if (!db) return;
@@ -2673,29 +2724,28 @@
 
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const agentEmail = userSession.email || 'alvin@artofenso.com';
-
       const title = document.getElementById('ann_create_title').value.trim();
       const body = document.getElementById('ann_create_body').value.trim();
       const keyword = document.getElementById('ann_create_keyword').value.trim();
 
-      const { data, error } = await db.from('portal_announcements').insert([{
+      const { error } = await db.from('portal_announcements').insert([{
         title: title,
         body: body,
         verification_keyword: keyword,
         created_by: agentEmail,
         is_active: true
-      }]).select();
+      }]);
 
       btn.disabled = false;
       btn.innerText = originalText;
 
       if (error) {
-        alert('Failed to publish announcement: ' + error.message);
+        showToast('Failed to publish: ' + error.message, 'error');
         return;
       }
 
       document.getElementById('newAnnouncementForm').reset();
-      alert(`Announcement "${title}" is now active! All agents will be required to verify with "${keyword}".`);
+      showToast(`Announcement "${title}" published!`, 'success');
       fetchAnnouncementsList();
     };
 
@@ -2704,11 +2754,7 @@
       const tbody = document.getElementById('announcementsTableBody');
       tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching...</td></tr>';
 
-      const { data: list, error } = await db
-        .from('portal_announcements')
-        .select('*')
-        .order('created_at', { ascending: false });
-
+      const { data: list, error } = await db.from('portal_announcements').select('*').order('created_at', { ascending: false });
       if (error || !list || list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No announcements created yet.</td></tr>';
         return;
@@ -2724,20 +2770,15 @@
           ? '<span class="badge-v1" style="background:#dcfce7; color:#15803d; border-color:#86efac;">ACTIVE</span>' 
           : '<span class="badge-v1" style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;">INACTIVE</span>';
 
-        const toggleBtnLabel = ann.is_active ? 'Deactivate' : 'Activate';
-
         tr.innerHTML = `
           <td>${statusBadge}</td>
           <td><strong>${ann.title}</strong></td>
           <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${ann.verification_keyword}</code></td>
           <td>${ann.created_by ? ann.created_by.split('@')[0] : '—'}</td>
-          <td>
-            <strong>${annReads.length} verified</strong>
-            <button class="btn btn-secondary btn-sm" style="margin-left:6px; padding:1px 5px; font-size:0.7rem;" onclick='viewVerifiedAgents(${JSON.stringify(annReads.map(r => r.agent_email))})'>View List</button>
-          </td>
+          <td><strong>${annReads.length} verified</strong></td>
           <td>
             <div style="display:flex; gap:4px;">
-              <button class="btn btn-secondary btn-sm" onclick="toggleAnnouncementStatus(${ann.id}, ${!ann.is_active})">${toggleBtnLabel}</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleAnnouncementStatus(${ann.id}, ${!ann.is_active})">${ann.is_active ? 'Deactivate' : 'Activate'}</button>
               <button class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteAnnouncement(${ann.id})">Delete</button>
             </div>
           </td>
@@ -2753,21 +2794,14 @@
     };
 
     window.deleteAnnouncement = async function(id) {
-      if (!confirm('Are you sure you want to delete this announcement and its read receipts?')) return;
+      if (!confirm('Are you sure you want to delete this announcement?')) return;
       if (!db) return;
       await db.from('portal_announcements').delete().eq('id', id);
+      showToast('Announcement removed', 'info');
       fetchAnnouncementsList();
     };
 
-    window.viewVerifiedAgents = function(emails) {
-      if (!emails || emails.length === 0) {
-        alert('No agents have verified this announcement yet.');
-        return;
-      }
-      alert('Verified Agents:\n\n• ' + emails.join('\n• '));
-    };
-		
-    // MANDATORY ANNOUNCEMENT VERIFICATION ENGINE
+    let pendingUnreadAnnouncements = [];
     let currentActiveAnnouncement = null;
 
     async function checkForUnreadAnnouncements() {
@@ -2777,89 +2811,109 @@
       if (!agentEmail) return;
 
       try {
-        const { data: announcements, error: aErr } = await db
-          .from('portal_announcements')
-          .select('*')
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(1);
+        const { data: activeList } = await db.from('portal_announcements').select('*').eq('is_active', true).order('created_at', { ascending: true });
+        if (!activeList || activeList.length === 0) return;
 
-        if (aErr || !announcements || announcements.length === 0) return;
-        const latest = announcements[0];
+        const { data: readRecords } = await db.from('announcement_reads').select('announcement_id').eq('agent_email', agentEmail);
+        const readIds = new Set((readRecords || []).map(r => String(r.announcement_id)));
+        pendingUnreadAnnouncements = activeList.filter(ann => !readIds.has(String(ann.id)));
 
-        const { data: readRecord } = await db
-          .from('announcement_reads')
-          .select('id')
-          .eq('announcement_id', latest.id)
-          .eq('agent_email', agentEmail)
-          .maybeSingle();
-
-        if (!readRecord) {
-          currentActiveAnnouncement = latest;
-          document.getElementById('announcementTitle').innerText = latest.title;
-          document.getElementById('announcementBody').innerHTML = latest.body;
-          document.getElementById('verificationKeywordInput').value = '';
-          document.getElementById('verificationErrorMsg').style.display = 'none';
-          
-          const modal = document.getElementById('mandatoryUpdateModal');
-          if (modal && !modal.open) {
-            modal.showModal();
-            modal.oncancel = (e) => e.preventDefault();
-          }
-        }
+        showNextQueuedAnnouncement();
       } catch (err) {
-        console.warn('Announcement check notice:', err);
+        console.warn('Notice check:', err);
+      }
+    }
+
+    function showNextQueuedAnnouncement() {
+      if (pendingUnreadAnnouncements.length === 0) {
+        currentActiveAnnouncement = null;
+        const modal = document.getElementById('mandatoryUpdateModal');
+        if (modal && modal.open) modal.close();
+        return;
+      }
+      currentActiveAnnouncement = pendingUnreadAnnouncements.shift();
+      document.getElementById('announcementTitle').innerText = currentActiveAnnouncement.title;
+      document.getElementById('announcementBody').innerHTML = currentActiveAnnouncement.body;
+      document.getElementById('verificationKeywordInput').value = '';
+      document.getElementById('verificationErrorMsg').style.display = 'none';
+      
+      const modal = document.getElementById('mandatoryUpdateModal');
+      if (modal && !modal.open) {
+        modal.showModal();
+        modal.oncancel = (e) => e.preventDefault();
       }
     }
 
     window.confirmAnnouncementRead = async function() {
       if (!currentActiveAnnouncement || !db) return;
-
       const entered = document.getElementById('verificationKeywordInput').value.trim().toLowerCase();
       const required = String(currentActiveAnnouncement.verification_keyword || '').trim().toLowerCase();
-      const errorMsg = document.getElementById('verificationErrorMsg');
 
       if (entered !== required) {
-        errorMsg.style.display = 'block';
+        document.getElementById('verificationErrorMsg').style.display = 'block';
         return;
       }
 
-      errorMsg.style.display = 'none';
+      document.getElementById('verificationErrorMsg').style.display = 'none';
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const agentEmail = userSession.email || 'alvin@artofenso.com';
 
-      const { error } = await db.from('announcement_reads').insert([{
+      await db.from('announcement_reads').insert([{
         announcement_id: currentActiveAnnouncement.id,
         agent_email: agentEmail,
         entered_keyword: document.getElementById('verificationKeywordInput').value.trim()
       }]);
 
-      if (!error) {
-        document.getElementById('mandatoryUpdateModal').close();
-        alert('Thank you! Your acknowledgement has been recorded.');
-      } else {
-        alert('Error saving acknowledgement: ' + error.message);
-      }
+      showToast('Notice acknowledged!', 'success');
+      showNextQueuedAnnouncement();
     };
-	
-    // KNOWLEDGE BASE ENGINE (NOTION/ZENDESK INTERACTIVE HUB)
+
+    window.openAgentNoticeBoard = async function() {
+      const modal = document.getElementById('agentNoticeBoardModal');
+      const listEl = document.getElementById('agentNoticeBoardList');
+      modal.showModal();
+      listEl.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:1.5rem;">Loading announcements...</p>';
+
+      if (!db) return;
+      const { data: announcements } = await db.from('portal_announcements').select('*').order('created_at', { ascending: false }).limit(20);
+      if (!announcements || announcements.length === 0) {
+        listEl.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:1.5rem;">No notices currently on the board.</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      announcements.forEach(ann => {
+        const item = document.createElement('div');
+        item.style.borderBottom = '1px solid var(--border-color)';
+        item.style.padding = '0.75rem 0';
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:var(--primary-green); font-size:0.9rem;">${ann.title}</strong>
+            <small style="color:var(--text-muted); font-size:0.72rem;">${new Date(ann.created_at).toLocaleDateString()}</small>
+          </div>
+          <div style="font-size:0.82rem; line-height:1.45; color:var(--text-dark);">${ann.body}</div>
+        `;
+        listEl.appendChild(item);
+      });
+    };
+
+    // ============================================================
+    // KNOWLEDGE BASE ENGINE
+    // ============================================================
     let globalKbArticles = [];
     let currentKbCategory = 'all';
     let currentSelectedArticle = null;
 
     window.openKnowledgeBaseCategory = function(category) {
-      showView('knowledgeBaseView');
+      switchView('knowledgeBaseView');
       selectKbCategory(category);
     };
 
     window.selectKbCategory = function(cat) {
       currentKbCategory = cat;
       document.querySelectorAll('.kb-tab-btn').forEach(btn => btn.classList.remove('active'));
-      
       const activeBtnId = cat === 'all' ? 'kbTabAll' : cat === 'playbook' ? 'kbTabPlaybook' : cat === 'macro' ? 'kbTabMacro' : 'kbTabFaq';
       const activeBtn = document.getElementById(activeBtnId);
       if (activeBtn) activeBtn.classList.add('active');
-
       filterKnowledgeBaseArticles();
     };
 
@@ -2868,24 +2922,22 @@
       const listEl = document.getElementById('kbArticlesList');
       listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>';
 
-      const { data, error } = await db
-        .from('knowledge_base')
-        .select('*')
-        .order('category', { ascending: true })
-        .order('title', { ascending: true });
-
+      const { data, error } = await db.from('knowledge_base').select('*').order('category', { ascending: true }).order('title', { ascending: true });
       if (error || !data || data.length === 0) {
         listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">No guides found.</li>';
         return;
       }
-
       globalKbArticles = data;
       filterKnowledgeBaseArticles();
-
-      if (!currentSelectedArticle && globalKbArticles.length > 0) {
-        renderSelectedArticle(globalKbArticles[0]);
-      }
+      if (!currentSelectedArticle && globalKbArticles.length > 0) renderSelectedArticle(globalKbArticles[0]);
     }
+
+    window.filterByTag = function(tag) {
+      const searchBox = document.getElementById('kbSearchInput');
+      searchBox.value = tag;
+      filterKnowledgeBaseArticles();
+      showToast(`Filtered by #${tag}`, 'info');
+    };
 
     window.filterKnowledgeBaseArticles = function() {
       const query = (document.getElementById('kbSearchInput').value || '').toLowerCase().trim();
@@ -2896,73 +2948,51 @@
         const matchesSearch = !query || 
           (item.title && item.title.toLowerCase().includes(query)) ||
           (item.content && item.content.toLowerCase().includes(query)) ||
-          (item.tags && item.tags.some(t => t.toLowerCase().includes(query)));
-
+          (item.tags && item.tags.some(t => t.toLowerCase().includes(query.replace('#', ''))));
         return matchesCategory && matchesSearch;
       });
 
       document.getElementById('kbArticlesCountBadge').innerText = `${filtered.length} Articles`;
-
       if (filtered.length === 0) {
         listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">No matching guides.</li>';
         return;
       }
-
       listEl.innerHTML = '';
       filtered.forEach(art => {
         const li = document.createElement('li');
         const isActive = currentSelectedArticle && String(currentSelectedArticle.id) === String(art.id);
         li.className = `kb-article-item ${isActive ? 'active' : ''}`;
         li.onclick = () => renderSelectedArticle(art);
-
         const icon = art.category === 'playbook' ? '📖' : art.category === 'macro' ? '💬' : '❓';
-        const tagPreview = art.tags && art.tags.length > 0 ? art.tags.slice(0, 2).join(', ') : art.category;
-
-        li.innerHTML = `
-          <div class="kb-article-item-title">${icon} ${art.title}</div>
-          <div class="kb-article-item-meta">${tagPreview}</div>
-        `;
+        const tagsHtml = (art.tags && art.tags.length > 0)
+          ? art.tags.slice(0, 3).map(t => `<span class="kb-chip-tag" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('')
+          : `<span style="font-size:0.7rem; color:var(--text-muted);">${art.category}</span>`;
+        li.innerHTML = `<div class="kb-article-item-title">${icon} ${art.title}</div><div style="display:flex; flex-wrap:wrap; align-items:center;">${tagsHtml}</div>`;
         listEl.appendChild(li);
       });
     };
 
-	function simpleMarkdownParser(text) {
-      if (!text) return '';
-      const trimmed = text.trim();
-      
-      // If the content is written in HTML, don't corrupt it with regex line breaks
-      if (trimmed.startsWith('<')) {
-        return trimmed;
-      }
-
-      // Standard markdown conversion for plain text
-      return text
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^\- (.*$)/gim, '<li>$1</li>')
-        .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-        .replace(/\n\n/gim, '<p></p>')
-        .replace(/\n/gim, '<br>');
-    }
-	
     function renderSelectedArticle(article) {
       currentSelectedArticle = article;
       filterKnowledgeBaseArticles();
 
       document.getElementById('kbCurrentCategoryBadge').innerText = article.category.toUpperCase();
       document.getElementById('kbCurrentArticleTitle').innerText = article.title;
-      
       const lastEdited = article.updated_at ? new Date(article.updated_at).toLocaleDateString() : 'Recently';
       document.getElementById('kbCurrentArticleMeta').innerText = `Last updated ${lastEdited} by ${article.last_edited_by || 'Team'}`;
       
-      document.getElementById('kbEditArticleBtn').style.display = 'inline-flex';
-      document.getElementById('kbCurrentArticleBody').innerHTML = simpleMarkdownParser(article.content);
+      const tagsContainer = document.getElementById('kbCurrentArticleTags');
+      tagsContainer.innerHTML = (article.tags && article.tags.length > 0)
+        ? article.tags.map(t => `<span class="kb-chip-tag" onclick="filterByTag('${t}')">#${t}</span>`).join('')
+        : '';
 
-     const macroBox = document.getElementById('kbMacroContainer');
+      document.getElementById('kbEditArticleBtn').style.display = 'inline-flex';
+      document.getElementById('kbDeleteArticleBtn').style.display = 'inline-flex';
+      document.getElementById('kbCurrentArticleBody').innerHTML = article.content;
+
+      const macroBox = document.getElementById('kbMacroContainer');
       const macroContent = document.getElementById('kbMacroContent');
-      const isMacro = String(article.category || '').toLowerCase().trim() === 'macro';
-      
-      if (isMacro && article.macro_text && article.macro_text.trim() !== '') {
+      if (article.category === 'macro' && article.macro_text) {
         macroBox.style.display = 'block';
         macroContent.innerText = article.macro_text;
       } else {
@@ -2977,6 +3007,7 @@
         const orig = btn.innerText;
         btn.innerText = 'Copied! ✓';
         btn.style.backgroundColor = '#16a34a';
+        showToast('Macro copied to clipboard!', 'info');
         setTimeout(() => {
           btn.innerText = orig;
           btn.style.backgroundColor = '';
@@ -2984,51 +3015,40 @@
       });
     };
 
-    // Auto-announce visibility toggle
-    window.toggleAutoAnnounceFields = function(isChecked) {
-      const wrap = document.getElementById('kb_announce_fields_wrap');
-      if (wrap) wrap.style.display = isChecked ? 'block' : 'none';
-      const kwInput = document.getElementById('kb_announce_keyword');
-      if (kwInput) kwInput.required = isChecked;
-    };
-
-    // Macro textarea field visibility toggle
     window.toggleMacroFieldVisibility = function(category) {
       const row = document.getElementById('kb_macro_field_row');
-      if (row) {
-        row.style.display = (category === 'macro') ? 'grid' : 'none';
-      }
+      if (row) row.style.display = (category === 'macro') ? 'grid' : 'none';
     };
 
-    // Close the Knowledge Base Editor Modal
     window.closeArticleEditorModal = function() {
-      const modal = document.getElementById('kbEditorModal');
-      if (modal) modal.close();
+      document.getElementById('kbEditorModal')?.close();
     };
 
-    // Open Editor to Edit currently selected article
     window.editCurrentSelectedArticle = function() {
-      if (!currentSelectedArticle) {
-        alert('Please select an article from the list first.');
-        return;
-      }
+      if (!currentSelectedArticle) return;
       openArticleEditorModal(currentSelectedArticle);
     };
 
-    // Open Editor Modal (New or Edit)
+    window.deleteCurrentSelectedArticle = async function() {
+      if (!currentSelectedArticle || !db) return;
+      if (!confirm(`Are you sure you want to delete "${currentSelectedArticle.title}"?`)) return;
+
+      const { error } = await db.from('knowledge_base').delete().eq('id', currentSelectedArticle.id);
+      if (error) showToast('Failed to delete: ' + error.message, 'error');
+      else {
+        showToast(`Guide deleted.`, 'info');
+        currentSelectedArticle = null;
+        loadKnowledgeBaseArticles();
+      }
+    };
+
     window.openArticleEditorModal = function(article) {
       const modal = document.getElementById('kbEditorModal');
       const form = document.getElementById('kbEditorForm');
       form.reset();
 
-      const autoAnnounceCheck = document.getElementById('kb_auto_announce');
-      if (autoAnnounceCheck) {
-        autoAnnounceCheck.checked = false;
-        toggleAutoAnnounceFields(false);
-      }
-
       if (article) {
-        document.getElementById('kbEditorModalTitle').innerText = 'Edit Knowledge Base Guide';
+        document.getElementById('kbEditorModalTitle').innerText = 'Edit Guide';
         document.getElementById('kb_edit_id').value = article.id || '';
         document.getElementById('kb_edit_category').value = article.category || 'playbook';
         document.getElementById('kb_edit_title').value = article.title || '';
@@ -3037,23 +3057,17 @@
         document.getElementById('kb_edit_macro_text').value = article.macro_text || '';
         toggleMacroFieldVisibility(article.category);
       } else {
-        document.getElementById('kbEditorModalTitle').innerText = 'Create Knowledge Base Guide';
+        document.getElementById('kbEditorModalTitle').innerText = 'Create Guide';
         document.getElementById('kb_edit_id').value = '';
-        const defaultCategory = (currentKbCategory && currentKbCategory !== 'all') ? currentKbCategory : 'playbook';
-        document.getElementById('kb_edit_category').value = defaultCategory;
-        toggleMacroFieldVisibility(defaultCategory);
+        document.getElementById('kb_edit_category').value = currentKbCategory !== 'all' ? currentKbCategory : 'playbook';
+        toggleMacroFieldVisibility(document.getElementById('kb_edit_category').value);
       }
-
-      if (modal) modal.showModal();
+      modal.showModal();
     };
 
-    // Save Article (Insert or Update)
     window.saveKnowledgeBaseArticle = async function(e) {
       e.preventDefault();
-      if (!db) {
-        alert('Database client not connected.');
-        return;
-      }
+      if (!db) return;
 
       const editId = document.getElementById('kb_edit_id').value;
       const category = document.getElementById('kb_edit_category').value;
@@ -3062,17 +3076,9 @@
       const content = document.getElementById('kb_edit_content').value.trim();
       const macroText = document.getElementById('kb_edit_macro_text').value.trim();
 
-      const shouldAnnounce = document.getElementById('kb_auto_announce').checked;
-      const keyword = (document.getElementById('kb_announce_keyword').value || '').trim();
-
-      if (shouldAnnounce && !keyword) {
-        alert('Please specify a verification keyword so agents can verify having read this update.');
-        return;
-      }
-
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const agentEmail = userSession.email || 'alvin@artofenso.com';
-      const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+      const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean) : [];
 
       const payload = {
         category: category,
@@ -3085,58 +3091,145 @@
       };
 
       try {
-        let savedArticle = null;
         if (editId) {
-          const { data, error } = await db.from('knowledge_base').update(payload).eq('id', editId).select();
-          if (error) throw error;
-          savedArticle = data && data[0];
+          await db.from('knowledge_base').update(payload).eq('id', editId);
         } else {
-          const { data, error } = await db.from('knowledge_base').insert([payload]).select();
-          if (error) throw error;
-          savedArticle = data && data[0];
+          await db.from('knowledge_base').insert([payload]);
         }
-
-        // AUTO-BROADCAST IF CHECKED
-        if (shouldAnnounce) {
-          const categoryIcon = category === 'playbook' ? '📖 SOP Update' : category === 'macro' ? '💬 New Macro' : '❓ FAQ Update';
-          
-          const announcementBody = `
-<div style="font-family: inherit; line-height: 1.55;">
-  <p style="margin-bottom: 8px;"><strong>${categoryIcon}:</strong> A new guide has been published to the Knowledge Base:</p>
-  <div style="background: var(--card-bg); border-left: 3px solid var(--primary-green); padding: 8px 12px; margin-bottom: 10px; border-radius: 4px;">
-    <h4 style="margin: 0; color: var(--primary-green);">${title}</h4>
-    <p style="margin: 4px 0 0 0; font-size: 0.78rem; color: var(--text-muted);">${content.slice(0, 160)}...</p>
-  </div>
-  <p style="font-size: 0.8rem; margin: 0;">Please review this update in the Knowledge Base. To confirm you have read this notice, enter the verification keyword below.</p>
-</div>`.trim();
-
-          await db.from('portal_announcements').insert([{
-            title: `KB Update: ${title}`,
-            body: announcementBody,
-            verification_keyword: keyword,
-            created_by: agentEmail,
-            is_active: true
-          }]);
-        }
-
         closeArticleEditorModal();
         await loadKnowledgeBaseArticles();
-        
-        if (savedArticle) {
-          renderSelectedArticle(savedArticle);
-        }
-
-        if (shouldAnnounce) {
-          alert(`Guide saved and broadcasted to all agents with keyword "${keyword}"!`);
-        } else {
-          alert('Guide saved and published successfully!');
-        }
-
+        showToast('Guide published successfully!', 'success');
       } catch (err) {
-        alert('Failed to save article: ' + err.message);
+        showToast('Error saving guide: ' + err.message, 'error');
       }
     };
-	
+
+    // ============================================================
+    // AUTHENTICATION & BOOTSTRAP
+    // ============================================================
+    window.bypassLocalAuth = function() {
+      const fallbackSession = {
+        email: "alvin@artofenso.com",
+        name: "Alvin",
+        picture: "",
+        expiry: new Date().getTime() + (365 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(fallbackSession));
+      initAuth();
+    };
+
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        return JSON.parse(jsonPayload);
+      } catch(e) { return null; }
+    }
+
+    window.handleCredentialResponse = function(response) {
+      const user = parseJwt(response.credential);
+      if (!user) return;
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        picture: user.picture,
+        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
+      };
+      localStorage.setItem('user_session', JSON.stringify(sessionData));
+      initAuth();
+    };
+
+    window.logout = function() {
+      localStorage.removeItem('user_session');
+      switchView('loginView');
+    };
+
+async function initAuth() {
+      let session = null;
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        try {
+          session = JSON.parse(sessionRaw);
+          if (new Date().getTime() > session.expiry) {
+            localStorage.removeItem('user_session');
+            session = null;
+          }
+        } catch(e) { session = null; }
+      }
+
+      if (!session && window.location.protocol === 'file:') {
+        bypassLocalAuth();
+        return;
+      }
+
+      if (session) {
+        document.getElementById('userEmail').innerText = session.email;
+        const avatarEl = document.getElementById('topNavAvatar');
+        if (avatarEl) avatarEl.innerText = (session.name || session.email || 'A').charAt(0).toUpperCase();
+
+        await loadUserProfile(session.email);
+        await loadMaintenanceSettings();
+        initDropdownOptions();
+        initChatRealtime();
+
+        // 1. Determine if current user is an admin
+        const isAdmin = (currentUserProfile.role === 'admin') || (session.email === 'alvin@artofenso.com');
+
+        // 2. Guard the default view on launch:
+        // If maintenance is ON and user is NOT admin, route to Ticket Forms
+        if (isVibeInMaintenance && !isAdmin) {
+          switchView('dashboardView');
+        } else {
+          switchView('refundsQueueView');
+        }
+      } else {
+        switchView('loginView');
+      }
+    }
+
+    async function initDropdownOptions() {
+      if (!db) return;
+      try {
+        const { data: users } = await db.from('users').select('email').order('email', { ascending: true });
+        if (users && users.length > 0) {
+          const filterSelect = document.getElementById('queueAssigneeFilter');
+          const editSelect = document.getElementById('edit_assignee_email');
+
+          filterSelect.innerHTML = '<option value="">— All</option><option value="__unassigned__">Unassigned</option>';
+          editSelect.innerHTML = '<option value="">— Unassigned —</option>';
+
+          users.forEach(u => {
+            const opt1 = document.createElement('option');
+            opt1.value = u.email;
+            opt1.textContent = u.email;
+            filterSelect.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = u.email;
+            opt2.textContent = u.email;
+            editSelect.appendChild(opt2);
+          });
+        }
+
+        const { data: prods } = await db.from('refunds').select('product').not('product', 'is', null).limit(1000);
+        if (prods) {
+          const unique = [...new Set(prods.map(p => p.product).filter(Boolean))].sort();
+          const pSelect = document.getElementById('edit_product');
+          pSelect.innerHTML = '<option value="">—</option>';
+          unique.forEach(prod => {
+            const opt = document.createElement('option');
+            opt.value = prod;
+            opt.textContent = prod;
+            pSelect.appendChild(opt);
+          });
+        }
+      } catch (err) {
+        console.warn("Dropdown notice:", err);
+      }
+    }
+
+    // App Startup
     initTheme();
     initAuth();
   </script>
