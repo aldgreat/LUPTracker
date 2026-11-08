@@ -10,7 +10,9 @@
   
   <!-- Supabase UMD Client (v2) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  
+  <!-- Chart.js for Reports Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     :root {
       /* LIGHT THEME */
@@ -808,6 +810,11 @@
       line-height: 1.5;
     }
 
+    /* ROLE PERMISSION UTILITIES */
+    .mod-or-admin-only {
+      display: none !important;
+    }
+
     /* TOAST NOTIFICATION CONTAINER */
     #portalToastContainer {
       position: fixed;
@@ -861,7 +868,9 @@
         <a onclick="switchView('dashboardView')" class="nav-link">🎫 Ticket Forms</a>
       </li>
       <li class="nav-item">
-        <a onclick="switchView('reportsView')" class="nav-link">📊 Search &amp; Reports</a>
+        <a onclick="switchView('reportsView')" class="nav-link" id="nav-reports-link">
+          <span id="nav-reports-icon">📊</span> <span id="nav-reports-label">Search &amp; Reports</span>
+        </a>
       </li>
     </ul>
 
@@ -1202,54 +1211,157 @@
         </div>
       </div>
 
-      <!-- VIEW 4: REPORTS -->
-      <div id="reportsView" class="view-page">
-        <div class="portal-card">
-          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
-            <input type="text" id="reportSearchInput" placeholder="Search by Order #, Email, Reason, or Agent..." onkeyup="filterReportData()" style="flex: 2;" />
-            <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1;">
-              <option value="all">All Sheet Tabs</option>
-              <option value="sgrelaunch">SGRelaunch</option>
-              <option value="replacement tracking">Replacement Tracking Sheet</option>
-              <option value="recall order refund">Recall Order Refunds</option>
-              <option value="refund others">Refund Others</option>
-            </select>
-            <button onclick="fetchPortalData()" class="btn">🔄 Load Sheet Data</button>
-          </div>
+	<!-- VIEW 4: SEARCH & REPORTS (POWERED BY SUPABASE + CHART.JS) -->
+	<div id="reportsView" class="view-page" style="max-width: 1200px;">
+	  
+	  <!-- Header & Controls -->
+	  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+		<div>
+		  <h2 id="reportsHeaderTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Operations &amp; Tracker Intelligence</h2>
+		  <p id="reportsHeaderSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">
+			Realtime record lookups and ticket search across all intake trackers.
+		  </p>
+		</div>
+		<div style="display: flex; gap: 8px;">
+		  <button onclick="exportReportsCSV()" id="reportsExportBtn" class="btn btn-secondary btn-sm mod-or-admin-only">📥 Export Filtered CSV</button>
+		  <button onclick="fetchPortalData()" class="btn btn-sm">🔄 Refresh Data</button>
+		</div>
+	  </div>
 
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
-            <div style="background: var(--input-bg); padding: 0.75rem; border-radius: 6px; text-align: center;">
-              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Total</span>
-              <h3 id="totalTicketCount" style="color: var(--primary-green); margin-top: 0.15rem; font-size: 1.15rem;">0</h3>
-            </div>
-            <div style="background: var(--input-bg); padding: 0.75rem; border-radius: 6px; text-align: center;">
-              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Refunds</span>
-              <h3 id="totalRefundCount" style="color: var(--primary-green); margin-top: 0.15rem; font-size: 1.15rem;">0</h3>
-            </div>
-            <div style="background: var(--input-bg); padding: 0.75rem; border-radius: 6px; text-align: center;">
-              <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">Replacements</span>
-              <h3 id="totalReplacementsCount" style="color: var(--primary-green); margin-top: 0.15rem; font-size: 1.15rem;">0</h3>
-            </div>
-          </div>
+	  <!-- KPI Metric Cards Grid (Restricted to Mods & Admins) -->
+	  <div id="reportsKpiContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid var(--primary-green);">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Tracker Intake</span>
+		  <h3 id="repMetricTotal" style="color: var(--text-dark); margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">Across all 4 active sheets</small>
+		</div>
 
-          <div class="table-responsive" style="max-height: 420px; overflow-y: auto;">
-            <table class="refund-table">
-              <thead>
-                <tr>
-                  <th>Sheet Tab</th>
-                  <th>Order #</th>
-                  <th>Email</th>
-                  <th>Agent</th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-              <tbody id="reportsTableBody">
-                <tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Click "Load Sheet Data" to fetch records.</td></tr>
-              </tbody>
-            </table>
-          </div>
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #ef4444;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Refund Sum</span>
+		  <h3 id="repMetricRefundVal" style="color: #ef4444; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">$0.00</h3>
+		  <small id="repMetricRefundCount" style="font-size: 0.7rem; color: var(--text-muted);">0 refund records logged</small>
+		</div>
+
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #0284c7;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Replacements Issued</span>
+		  <h3 id="repMetricReplacements" style="color: #0284c7; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">LIT, damaged &amp; mispicks</small>
+		</div>
+
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #f59e0b;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Agents Logging</span>
+		  <h3 id="repMetricActiveAgents" style="color: #f59e0b; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">Contributing team members</small>
+		</div>
+	  </div>
+
+	  <!-- Analytics Graphs Grid (Restricted to Mods & Admins) -->
+	  <div id="reportsChartsContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+		<!-- Volume Distribution Chart -->
+		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Intake Volume by Tracker Source</h4>
+			<span class="badge-v1" style="font-size: 0.65rem;">Tab Ratio</span>
+		  </div>
+		  <div style="height: 240px; position: relative;">
+			<canvas id="chartTrackerVolume"></canvas>
+		  </div>
+		</div>
+
+		<!-- Reason Breakdown Chart -->
+		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Top Reasons (Replacements &amp; Refunds)</h4>
+			<span class="badge-v1" style="font-size: 0.65rem;">Fulfillment Drivers</span>
+		  </div>
+		  <div style="height: 240px; position: relative;">
+			<canvas id="chartTopReasons"></canvas>
+		  </div>
+		</div>
+	  </div>
+
+	  <!-- Search, Filter & Data Table -->
+	  <div class="portal-card">
+	<!-- Search, Date Range & Filter Controls -->
+    <div style="display: flex; gap: 0.65rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
+      <!-- Search Input -->
+      <input 
+        type="search" 
+        id="reportSearchInput" 
+        placeholder="Filter by Order #, Email, Reason, Sub-Status, or Agent..." 
+        onkeyup="filterReportData()" 
+        style="flex: 2; min-width: 220px;" 
+      />
+
+      <!-- Category Filter -->
+      <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 160px;">
+        <option value="all">All Sheet Sources</option>
+        <option value="SGRelaunch">SGRelaunch</option>
+        <option value="Replacement Tracking">Replacement Tracking Sheet</option>
+        <option value="Recall Order Refunds">Recall Order Refunds</option>
+        <option value="Refund Others">Refund Others</option>
+      </select>
+
+      <!-- Date Presets -->
+      <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 140px;">
+        <option value="all">All Time</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="last7">Last 7 Days</option>
+        <option value="last30">Last 30 Days</option>
+        <option value="thisMonth">This Month</option>
+        <option value="custom">Custom Range...</option>
+      </select>
+
+      <!-- Custom Date Pickers (Shown when 'custom' is selected) -->
+      <div id="customDateRangeBox" style="display: none; align-items: center; gap: 6px;">
+        <input type="date" id="reportStartDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="Start Date" />
+        <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">to</span>
+        <input type="date" id="reportEndDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="End Date" />
+        <button type="button" onclick="clearDateFilter()" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.6rem;" title="Clear date selection">✕</button>
+      </div>
+    </div>
+
+		<div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+		  <table class="refund-table">
+			<thead>
+			  <tr>
+				<th>Source Sheet</th>
+				<th>Date / Timestamp</th>
+				<th>Order #</th>
+				<th>Customer Email</th>
+				<th>Agent</th>
+				<th>Details / Reason</th>
+				<th>Amount</th>
+			  </tr>
+			</thead>
+			<tbody id="reportsTableBody">
+			  <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Supabase...</td></tr>
+			</tbody>
+		  </table>
+		 </div>
+		 <!-- REPORTS PAGINATION BAR -->
+      <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="reportsPageSummary" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">
+            Showing 0 of 0 records
+          </span>
+          <select id="reportsPageSize" onchange="changeReportsPageSize(this.value)" style="width: auto; padding: 2px 6px; font-size: 0.75rem;">
+            <option value="50">50 / page</option>
+            <option value="100" selected>100 / page</option>
+            <option value="250">250 / page</option>
+            <option value="500">500 / page</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <button id="reportsPrevBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(-1)">&larr; Previous</button>
+          <span id="reportsPageIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
+          <button id="reportsNextBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(1)">Next &rarr;</button>
         </div>
       </div>
+	  </div>
+	</div>
 
       <!-- VIEW 5: KNOWLEDGE BASE -->
       <div id="knowledgeBaseView" class="view-page full-width">
@@ -2023,7 +2135,8 @@
         } else if (viewId === 'dashboardView') {
           heading.innerText = 'Ticket Submission Forms';
         } else if (viewId === 'reportsView') {
-          heading.innerText = 'Search & Reports';
+          const isModOrAdmin = isAdmin || (currentUserProfile.role === 'moderator');
+          heading.innerText = isModOrAdmin ? 'Search & Reports' : 'Record Search';
           if (globalPortalData.length === 0) fetchPortalData();
         } else if (viewId === 'announcementsManagerView') {
           heading.innerText = 'Announcement Manager';
@@ -2152,9 +2265,42 @@
       if (pName) pName.value = currentUserProfile.full_name || '';
       if (pRole) pRole.value = currentUserProfile.role || 'agent';
 
+      // Check roles
+      const isAdmin = (currentUserProfile.role === 'admin') || (email === 'alvin@artofenso.com') || (email === 'alvin@letsliveitup.com');
+      const isModerator = (currentUserProfile.role === 'moderator');
+      const hasReportsPrivileges = isAdmin || isModerator;
+
       // Show/Hide Admin links based on RBAC
-      const isAdmin = currentUserProfile.role === 'admin';
       document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'block' : 'none');
+
+      // Adjust Search & Reports UI according to role
+      const navReportsLabel = document.getElementById('nav-reports-label');
+      const navReportsIcon = document.getElementById('nav-reports-icon');
+      const repTitle = document.getElementById('reportsHeaderTitle');
+      const repSubtitle = document.getElementById('reportsHeaderSubtitle');
+      const kpiBox = document.getElementById('reportsKpiContainer');
+      const chartsBox = document.getElementById('reportsChartsContainer');
+      const exportBtn = document.getElementById('reportsExportBtn');
+
+      if (hasReportsPrivileges) {
+        if (navReportsLabel) navReportsLabel.innerText = 'Search & Reports';
+        if (navReportsIcon) navReportsIcon.innerText = '📊';
+        if (repTitle) repTitle.innerText = 'Operations & Tracker Intelligence';
+        if (repSubtitle) repSubtitle.innerText = 'Realtime aggregation across all tracker submission logs directly from Supabase.';
+        if (kpiBox) kpiBox.style.setProperty('display', 'grid', 'important');
+        if (chartsBox) chartsBox.style.setProperty('display', 'grid', 'important');
+        if (exportBtn) exportBtn.style.setProperty('display', 'inline-flex', 'important');
+      } else {
+        // Agent: Record Search Only
+        if (navReportsLabel) navReportsLabel.innerText = 'Record Search';
+        if (navReportsIcon) navReportsIcon.innerText = '🔍';
+        if (repTitle) repTitle.innerText = 'Tracker Record Search';
+        if (repSubtitle) repSubtitle.innerText = 'Search and browse customer support intake logs across all trackers.';
+        if (kpiBox) kpiBox.style.setProperty('display', 'none', 'important');
+        if (chartsBox) chartsBox.style.setProperty('display', 'none', 'important');
+        if (exportBtn) exportBtn.style.setProperty('display', 'none', 'important');
+      }
+
       applyVibeMaintenanceState();
     }
 
@@ -2423,7 +2569,8 @@
 
             if (matchedRecords && matchedRecords.length > 0) {
               for (const record of matchedRecords) {
-                const appendNote = `\n[${todayDate}] Updated to Refunded ($${cleanRefundAmt}) via Tracker by ${agentEmail}`;
+                const appendNote = `
+[${todayDate}] Updated to Refunded ($${cleanRefundAmt}) via Tracker by ${agentEmail}`;
                 await db.from('refunds').update({ status: 'Refunded', refund_amount: cleanRefundAmt, refund_date: todayDate, last_modified: nowIso, last_modified_by: agentEmail, notes: (record.notes || '') + appendNote }).eq('task_id', record.task_id);
               }
               matchNotification = ` Matched & updated task #${matchedRecords[0].task_id} to Refunded.`;
@@ -2712,89 +2859,492 @@
       }
     };
 
+	// ============================================================
+    // MODULE 4: SUPABASE INTELLIGENCE & REPORTING ENGINE
     // ============================================================
-    // REPORTS TAB
-    // ============================================================
-    window.fetchPortalData = function() {
-      const tbody = document.getElementById('reportsTableBody');
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1rem; color: var(--text-muted);">Fetching data...</td></tr>';
+    let chartVolumeInstance = null;
+    let chartReasonsInstance = null;
 
-      fetch(`${SCRIPT_URL}?action=getReports`)
-        .then(res => res.json())
-        .then(response => {
-          if (response.status === 'success') {
-            globalPortalData = response.data;
-            filterReportData();
-            showToast('Reports refreshed successfully', 'success');
+    // Helper function to fetch all rows across any table regardless of size
+    async function fetchAllTableRows(tableName, batchSize = 1000) {
+      let records = [];
+      let from = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const to = from + batchSize - 1;
+        const { data, error } = await db
+          .from(tableName)
+          .select('*')
+          .range(from, to);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          records = records.concat(data);
+          // If we received fewer rows than batchSize, we reached the end
+          if (data.length < batchSize) {
+            hasMore = false;
           } else {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1rem; color: #d9534f;">Failed to load: ${response.message}</td></tr>`;
+            from += batchSize;
           }
-        })
-        .catch(() => {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1rem; color: #d9534f;">Error fetching reports.</td></tr>';
+        } else {
+          hasMore = false;
+        }
+      }
+
+      return records;
+    }
+
+    window.fetchPortalData = async function() {
+      const tbody = document.getElementById('reportsTableBody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Fetching complete dataset from Supabase...</td></tr>';
+
+      if (!db) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 1.5rem;">Database not connected.</td></tr>';
+        return;
+      }
+
+      try {
+        // Query all 4 tracker tables concurrently using pagination to bypass the 1k/2k row ceiling
+        const [sgRows, repRows, recallRows, othersRows] = await Promise.all([
+          fetchAllTableRows('tracker_sgrelaunch'),
+          fetchAllTableRows('tracker_replacements'),
+          fetchAllTableRows('tracker_recall_refunds'),
+          fetchAllTableRows('tracker_refund_others')
+        ]);
+
+        let combined = [];
+
+        // Normalize SGRelaunch records
+        sgRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'SGRelaunch',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: r.sub_status ? `Sub-status: ${r.sub_status}` : 'General Feedback',
+            amount: r.refund_amount || ''
+          });
         });
+
+        // Normalize Replacement Tracking records
+        repRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Replacement Tracking',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.replacement_reason || 'Replacement'} (New: ${r.replacement_order_number || '—'})`,
+            amount: 'N/A'
+          });
+        });
+
+        // Normalize Recall Order Refunds records
+        recallRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Recall Order Refunds',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.refund_reason || 'Recall'} | ${r.sub_status || ''}`,
+            amount: r.refund_amount || ''
+          });
+        });
+
+        // Normalize Refund Others records
+        othersRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Refund Others',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.refund_reason || 'Other'} | ${r.sub_status || ''}`,
+            amount: r.refund_amount || ''
+          });
+        });
+
+        // Sort descending by timestamp / newest first
+        combined.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+        globalPortalData = combined;
+        filterReportData();
+        showToast(`Loaded all ${globalPortalData.length.toLocaleString()} records from Supabase!`, 'success');
+
+      } catch (err) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:1.5rem;">Fetch error: ${err.message}</td></tr>`;
+      }
+    };
+
+	// ============================================================
+    // DATE FILTERING & PRESETS LOGIC
+    // ============================================================
+    window.applyDatePreset = function(preset) {
+      const customBox = document.getElementById('customDateRangeBox');
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+      
+      const now = new Date();
+      const formatDate = d => d.toISOString().split('T')[0];
+
+      if (preset === 'custom') {
+        if (customBox) customBox.style.display = 'inline-flex';
+        return;
+      } else {
+        if (customBox) customBox.style.display = 'none';
+      }
+
+      if (preset === 'all') {
+        startInput.value = '';
+        endInput.value = '';
+      } else if (preset === 'today') {
+        const todayStr = formatDate(now);
+        startInput.value = todayStr;
+        endInput.value = todayStr;
+      } else if (preset === 'yesterday') {
+        const yest = new Date(now);
+        yest.setDate(yest.getDate() - 1);
+        const yestStr = formatDate(yest);
+        startInput.value = yestStr;
+        endInput.value = yestStr;
+      } else if (preset === 'last7') {
+        const past7 = new Date(now);
+        past7.setDate(past7.getDate() - 7);
+        startInput.value = formatDate(past7);
+        endInput.value = formatDate(now);
+      } else if (preset === 'last30') {
+        const past30 = new Date(now);
+        past30.setDate(past30.getDate() - 30);
+        startInput.value = formatDate(past30);
+        endInput.value = formatDate(now);
+      } else if (preset === 'thisMonth') {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        startInput.value = formatDate(firstDay);
+        endInput.value = formatDate(now);
+      }
+
+      filterReportData();
+    };
+
+    window.clearDateFilter = function() {
+      const presetSelect = document.getElementById('reportDatePreset');
+      const customBox = document.getElementById('customDateRangeBox');
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+
+      if (presetSelect) presetSelect.value = 'all';
+      if (customBox) customBox.style.display = 'none';
+      if (startInput) startInput.value = '';
+      if (endInput) endInput.value = '';
+
+      filterReportData();
+    };
+
+    function parseRecordDate(ts) {
+      if (!ts) return null;
+      const parsed = new Date(ts);
+      if (!isNaN(parsed.getTime())) return parsed;
+      
+      const parts = String(ts).split(' ')[0].split('/');
+      if (parts.length === 3) {
+        const month = parseInt(parts[0], 10) - 1;
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        const manualDate = new Date(year, month, day);
+        if (!isNaN(manualDate.getTime())) return manualDate;
+      }
+      return null;
+    }
+
+    // ============================================================
+    // REPORTS PAGINATION & FILTER LOGIC
+    // ============================================================
+    let reportsCurrentPage = 0;
+    let reportsPageSize = 100;
+    let currentFilteredReportsData = [];
+
+    window.changeReportsPageSize = function(val) {
+      reportsPageSize = parseInt(val, 10) || 100;
+      reportsCurrentPage = 0;
+      renderReportTable(currentFilteredReportsData);
+    };
+
+    window.changeReportsPage = function(delta) {
+      const totalPages = Math.ceil(currentFilteredReportsData.length / reportsPageSize) || 1;
+      const next = reportsCurrentPage + delta;
+      if (next >= 0 && next < totalPages) {
+        reportsCurrentPage = next;
+        renderReportTable(currentFilteredReportsData);
+        const container = document.querySelector('#reportsView .table-responsive');
+        if (container) container.scrollTop = 0;
+      }
+    };
+
+    window.filterReportData = function() {
+      const query = (document.getElementById('reportSearchInput')?.value || '').toLowerCase().trim();
+      const category = document.getElementById('reportCategoryFilter')?.value || 'all';
+      const startDateVal = document.getElementById('reportStartDate')?.value;
+      const endDateVal = document.getElementById('reportEndDate')?.value;
+
+      let startBound = null;
+      let endBound = null;
+
+      if (startDateVal) {
+        startBound = new Date(startDateVal + 'T00:00:00');
+      }
+      if (endDateVal) {
+        endBound = new Date(endDateVal + 'T23:59:59.999');
+      }
+
+      const filtered = globalPortalData.filter(item => {
+        const matchesCategory = (category === 'all') || (item._sourceSheet === category);
+        if (!matchesCategory) return false;
+
+        const matchesSearch = !query || 
+          String(item.order_number).toLowerCase().includes(query) ||
+          String(item.customer_email).toLowerCase().includes(query) ||
+          String(item.agent_email).toLowerCase().includes(query) ||
+          String(item.reason).toLowerCase().includes(query) ||
+          String(item.amount).toLowerCase().includes(query);
+        if (!matchesSearch) return false;
+
+        if (startBound || endBound) {
+          const recDate = parseRecordDate(item.timestamp);
+          if (!recDate) return false;
+          if (startBound && recDate < startBound) return false;
+          if (endBound && recDate > endBound) return false;
+        }
+
+        return true;
+      });
+
+      currentFilteredReportsData = filtered;
+      reportsCurrentPage = 0;
+
+      renderReportMetrics(filtered);
+      renderReportCharts(filtered);
+      renderReportTable(filtered);
     };
 
     function renderReportMetrics(data) {
-      document.getElementById('totalTicketCount').innerText = data.length;
-      const replacements = data.filter(d => String(d._sourceSheet || '').toLowerCase().includes('replacement tracking')).length;
-      document.getElementById('totalRefundCount').innerText = data.length - replacements;
-      document.getElementById('totalReplacementsCount').innerText = replacements;
+      const totalCount = data.length;
+      let totalRefundDollars = 0;
+      let refundCount = 0;
+      let replacementCount = 0;
+      const agentsSet = new Set();
+
+      data.forEach(item => {
+        if (item.agent_email && item.agent_email !== '—') agentsSet.add(item.agent_email);
+
+        if (item._sourceSheet === 'Replacement Tracking') {
+          replacementCount++;
+        } else if (item.amount && item.amount !== 'N/A') {
+          const num = parseFloat(String(item.amount).replace(/[^0-9.]/g, ''));
+          if (!isNaN(num)) {
+            totalRefundDollars += num;
+            refundCount++;
+          }
+        }
+      });
+
+      const totalEl = document.getElementById('repMetricTotal');
+      const refundValEl = document.getElementById('repMetricRefundVal');
+      const refundCountEl = document.getElementById('repMetricRefundCount');
+      const replacementsEl = document.getElementById('repMetricReplacements');
+      const activeAgentsEl = document.getElementById('repMetricActiveAgents');
+
+      if (totalEl) totalEl.innerText = totalCount.toLocaleString();
+      if (refundValEl) refundValEl.innerText = `$${totalRefundDollars.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      if (refundCountEl) refundCountEl.innerText = `${refundCount} refund records logged`;
+      if (replacementsEl) replacementsEl.innerText = replacementCount.toLocaleString();
+      if (activeAgentsEl) activeAgentsEl.innerText = agentsSet.size;
+    }
+
+    function renderReportCharts(data) {
+      if (typeof Chart === 'undefined') return;
+
+      const sourceCounts = {
+        'SGRelaunch': 0,
+        'Replacement Tracking': 0,
+        'Recall Order Refunds': 0,
+        'Refund Others': 0
+      };
+
+      const reasonCounts = {};
+
+      data.forEach(item => {
+        if (sourceCounts[item._sourceSheet] !== undefined) {
+          sourceCounts[item._sourceSheet]++;
+        }
+
+        let cleanReason = (item.reason || 'Unspecified').split('|')[0].split('(')[0].replace('Sub-status:', '').trim();
+        if (cleanReason) {
+          reasonCounts[cleanReason] = (reasonCounts[cleanReason] || 0) + 1;
+        }
+      });
+
+      const isDark = document.body.classList.contains('dark-mode');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+
+      const ctxVolume = document.getElementById('chartTrackerVolume')?.getContext('2d');
+      if (ctxVolume) {
+        if (chartVolumeInstance) chartVolumeInstance.destroy();
+        chartVolumeInstance = new Chart(ctxVolume, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(sourceCounts),
+            datasets: [{
+              data: Object.values(sourceCounts),
+              backgroundColor: ['#10b981', '#0284c7', '#f59e0b', '#a855f7'],
+              borderWidth: isDark ? 2 : 1,
+              borderColor: isDark ? '#121e1a' : '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, boxWidth: 12, font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      const sortedReasons = Object.entries(reasonCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6);
+
+      const ctxReasons = document.getElementById('chartTopReasons')?.getContext('2d');
+      if (ctxReasons) {
+        if (chartReasonsInstance) chartReasonsInstance.destroy();
+        chartReasonsInstance = new Chart(ctxReasons, {
+          type: 'bar',
+          data: {
+            labels: sortedReasons.map(r => r[0]),
+            datasets: [{
+              label: 'Occurrences',
+              data: sortedReasons.map(r => r[1]),
+              backgroundColor: isDark ? '#22c55e' : '#0E3A2F',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                ticks: { color: textColor, precision: 0 },
+                grid: { color: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }
+              },
+              y: {
+                ticks: { color: textColor, font: { size: 11 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
     }
 
     function renderReportTable(data) {
       const tbody = document.getElementById('reportsTableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 1rem; color: var(--text-muted);">No records found.</td></tr>';
+      const total = data.length;
+      const totalPages = Math.ceil(total / reportsPageSize) || 1;
+
+      if (reportsCurrentPage >= totalPages) reportsCurrentPage = totalPages - 1;
+      if (reportsCurrentPage < 0) reportsCurrentPage = 0;
+
+      const from = reportsCurrentPage * reportsPageSize;
+      const to = Math.min(from + reportsPageSize, total);
+
+      const indicator = document.getElementById('reportsPageIndicator');
+      if (indicator) indicator.innerText = `Page ${reportsCurrentPage + 1} of ${totalPages}`;
+
+      const summary = document.getElementById('reportsPageSummary');
+      if (summary) summary.innerText = total > 0 ? `Showing ${from + 1}–${to} of ${total.toLocaleString()} records` : 'Showing 0 records';
+
+      const prevBtn = document.getElementById('reportsPrevBtn');
+      const nextBtn = document.getElementById('reportsNextBtn');
+      if (prevBtn) prevBtn.disabled = (reportsCurrentPage === 0);
+      if (nextBtn) nextBtn.disabled = (reportsCurrentPage + 1 >= totalPages);
+
+      if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">No records found matching filters.</td></tr>';
         return;
       }
 
-      data.forEach(item => {
+      const pageSlice = data.slice(from, to);
+      pageSlice.forEach(item => {
         const tr = document.createElement('tr');
-        tr.style.borderBottom = '1px solid var(--border-color)';
-        const keys = Object.keys(item).filter(k => k !== '_sourceSheet');
-        const agent = item[keys[1]] || 'N/A';
-        const orderNo = item[keys[2]] || 'N/A';
-        const email = item[keys[3]] || 'N/A';
-        
-        let detailsArr = [];
-        for (let i = 4; i < keys.length; i++) {
-          if (item[keys[i]]) detailsArr.push(item[keys[i]]);
-        }
+        const badgeColor = item._sourceSheet === 'SGRelaunch' ? '#10b981' :
+                           item._sourceSheet === 'Replacement Tracking' ? '#0284c7' :
+                           item._sourceSheet === 'Recall Order Refunds' ? '#f59e0b' : '#a855f7';
 
         tr.innerHTML = `
-          <td><span class="badge-v1" style="font-size: 0.68rem;">${item._sourceSheet}</span></td>
-          <td style="font-weight: 600;">${orderNo}</td>
-          <td>${email}</td>
-          <td>${agent}</td>
-          <td>${detailsArr.join(' | ') || 'N/A'}</td>
+          <td><span class="badge-v1" style="font-size:0.68rem; color:${badgeColor}; border-color:${badgeColor}33;">${item._sourceSheet}</span></td>
+          <td style="font-size:0.75rem; color:var(--text-muted);">${item.timestamp ? String(item.timestamp).slice(0, 16) : '—'}</td>
+          <td style="font-weight: 700;">${item.order_number}</td>
+          <td>${item.customer_email}</td>
+          <td>${item.agent_email ? item.agent_email.split('@')[0] : '—'}</td>
+          <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.reason)}">${escapeHtml(item.reason)}</td>
+          <td style="font-weight: 700; color: ${item.amount && item.amount !== 'N/A' ? '#ef4444' : 'var(--text-muted)'};">${item.amount || '—'}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    window.filterReportData = function() {
-      const query = document.getElementById('reportSearchInput').value.toLowerCase();
-      const category = document.getElementById('reportCategoryFilter').value.toLowerCase();
+    window.exportReportsCSV = function() {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdmin = (currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com') || (userSession.email === 'alvin@letsliveitup.com');
+      const isModerator = (currentUserProfile.role === 'moderator');
 
-      const filtered = globalPortalData.filter(item => {
-        const sourceSheet = String(item._sourceSheet || '').toLowerCase();
-        let matchesCategory = (category === 'all') 
-          ? true 
-          : (category === 'sgrelaunch') 
-            ? (sourceSheet.includes('sgrelaunch') || sourceSheet.includes('super greens'))
-            : sourceSheet.includes(category);
-        
-        const matchesSearch = Object.values(item).some(val => String(val).toLowerCase().includes(query));
-        return matchesCategory && matchesSearch;
-      });
+      if (!isAdmin && !isModerator) {
+        showToast('Exporting reports is restricted to Moderators and Admins.', 'error');
+        return;
+      }
 
-      renderReportMetrics(filtered);
-      renderReportTable(filtered);
+      if (!globalPortalData || globalPortalData.length === 0) {
+        showToast('No data available to export.', 'error');
+        return;
+      }
+
+      const headers = ["Source Sheet", "Timestamp", "Order Number", "Customer Email", "Agent Email", "Details", "Amount"];
+      const rows = globalPortalData.map(d => [
+        `"${d._sourceSheet || ''}"`,
+        `"${d.timestamp || ''}"`,
+        `"${d.order_number || ''}"`,
+        `"${d.customer_email || ''}"`,
+        `"${d.agent_email || ''}"`,
+        `"${(d.reason || '').replace(/"/g, '""')}"`,
+        `"${d.amount || ''}"`
+      ]);
+
+	const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `LiveItUp_Tracker_Report_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('CSV export downloaded!', 'success');
     };
-
+	
     // ============================================================
     // ANNOUNCEMENTS ENGINE
     // ============================================================
@@ -3394,27 +3944,30 @@
       }
     }
 
-    async function initDropdownOptions() {
+   async function initDropdownOptions() {
       if (!db) return;
       try {
-        const { data: users } = await db.from('users').select('email').order('email', { ascending: true });
+        // Query public.profiles where your team member accounts live
+        const { data: users } = await db.from('profiles').select('email').order('email', { ascending: true });
         if (users && users.length > 0) {
           const filterSelect = document.getElementById('queueAssigneeFilter');
           const editSelect = document.getElementById('edit_assignee_email');
 
-          filterSelect.innerHTML = '<option value="">— All</option><option value="__unassigned__">Unassigned</option>';
-          editSelect.innerHTML = '<option value="">— Unassigned —</option>';
+          if (filterSelect) filterSelect.innerHTML = '<option value="">— All</option><option value="__unassigned__">Unassigned</option>';
+          if (editSelect) editSelect.innerHTML = '<option value="">— Unassigned —</option>';
 
           users.forEach(u => {
-            const opt1 = document.createElement('option');
-            opt1.value = u.email;
-            opt1.textContent = u.email;
-            filterSelect.appendChild(opt1);
+            if (u.email) {
+              const opt1 = document.createElement('option');
+              opt1.value = u.email;
+              opt1.textContent = u.email;
+              if (filterSelect) filterSelect.appendChild(opt1);
 
-            const opt2 = document.createElement('option');
-            opt2.value = u.email;
-            opt2.textContent = u.email;
-            editSelect.appendChild(opt2);
+              const opt2 = document.createElement('option');
+              opt2.value = u.email;
+              opt2.textContent = u.email;
+              if (editSelect) editSelect.appendChild(opt2);
+            }
           });
         }
 
@@ -3422,13 +3975,15 @@
         if (prods) {
           const unique = [...new Set(prods.map(p => p.product).filter(Boolean))].sort();
           const pSelect = document.getElementById('edit_product');
-          pSelect.innerHTML = '<option value="">—</option>';
-          unique.forEach(prod => {
-            const opt = document.createElement('option');
-            opt.value = prod;
-            opt.textContent = prod;
-            pSelect.appendChild(opt);
-          });
+          if (pSelect) {
+            pSelect.innerHTML = '<option value="">—</option>';
+            unique.forEach(prod => {
+              const opt = document.createElement('option');
+              opt.value = prod;
+              opt.textContent = prod;
+              pSelect.appendChild(opt);
+            });
+          }
         }
       } catch (err) {
         console.warn("Dropdown notice:", err);
