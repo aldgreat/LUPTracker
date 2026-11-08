@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live It Up - Portal & Refund Management</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <title>Live It Up - Portal &amp; Refund Management</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -847,7 +846,7 @@
   <div id="portalToastContainer"></div>
 
   <!-- LEFT SIDEBAR -->
-  <aside id="sidebar" class="sidebar">
+  <aside id="sidebar" class="sidebar" style="display: none;">
     <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
 
     <div class="sidebar-section-title">Portals</div>
@@ -914,7 +913,7 @@
   <main class="main-wrapper">
 
     <!-- TOP NAVBAR -->
-    <header class="top-navbar">
+    <header class="top-navbar" style="display: none;">
       <h1 class="top-page-heading" id="topPageHeading">Refund Requests</h1>
       
       <div id="userBar" class="user-pill">
@@ -932,22 +931,55 @@
 
     <div class="content-area">
 
-      <!-- VIEW 1: LOGIN -->
-      <div id="loginView" class="view-page" style="max-width: 380px; margin: 4rem auto;">
-        <div class="portal-card" style="text-align: center; padding: 2rem;">
-          <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--primary-green);">Welcome Back</h2>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Sign in to access your portal.</p>
+      <!-- VIEW 1: AUTHENTICATION (LOGIN & REGISTRATION) -->
+      <div id="loginView" class="view-page active" style="max-width: 420px; margin: 3.5rem auto; width: 100%;">
+        <div class="portal-card" style="padding: 2.25rem 2rem; box-shadow: var(--shadow); border-radius: 12px;">
           
-          <div style="display: flex; flex-direction:column; gap:8px; align-items: center;">
-            <div id="g_id_onload"
-                 data-client_id="347207767403-9i6g3pucs3mbm4iqfpmtnevtgq07jhpe.apps.googleusercontent.com"
-                 data-callback="handleCredentialResponse"
-                 data-auto_select="false"
-                 data-use_fedcm_for_prompt="false">
-            </div>
-            <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"></div>
-            <button onclick="bypassLocalAuth()" class="btn btn-secondary btn-sm" style="margin-top:6px;">Continue as Local Agent</button>
+          <!-- Header -->
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h2 id="authCardTitle" style="font-size: 1.45rem; font-weight: 800; color: var(--primary-green); letter-spacing: -0.02em;">Welcome Back</h2>
+            <p id="authCardSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 4px;">Sign in to your Live It Up agent portal account.</p>
           </div>
+
+          <!-- Auth Form -->
+          <form id="authMainForm" onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            
+            <!-- Full Name (Registration only) -->
+            <div id="authFullNameGroup" style="display: none;">
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Full Name</label>
+              <input type="text" id="auth_fullname" placeholder="e.g. Jane Doe" autocomplete="name" />
+            </div>
+
+            <!-- Email Field -->
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Work Email</label>
+              <input type="email" id="auth_email" placeholder="name@letsliveitup.com" required autocomplete="email" />
+            </div>
+
+            <!-- Password Field -->
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Password</label>
+              <input type="password" id="auth_password" placeholder="••••••••" required minlength="6" autocomplete="current-password" />
+            </div>
+
+            <!-- Confirm Password (Registration only) -->
+            <div id="authConfirmPasswordGroup" style="display: none;">
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Confirm Password</label>
+              <input type="password" id="auth_confirm_password" placeholder="••••••••" minlength="6" autocomplete="new-password" />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="authSubmitBtn" class="btn" style="width: 100%; padding: 0.65rem; margin-top: 6px; font-size: 0.88rem;">
+              Sign In
+            </button>
+
+            <!-- Toggle between Login & Register -->
+            <div style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">
+              <span id="authToggleQuestion">Don't have an account?</span>
+              <a href="javascript:void(0)" onclick="toggleAuthMode()" id="authToggleLink" style="color: var(--primary-green); font-weight: 700; text-decoration: underline; margin-left: 4px;">Register here</a>
+            </div>
+
+          </form>
         </div>
       </div>
 
@@ -1082,7 +1114,7 @@
       </div>
 
       <!-- VIEW 3: TICKET FORMS -->
-	<div id="dashboardView" class="view-page active" style="max-width: 1050px;">
+      <div id="dashboardView" class="view-page" style="max-width: 1050px;">
         <div style="width: 100%; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
             <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Customer Support Intake Portals</h2>
@@ -1397,7 +1429,7 @@
       </div>
 
       <!-- VIEW 9: ADMIN SETTINGS & RBAC (MODULE 2 & 3) -->
-      <div id="adminSettingsView" class="view-page" style="max-width: 860px;">
+      <div id="adminSettingsView" class="view-page" style="max-width: 920px;">
         <!-- Maintenance Switch Control -->
         <div class="portal-card" style="margin-bottom: 1.5rem;">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
@@ -1419,7 +1451,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
             <div>
               <h3 style="margin: 0; font-size: 1.05rem; color: var(--primary-green);">Team Roles &amp; Permissions</h3>
-              <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">Assign agent, moderator, or admin privileges across team accounts.</p>
+              <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">Manage member privileges and approve registration access.</p>
             </div>
             <button onclick="loadUserProfilesTable()" class="btn btn-secondary btn-sm">Refresh List</button>
           </div>
@@ -1432,10 +1464,11 @@
                   <th>Email</th>
                   <th>Role</th>
                   <th>Status</th>
+                  <th>Access Approval</th>
                 </tr>
               </thead>
               <tbody id="admin-user-table-body">
-                <tr><td colspan="4" style="padding: 14px; text-align: center; color: var(--text-muted);">Loading team profiles...</td></tr>
+                <tr><td colspan="5" style="padding: 14px; text-align: center; color: var(--text-muted);">Loading team profiles...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1881,7 +1914,7 @@
     let currentActiveTaskId = null;
 
     // RBAC, Maintenance & Chat State
-    let currentUserProfile = { role: 'agent', full_name: 'Agent' };
+    let currentUserProfile = { role: 'agent', full_name: 'Agent', is_approved: false };
     let isVibeInMaintenance = true;
     let currentChatChannel = 'general';
     let chatChannelSubscription = null;
@@ -1948,30 +1981,37 @@
       return String(d).slice(0, 10);
     }
 
-    // UNIFIED VIEW ROUTER (Hard Maintenance Guard & Admin Permissions)
+    // STRICT UNIFIED VIEW ROUTER (Hard Auth Gate & Maintenance Redirection)
     window.switchView = function(viewId) {
-      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
-      const isAdmin = (currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com');
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || null;
+
+      // Hard gate: If unauthenticated, hide everything and force login
+      if (!userSession && viewId !== 'loginView') {
+        viewId = 'loginView';
+      }
+
+      const isAdmin = userSession && ((currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com') || (userSession.email === 'alvin@letsliveitup.com'));
 
       if (viewId === 'refundsQueueView' && isVibeInMaintenance && !isAdmin) {
         showToast('Vibe Refunding is currently offline for maintenance.', 'error');
         viewId = 'dashboardView';
       }
 
+      // Hide all content views
       document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
       const target = document.getElementById(viewId);
       if (target) target.classList.add('active');
 
       const sidebar = document.getElementById('sidebar');
-      const userBar = document.getElementById('userBar');
+      const topNavbar = document.querySelector('.top-navbar');
       const heading = document.getElementById('topPageHeading');
 
-      if (viewId === 'loginView') {
+      if (viewId === 'loginView' || !userSession) {
         if (sidebar) sidebar.style.display = 'none';
-        if (userBar) userBar.style.display = 'none';
+        if (topNavbar) topNavbar.style.display = 'none';
       } else {
         if (sidebar) sidebar.style.display = 'flex';
-        if (userBar) userBar.style.display = 'flex';
+        if (topNavbar) topNavbar.style.display = 'flex';
         
         document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
         const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
@@ -2004,6 +2044,22 @@
         checkForUnreadAnnouncements();
       }
     };
+
+    // Hash change protection
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || null;
+      if (!userSession) {
+        switchView('loginView');
+        return;
+      }
+      const isAdmin = (currentUserProfile.role === 'admin') || (userSession.email === 'alvin@artofenso.com');
+      if ((hash === 'vibe' || hash === 'refundsQueueView') && isVibeInMaintenance && !isAdmin) {
+        showToast('Vibe Refunding is currently offline for maintenance.', 'error');
+        window.location.hash = '#dashboard';
+        switchView('dashboardView');
+      }
+    });
 
     // ============================================================
     // MODULE 2: MAINTENANCE MODE
@@ -2068,23 +2124,25 @@
     };
 
     // ============================================================
-    // MODULE 3: AUTH, PROFILES & RBAC
+    // MODULE 3: AUTH, PROFILES & RBAC WITH APPROVAL GATE
     // ============================================================
     async function loadUserProfile(email) {
       if (!db || !email) return;
       try {
-        const { data, error } = await db.from('profiles').select('*').eq('email', email).single();
+        const { data, error } = await db.from('profiles').select('*').eq('email', email).maybeSingle();
         if (!error && data) {
           currentUserProfile = data;
         } else {
+          const isHardcodedAdmin = (email === 'alvin@artofenso.com' || email === 'alvin@letsliveitup.com');
           currentUserProfile = {
             email: email,
             full_name: email.split('@')[0],
-            role: email === 'alvin@artofenso.com' ? 'admin' : 'agent'
+            role: isHardcodedAdmin ? 'admin' : 'agent',
+            is_approved: isHardcodedAdmin
           };
         }
       } catch (e) {
-        currentUserProfile = { email: email, full_name: 'Agent', role: 'agent' };
+        currentUserProfile = { email: email, full_name: 'Agent', role: 'agent', is_approved: false };
       }
 
       const pEmail = document.getElementById('profile-email');
@@ -2134,28 +2192,40 @@
     window.loadUserProfilesTable = async function() {
       const tbody = document.getElementById('admin-user-table-body');
       if (!tbody || !db) return;
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px;">Loading profiles...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:12px;">Loading profiles...</td></tr>';
 
       const { data: profiles, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
       if (error || !profiles || profiles.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:12px; color:var(--text-muted);">No profiles recorded yet.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:12px; color:var(--text-muted);">No profiles recorded yet.</td></tr>';
         return;
       }
 
-      tbody.innerHTML = profiles.map(p => `
-        <tr style="border-bottom: 1px solid var(--border-color);">
-          <td style="font-weight: 700;">${p.full_name || 'Agent'}</td>
-          <td>${p.email}</td>
-          <td>
-            <select onchange="updateUserRole('${p.id}', this.value)" style="padding: 3px 6px; font-size: 0.78rem;">
-              <option value="agent" ${p.role === 'agent' ? 'selected' : ''}>Agent</option>
-              <option value="moderator" ${p.role === 'moderator' ? 'selected' : ''}>Moderator</option>
-              <option value="admin" ${p.role === 'admin' ? 'selected' : ''}>Admin</option>
-            </select>
-          </td>
-          <td><span style="color:#16a34a; font-weight:700; font-size:0.75rem;">ACTIVE</span></td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = profiles.map(p => {
+        const isApproved = p.is_approved === true;
+        const approvalBadge = isApproved
+          ? '<span style="color:#16a34a; font-weight:700; font-size:0.75rem;">APPROVED</span>'
+          : '<span style="color:#f59e0b; font-weight:700; font-size:0.75rem;">PENDING</span>';
+
+        const actionBtn = isApproved
+          ? `<button class="btn btn-secondary btn-sm" style="font-size:0.72rem; color:#ef4444;" onclick="setUserApproval('${p.id}', false)">Revoke</button>`
+          : `<button class="btn btn-sm" style="font-size:0.72rem; background:#16a34a;" onclick="setUserApproval('${p.id}', true)">Approve ✓</button>`;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="font-weight: 700;">${p.full_name || 'Agent'}</td>
+            <td>${p.email}</td>
+            <td>
+              <select onchange="updateUserRole('${p.id}', this.value)" style="padding: 3px 6px; font-size: 0.78rem;">
+                <option value="agent" ${p.role === 'agent' ? 'selected' : ''}>Agent</option>
+                <option value="moderator" ${p.role === 'moderator' ? 'selected' : ''}>Moderator</option>
+                <option value="admin" ${p.role === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </td>
+            <td>${approvalBadge}</td>
+            <td>${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
     };
 
     window.updateUserRole = async function(userId, newRole) {
@@ -2163,6 +2233,17 @@
       const { error } = await db.from('profiles').update({ role: newRole }).eq('id', userId);
       if (error) showToast('Failed to update role: ' + error.message, 'error');
       else showToast('User role updated!', 'success');
+    };
+
+    window.setUserApproval = async function(userId, approved) {
+      if (!db) return;
+      const { error } = await db.from('profiles').update({ is_approved: approved, updated_at: new Date().toISOString() }).eq('id', userId);
+      if (error) {
+        showToast('Failed to update status: ' + error.message, 'error');
+      } else {
+        showToast(`User ${approved ? 'approved' : 'access revoked'}!`, 'success');
+        loadUserProfilesTable();
+      }
     };
 
     // ============================================================
@@ -2232,12 +2313,16 @@
       const agentEmail = userSession.email || 'alvin@artofenso.com';
       const senderName = currentUserProfile.full_name || agentEmail.split('@')[0];
 
-      // Temporary ID placeholder
-      const tempUserId = "00000000-0000-0000-0000-000000000000";
+      // Query actual sender profile ID
+      let senderId = currentUserProfile.id;
+      if (!senderId) {
+        const { data: prof } = await db.from('profiles').select('id').eq('email', agentEmail).maybeSingle();
+        senderId = prof?.id;
+      }
 
       const { error } = await db.from('chat_messages').insert([{
         channel_id: currentChatChannel,
-        user_id: currentUserProfile.id || tempUserId,
+        user_id: senderId,
         user_name: senderName,
         user_email: agentEmail,
         content: content
@@ -3105,47 +3190,167 @@
     };
 
     // ============================================================
-    // AUTHENTICATION & BOOTSTRAP
+    // NATIVE SUPABASE AUTH (LOGIN & REGISTRATION WITH APPROVAL GATE)
     // ============================================================
-    window.bypassLocalAuth = function() {
-      const fallbackSession = {
-        email: "alvin@artofenso.com",
-        name: "Alvin",
-        picture: "",
-        expiry: new Date().getTime() + (365 * 24 * 60 * 60 * 1000)
-      };
-      localStorage.setItem('user_session', JSON.stringify(fallbackSession));
-      initAuth();
+    let isRegisterMode = false;
+
+    window.toggleAuthMode = function() {
+      isRegisterMode = !isRegisterMode;
+
+      const title = document.getElementById('authCardTitle');
+      const subtitle = document.getElementById('authCardSubtitle');
+      const nameGroup = document.getElementById('authFullNameGroup');
+      const confirmGroup = document.getElementById('authConfirmPasswordGroup');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleQuestion = document.getElementById('authToggleQuestion');
+      const toggleLink = document.getElementById('authToggleLink');
+      const nameInput = document.getElementById('auth_fullname');
+      const confirmInput = document.getElementById('auth_confirm_password');
+
+      if (isRegisterMode) {
+        if (title) title.innerText = 'Create Account';
+        if (subtitle) subtitle.innerText = 'Register an agent account. New accounts require admin approval before access.';
+        if (nameGroup) nameGroup.style.display = 'block';
+        if (confirmGroup) confirmGroup.style.display = 'block';
+        if (nameInput) nameInput.required = true;
+        if (confirmInput) confirmInput.required = true;
+        if (submitBtn) submitBtn.innerText = 'Create Account';
+        if (toggleQuestion) toggleQuestion.innerText = 'Already have an account?';
+        if (toggleLink) toggleLink.innerText = 'Sign In';
+      } else {
+        if (title) title.innerText = 'Welcome Back';
+        if (subtitle) subtitle.innerText = 'Sign in to your Live It Up agent portal account.';
+        if (nameGroup) nameGroup.style.display = 'none';
+        if (confirmGroup) confirmGroup.style.display = 'none';
+        if (nameInput) nameInput.required = false;
+        if (confirmInput) confirmInput.required = false;
+        if (submitBtn) submitBtn.innerText = 'Sign In';
+        if (toggleQuestion) toggleQuestion.innerText = "Don't have an account?";
+        if (toggleLink) toggleLink.innerText = 'Register here';
+      }
     };
 
-    function parseJwt(token) {
+    window.handleAuthSubmit = async function(e) {
+      e.preventDefault();
+      if (!db) {
+        showToast('Supabase client not connected.', 'error');
+        return;
+      }
+
+      const email = document.getElementById('auth_email').value.trim().toLowerCase();
+      const password = document.getElementById('auth_password').value;
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const originalText = submitBtn ? submitBtn.innerText : 'Submit';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = isRegisterMode ? 'Creating Account...' : 'Signing In...';
+      }
+
       try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-        return JSON.parse(jsonPayload);
-      } catch(e) { return null; }
-    }
+        if (isRegisterMode) {
+          const fullName = document.getElementById('auth_fullname').value.trim();
+          const confirmPassword = document.getElementById('auth_confirm_password').value;
 
-    window.handleCredentialResponse = function(response) {
-      const user = parseJwt(response.credential);
-      if (!user) return;
-      const sessionData = {
-        email: user.email,
-        name: user.name,
-        picture: user.picture,
-        expiry: new Date().getTime() + (30 * 24 * 60 * 60 * 1000)
-      };
-      localStorage.setItem('user_session', JSON.stringify(sessionData));
-      initAuth();
+          if (password !== confirmPassword) {
+            showToast('Passwords do not match.', 'error');
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = originalText; }
+            return;
+          }
+
+          // 1. Supabase Auth registration
+          const { data: authData, error: authErr } = await db.auth.signUp({
+            email: email,
+            password: password,
+            options: { data: { full_name: fullName } }
+          });
+
+          if (authErr) throw authErr;
+
+          const isHardcodedAdmin = (email === 'alvin@artofenso.com' || email === 'alvin@letsliveitup.com');
+
+          // 2. Insert into profiles with approval status
+          await db.from('profiles').upsert([{
+            id: authData.user ? authData.user.id : undefined,
+            email: email,
+            full_name: fullName,
+            role: isHardcodedAdmin ? 'admin' : 'agent',
+            is_approved: isHardcodedAdmin
+          }], { onConflict: 'email' });
+
+          // Sign out immediately so pending accounts cannot access
+          await db.auth.signOut();
+          localStorage.removeItem('user_session');
+
+          if (isHardcodedAdmin) {
+            showToast('Admin account registered! Please sign in.', 'success');
+          } else {
+            showToast('Registration submitted! Your account is pending admin approval before access is granted.', 'info');
+          }
+
+          toggleAuthMode();
+
+        } else {
+          // --- LOGIN ---
+          const { data: loginData, error: loginErr } = await db.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+          if (loginErr) throw loginErr;
+
+          // Check approval state in public.profiles
+          const { data: prof } = await db
+            .from('profiles')
+            .select('id, full_name, role, is_approved')
+            .eq('email', email)
+            .maybeSingle();
+
+          const isHardcodedAdmin = (email === 'alvin@artofenso.com' || email === 'alvin@letsliveitup.com');
+          const isApproved = isHardcodedAdmin || (prof && prof.is_approved === true);
+
+          if (!isApproved) {
+            await db.auth.signOut();
+            localStorage.removeItem('user_session');
+            showToast('Your account is pending admin approval. Please contact Alvin.', 'error');
+            return;
+          }
+
+          const displayName = prof?.full_name || email.split('@')[0];
+          const sessionPayload = {
+            email: email,
+            name: displayName,
+            expiry: new Date().getTime() + (7 * 24 * 60 * 60 * 1000)
+          };
+          localStorage.setItem('user_session', JSON.stringify(sessionPayload));
+
+          showToast(`Welcome back, ${displayName}!`, 'success');
+          await initAuth();
+        }
+      } catch (err) {
+        showToast(err.message || 'Authentication failed', 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+        }
+      }
     };
 
-    window.logout = function() {
+    window.logout = async function() {
+      if (db) {
+        try { await db.auth.signOut(); } catch(e) {}
+      }
       localStorage.removeItem('user_session');
+      currentUserProfile = { role: 'agent', full_name: 'Agent', is_approved: false };
+
+      // Completely clear out any active view
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+
       switchView('loginView');
+      showToast('You have been signed out.', 'info');
     };
 
-async function initAuth() {
+    async function initAuth() {
       let session = null;
       const sessionRaw = localStorage.getItem('user_session');
       if (sessionRaw) {
@@ -3158,26 +3363,27 @@ async function initAuth() {
         } catch(e) { session = null; }
       }
 
-      if (!session && window.location.protocol === 'file:') {
-        bypassLocalAuth();
-        return;
-      }
-
-      if (session) {
+      if (session && session.email) {
         document.getElementById('userEmail').innerText = session.email;
         const avatarEl = document.getElementById('topNavAvatar');
         if (avatarEl) avatarEl.innerText = (session.name || session.email || 'A').charAt(0).toUpperCase();
 
         await loadUserProfile(session.email);
+
+        // Security check: Verify approval again on startup
+        const isHardcodedAdmin = (session.email === 'alvin@artofenso.com' || session.email === 'alvin@letsliveitup.com');
+        if (!isHardcodedAdmin && currentUserProfile && currentUserProfile.is_approved !== true) {
+          await logout();
+          showToast('Account approval revoked or pending. Access blocked.', 'error');
+          return;
+        }
+
         await loadMaintenanceSettings();
         initDropdownOptions();
         initChatRealtime();
 
-        // 1. Determine if current user is an admin
-        const isAdmin = (currentUserProfile.role === 'admin') || (session.email === 'alvin@artofenso.com');
+        const isAdmin = (currentUserProfile.role === 'admin') || isHardcodedAdmin;
 
-        // 2. Guard the default view on launch:
-        // If maintenance is ON and user is NOT admin, route to Ticket Forms
         if (isVibeInMaintenance && !isAdmin) {
           switchView('dashboardView');
         } else {
