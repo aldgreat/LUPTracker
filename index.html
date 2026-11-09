@@ -1901,6 +1901,29 @@
       </div>
 	  
     </div>
+	
+	<!-- ANNOUNCEMENT MANDATORY MODAL -->
+  <dialog id="mandatoryUpdateModal" style="max-width: 520px; border-radius: 14px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
+    <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 1.5rem;">📢</span>
+        <div>
+          <span class="badge-v1" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">Mandatory Update</span>
+          <h3 id="announcementTitle" style="margin-top: 4px; font-size: 1.15rem; color: var(--primary-green);">Important Team Update</h3>
+        </div>
+      </div>
+      <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 220px; overflow-y: auto;"></div>
+      <div>
+        <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Verification Keyword:</label>
+        <input type="text" id="verificationKeywordInput" placeholder="Enter keyword here..." autocomplete="off" />
+        <span id="verificationErrorMsg" style="color: #ef4444; font-size: 0.78rem; display: none; margin-top: 4px; font-weight: 600;">Incorrect keyword. Please read the note carefully.</span>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+        <button onclick="confirmAnnouncementRead()" class="btn btn-sm" style="width: 100%; padding: 0.65rem;">I Have Read &amp; Understood This Update</button>
+      </div>
+    </div>
+  </dialog>
+  
   </main>
 
   <!-- ============================================================ -->
@@ -3773,22 +3796,38 @@
     }
 
     function showNextQueuedAnnouncement() {
-      if (pendingUnreadAnnouncements.length === 0) {
+      if (!pendingUnreadAnnouncements || pendingUnreadAnnouncements.length === 0) {
         currentActiveAnnouncement = null;
         const modal = document.getElementById('mandatoryUpdateModal');
         if (modal && modal.open) modal.close();
         return;
       }
+
       currentActiveAnnouncement = pendingUnreadAnnouncements.shift();
-      document.getElementById('announcementTitle').innerText = currentActiveAnnouncement.title;
-      document.getElementById('announcementBody').innerHTML = currentActiveAnnouncement.body;
-      document.getElementById('verificationKeywordInput').value = '';
-      document.getElementById('verificationErrorMsg').style.display = 'none';
-      
+
       const modal = document.getElementById('mandatoryUpdateModal');
-      if (modal && !modal.open) {
-        modal.showModal();
-        modal.oncancel = (e) => e.preventDefault();
+      const titleEl = document.getElementById('announcementTitle');
+      const bodyEl = document.getElementById('announcementBody');
+      const inputEl = document.getElementById('verificationKeywordInput');
+      const errEl = document.getElementById('verificationErrorMsg');
+
+      if (!modal) {
+        console.error("Critical: #mandatoryUpdateModal dialog missing from DOM");
+        return;
+      }
+
+      if (titleEl) titleEl.innerText = currentActiveAnnouncement.title || 'Team Update';
+      if (bodyEl) bodyEl.innerHTML = currentActiveAnnouncement.body || '';
+      if (inputEl) inputEl.value = '';
+      if (errEl) errEl.style.display = 'none';
+
+      try {
+        if (!modal.open) {
+          modal.showModal();
+          modal.oncancel = (e) => e.preventDefault();
+        }
+      } catch (err) {
+        console.warn("Could not display announcement modal:", err);
       }
     }
 
