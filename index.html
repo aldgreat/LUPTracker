@@ -1,0 +1,4335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live It Up - Portal &amp; Refund Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Supabase UMD Client (v2) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- Chart.js for Reports Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      /* LIGHT THEME */
+      --bg-color: #F8F6F0;
+      --card-bg: #FFFFFF;
+      --sidebar-bg: #0E3A2F;
+      --sidebar-text: #E8F2ED;
+      --sidebar-hover: #1B5E4B;
+      --sidebar-active: rgba(255, 255, 255, 0.15);
+      --primary-green: #0E3A2F;
+      --accent-green: #1B5E4B;
+      --accent-badge: #E8F2ED;
+      --accent-badge-text: #0E3A2F;
+      --text-dark: #1A221E;
+      --text-muted: #64748b;
+      --border-color: #e2ece6;
+      --input-bg: #FAFAFA;
+      --table-th-bg: #fafbfa;
+      --table-hover-bg: #f9fbf9;
+      --btn-action-bg: #e2e8f0;
+      --btn-action-text: #0f172a;
+      --btn-action-border: #cbd5e1;
+      --shadow: 0 4px 16px rgba(14, 58, 47, 0.05);
+    }
+
+    body.dark-mode {
+      /* VIBE DARK THEME */
+      --bg-color: #0b1411;
+      --card-bg: #121e1a;
+      --sidebar-bg: #08110e;
+      --sidebar-text: #E8F2ED;
+      --sidebar-hover: #14352b;
+      --sidebar-active: rgba(255, 255, 255, 0.15);
+      --primary-green: #22c55e;
+      --accent-green: #16a34a;
+      --accent-badge: #1a3328;
+      --accent-badge-text: #86efac;
+      --text-dark: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #243830;
+      --input-bg: #182823;
+      --table-th-bg: #0e1815;
+      --table-hover-bg: #1a2c26;
+      --btn-action-bg: #334155;
+      --btn-action-text: #ffffff;
+      --btn-action-border: #475569;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      background-color: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      width: 140px;
+      height: auto;
+      margin-bottom: 2rem;
+      filter: brightness(0) invert(1);
+    }
+	  
+    .sidebar-section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(232, 242, 237, 0.55);
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+    }
+
+    .nav-list { list-style: none; margin-bottom: 1.5rem; }
+    .nav-item { margin-bottom: 0.25rem; }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      color: var(--sidebar-text);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: background 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover { background-color: var(--sidebar-hover); }
+    .nav-link.active {
+      background-color: var(--sidebar-hover);
+      font-weight: 700;
+    }
+
+    /* MAIN WRAPPER */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .top-navbar {
+      height: 56px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .top-page-heading {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--card-bg);
+      padding: 3px 10px 3px 4px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+    }
+
+    .user-avatar { width: 26px; height: 26px; border-radius: 50%; font-size: 0.75rem; }
+    .user-email { font-size: 0.82rem; font-weight: 600; color: var(--text-dark); }
+    .logout-btn { background: none; border: none; color: #f87171; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+
+    .theme-toggle-btn {
+      background: var(--accent-badge);
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+      padding: 3px 8px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .content-area {
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+    }
+
+    .view-page { display: none; width: 100%; margin: 0 auto; flex-direction: column; }
+    .view-page.active { display: flex; }
+
+    .portal-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      width: 100%;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .filters-wrapper {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem 0.85rem;
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 1200px) { .filters-wrapper { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 768px) { .filters-wrapper { grid-template-columns: repeat(2, 1fr); } }
+
+    .filter-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .filter-item label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="search"], select, textarea { 
+      width: 100%; 
+      padding: 0.45rem 0.65rem; 
+      border: 1px solid var(--border-color); 
+      border-radius: 6px; 
+      font-family: inherit; 
+      font-size: 0.84rem; 
+      background: var(--card-bg); 
+      color: var(--text-dark);
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-green);
+    }
+
+    .btn { 
+      display: inline-flex; 
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 0.9rem; 
+      background-color: var(--primary-green); 
+      color: #ffffff; 
+      border: none; 
+      font-weight: 600; 
+      font-size: 0.84rem; 
+      border-radius: 6px; 
+      cursor: pointer; 
+      text-decoration: none; 
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    body.dark-mode .btn {
+      background-color: #22c55e;
+      color: #0b1714;
+      font-weight: 700;
+    }
+    .btn:hover { opacity: 0.9; }
+
+    .btn-secondary {
+      background: var(--btn-action-bg);
+      color: var(--btn-action-text);
+      border: 1px solid var(--btn-action-border);
+    }
+    .btn-secondary:hover { opacity: 0.88; }
+
+    .btn-blue {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      border: 1px solid #0369a1;
+    }
+    .btn-blue:hover { background-color: #0369a1 !important; }
+
+    .btn-sm {
+      padding: 0.28rem 0.65rem;
+      font-size: 0.78rem;
+      border-radius: 5px;
+      font-weight: 600;
+    }
+
+    .actions-cell-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .comments-btn-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .btn-action-show {
+      width: 115px;
+      min-width: 115px;
+      height: 28px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--btn-action-bg);
+      color: var(--btn-action-text);
+      border: 1px solid var(--btn-action-border);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-action-edit {
+      width: 52px;
+      min-width: 52px;
+      height: 28px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--btn-action-bg);
+      color: var(--btn-action-text);
+      border: 1px solid var(--btn-action-border);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-action-show:hover, .btn-action-edit:hover { opacity: 0.85; }
+
+    .comments-count-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background-color: #0284c7;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      min-width: 17px;
+      height: 17px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .status-summary-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0;
+    }
+    .badge-v1 {
+      display: inline-block;
+      background-color: var(--accent-badge);
+      color: var(--accent-badge-text);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid var(--border-color);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    .refund-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .refund-table th {
+      background-color: var(--table-th-bg);
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 0.55rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .refund-table td {
+      padding: 0.45rem 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+    .refund-table tr:hover td { background-color: var(--table-hover-bg); }
+
+    .link-tag {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .link-tag:hover { text-decoration: underline; }
+
+    /* MODAL STYLES */
+    dialog {
+      border: none;
+      border-radius: 12px;
+      padding: 0;
+      max-width: 640px;
+      width: 90%;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+      margin: auto;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+    dialog::backdrop { background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(2px); }
+    .modal-box {
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .modal-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-green);
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .modal-body-scroll {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .vibe-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .vibe-row.align-start { align-items: flex-start; }
+    .vibe-label { font-size: 0.82rem; font-weight: 600; color: var(--text-dark); }
+    .vibe-input-wrap { width: 100%; }
+    .field-link {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 0.76rem;
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .field-link:hover { text-decoration: underline; }
+    .read-only-text { font-size: 0.84rem; color: var(--text-muted); padding: 0.2rem 0; }
+    .dates-header { font-size: 1rem; font-weight: 700; margin: 1.25rem 0 0.75rem 0; color: var(--primary-green); }
+    .last-modified-banner { font-size: 0.75rem; color: var(--text-muted); margin: 0.5rem 0 1rem 0; font-style: italic; }
+    .modal-footer {
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--input-bg);
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+    .comment-count-pill {
+      background: #0284c7;
+      color: #ffffff;
+      border-radius: 10px;
+      padding: 1px 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+    .embedded-policy-alert {
+      display: none;
+      background: var(--accent-badge);
+      border: 1px solid var(--primary-green);
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+	
+    /* TICKET FORMS GUI */
+    .ticket-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.15rem;
+      width: 100%;
+    }
+
+    @media (max-width: 820px) {
+      .ticket-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    .intake-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.35rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .intake-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      opacity: 0.85;
+    }
+
+    .intake-card-emerald::before { background: #10b981; }
+    .intake-card-blue::before { background: #0284c7; }
+    .intake-card-amber::before { background: #f59e0b; }
+    .intake-card-purple::before { background: #a855f7; }
+
+    .intake-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    body.dark-mode .intake-card:hover {
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .intake-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.9rem;
+    }
+
+    .intake-icon-pill {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .intake-chips-wrap { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .intake-meta-chip {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .intake-card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .intake-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .intake-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-color);
+      margin-top: 1rem;
+    }
+
+    .intake-footer-note { font-size: 0.72rem; color: var(--text-muted); }
+    .intake-footer-note code {
+      font-family: inherit;
+      background: var(--input-bg);
+      padding: 1px 4px;
+      border-radius: 3px;
+      border: 1px solid var(--border-color);
+      font-size: 0.7rem;
+    }
+
+    .intake-launch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .intake-launch-btn:hover {
+      background: var(--primary-green);
+      color: #ffffff;
+      border-color: var(--primary-green);
+    }
+
+    body.dark-mode .intake-launch-btn:hover {
+      background: #22c55e;
+      color: #0b1411;
+      border-color: #22c55e;
+    }
+	
+    /* KNOWLEDGE BASE NOTION / ZENDESK STYLE GUI */
+    .kb-container {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 1.25rem;
+      width: 100%;
+      height: calc(100vh - 120px);
+      min-height: 550px;
+    }
+
+    @media (max-width: 900px) {
+      .kb-container { grid-template-columns: 1fr; height: auto; }
+    }
+
+    .kb-sidebar-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .kb-category-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 0.75rem;
+      background: var(--input-bg);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .kb-tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 0.35rem 0.2rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .kb-tab-btn.active {
+      background: var(--card-bg);
+      color: var(--text-dark);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .kb-articles-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .kb-article-item {
+      padding: 0.65rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .kb-article-item:hover { background: var(--input-bg); }
+    .kb-article-item.active { background: var(--input-bg); border-color: var(--primary-green); }
+
+    .kb-article-item-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .kb-chip-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(14, 58, 47, 0.08);
+      color: var(--primary-green);
+      margin-right: 4px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+    body.dark-mode .kb-chip-tag {
+      background: rgba(34, 197, 94, 0.15);
+      color: #86efac;
+    }
+
+    .kb-reader-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .kb-reader-header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .kb-reader-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.3px;
+      margin-bottom: 0.35rem;
+    }
+
+    .kb-reader-body {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-dark);
+    }
+
+    .kb-macro-block {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-top: 1.25rem;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .kb-macro-header {
+      background: rgba(0,0,0,0.03);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kb-macro-content {
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.84rem;
+      white-space: pre-wrap;
+      color: var(--text-dark);
+      line-height: 1.5;
+    }
+
+    /* ROLE PERMISSION UTILITIES */
+    .mod-or-admin-only {
+      display: none !important;
+    }
+    .admin-only {
+      display: none !important;
+    }
+
+    /* SLACK-LIKE TEAM MESSENGER STYLES */
+    .slack-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      height: calc(100vh - 95px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 768px) {
+      .slack-layout { grid-template-columns: 1fr; }
+      .slack-sidebar { display: none; }
+    }
+    .slack-sidebar {
+      background: var(--input-bg);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .slack-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 4px 14px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .slack-add-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.15rem;
+      line-height: 1;
+      padding: 0 4px;
+      border-radius: 4px;
+      transition: all 0.15s ease;
+    }
+    .slack-add-btn:hover {
+      background: rgba(0,0,0,0.06);
+      color: var(--primary-green);
+    }
+    .slack-item-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      margin: 1px 6px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-dark);
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.12s ease;
+      width: calc(100% - 12px);
+    }
+    .slack-item-btn:hover { background: rgba(0,0,0,0.04); }
+    body.dark-mode .slack-item-btn:hover { background: rgba(255,255,255,0.05); }
+    .slack-item-btn.active {
+      background: rgba(34, 197, 94, 0.18) !important;
+      color: var(--primary-green) !important;
+      font-weight: 700 !important;
+    }
+    body.dark-mode .slack-item-btn.active { color: #86efac !important; }
+    .online-indicator {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #94a3b8;
+      flex-shrink: 0;
+      border: 1.5px solid var(--card-bg);
+      display: inline-block;
+      transition: background 0.2s ease;
+    }
+    .online-indicator.online {
+      background: #22c55e !important;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
+    }
+    .unread-counter-badge {
+      margin-left: auto;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .slack-chat-header {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+    }
+    .slack-messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--card-bg);
+    }
+    .slack-input-bar {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--input-bg);
+    }
+    .slack-input-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-attach-btn, .chat-emoji-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.05rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .chat-attach-btn:hover, .chat-emoji-btn:hover {
+      background: var(--card-bg);
+      color: var(--primary-green);
+    }
+    .emoji-popover {
+      display: none;
+      position: absolute;
+      bottom: 60px;
+      left: 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: var(--shadow);
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      z-index: 999;
+    }
+    .emoji-item {
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 4px;
+      text-align: center;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+    }
+    .emoji-item:hover {
+      background: var(--input-bg);
+    }
+
+    /* TOAST NOTIFICATION CONTAINER */
+    #portalToastContainer {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .portal-toast {
+      pointer-events: auto;
+      background: var(--card-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary-green);
+      padding: 10px 16px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      font-size: 0.84rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 260px;
+      max-width: 380px;
+    }
+    .portal-toast.error { border-left-color: #ef4444; }
+    .portal-toast.info { border-left-color: #0284c7; }
+  </style>
+</head>
+<body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="portalToastContainer"></div>
+
+  <!-- LEFT SIDEBAR -->
+  <aside id="sidebar" class="sidebar" style="display: none;">
+    <img src="LiU_logo_green.png" alt="Live It Up Logo" class="sidebar-logo" />
+
+    <div class="sidebar-section-title">Portals</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="#vibe" id="nav-vibe-refunds" class="nav-link" onclick="switchView('refundsQueueView'); return false;">
+          <span class="nav-icon">🔄</span>
+          <span class="nav-label">Vibe Refunding</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#dashboard" id="nav-ticket-forms" class="nav-link" onclick="switchView('dashboardView'); return false;">
+          <span class="nav-icon">🎫</span>
+          <span class="nav-label">Ticket Forms</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a onclick="switchView('reportsView')" class="nav-link" id="nav-reports-link">
+          <span id="nav-reports-icon">📊</span> <span id="nav-reports-label">Search &amp; Reports</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Collaboration</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a href="#messenger" class="nav-link" id="nav-messenger" onclick="switchView('messengerView'); return false;">
+          <span class="nav-icon">💬</span>
+          <span class="nav-label">Team Messenger</span>
+          <span id="unread-chat-badge" class="unread-counter-badge" style="display:none;">0</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#profile" class="nav-link" id="nav-profile" onclick="switchView('profileView'); return false;">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Profile &amp; Account</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-title">Knowledge Base</div>
+    <ul class="nav-list">
+      <li class="nav-item">
+        <a id="nav-kb-playbooks" onclick="openKnowledgeBaseCategory('playbook')" class="nav-link">📖 Playbooks</a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-kb-macros" onclick="openKnowledgeBaseCategory('macro')" class="nav-link">💬 Macro Guides</a>
+      </li>
+      <li class="nav-item">
+        <a id="nav-kb-faqs" onclick="openKnowledgeBaseCategory('faq')" class="nav-link">❓ Internal FAQs</a>
+      </li>
+    </ul>
+	  
+    <div class="sidebar-section-title admin-section-header" style="display: none;">Admin</div>
+    <ul class="nav-list">
+      <li class="nav-item admin-only">
+        <a onclick="switchView('announcementsManagerView')" class="nav-link">📢 Manage Updates</a>
+      </li>
+      <li class="nav-item admin-only" id="sidebar-admin-settings-item">
+        <a href="#admin-settings" class="nav-link" id="nav-admin-settings" onclick="switchView('adminSettingsView'); return false;">
+          <span class="nav-icon">🛡️</span>
+          <span class="nav-label">Admin Settings</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="main-wrapper">
+
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar" style="display: none;">
+      <h1 class="top-page-heading" id="topPageHeading">Refund Requests</h1>
+      
+      <div id="userBar" class="user-pill">
+        <button onclick="openAgentNoticeBoard()" class="theme-toggle-btn" title="View Team Announcements Notice Board">
+          📢 <span style="font-size:0.75rem;">Notices</span>
+        </button>
+        <button onclick="toggleDarkMode()" class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <span id="themeToggleIcon">🌙</span> <span id="themeToggleText">Dark</span>
+        </button>
+        <div class="user-avatar" id="topNavAvatar" style="background:#0ea5e9; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700;">A</div>
+        <span id="userEmail" class="user-email">user@letsliveitup.com</span>
+        <button onclick="logout()" class="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- VIEW 1: AUTHENTICATION -->
+      <div id="loginView" class="view-page active" style="max-width: 420px; margin: 3.5rem auto; width: 100%;">
+        <div class="portal-card" style="padding: 2.25rem 2rem; box-shadow: var(--shadow); border-radius: 12px;">
+          
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <h2 id="authCardTitle" style="font-size: 1.45rem; font-weight: 800; color: var(--primary-green); letter-spacing: -0.02em;">Welcome Back</h2>
+            <p id="authCardSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 4px;">Sign in to your Live It Up agent portal account.</p>
+          </div>
+
+          <form id="authMainForm" onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            <div id="authFullNameGroup" style="display: none;">
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Full Name</label>
+              <input type="text" id="auth_fullname" placeholder="e.g. Jane Doe" autocomplete="name" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Work Email</label>
+              <input type="email" id="auth_email" placeholder="name@letsliveitup.com" required autocomplete="email" />
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Password</label>
+              <input type="password" id="auth_password" placeholder="••••••••" required minlength="6" autocomplete="current-password" />
+            </div>
+
+            <div id="authConfirmPasswordGroup" style="display: none;">
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Confirm Password</label>
+              <input type="password" id="auth_confirm_password" placeholder="••••••••" minlength="6" autocomplete="new-password" />
+            </div>
+
+            <button type="submit" id="authSubmitBtn" class="btn" style="width: 100%; padding: 0.65rem; margin-top: 6px; font-size: 0.88rem;">
+              Sign In
+            </button>
+
+            <div style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: var(--text-muted);">
+              <span id="authToggleQuestion">Don't have an account?</span>
+              <a href="javascript:void(0)" onclick="toggleAuthMode()" id="authToggleLink" style="color: var(--primary-green); font-weight: 700; text-decoration: underline; margin-left: 4px;">Register here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW 2: REFUND QUEUE -->
+      <div id="refundsQueueView" class="view-page">
+        <div class="portal-card">
+
+          <div class="search-row">
+            <input 
+              type="search" 
+              id="queueSearchInput" 
+              placeholder="Search by customer email, order #, task ID, name..." 
+              onkeydown="if(event.key==='Enter') executeQueueFetch(0)"
+            />
+            <button onclick="executeQueueFetch(0)" class="btn">Search</button>
+          </div>
+
+          <div class="filters-wrapper">
+            <div class="filter-item">
+              <label>Status</label>
+              <select id="queueStatusFilter" onchange="executeQueueFetch(0)">
+                <option value="">— All</option>
+                <option value="New">New</option>
+                <option value="Follow Up">Follow Up</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Denied">Denied</option>
+                <option value="Failed">Failed</option>
+                <option value="Refunded">Refunded</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>Validation Method</label>
+              <select id="queueMethodFilter" onchange="executeQueueFetch(0)">
+                <option value="">— All</option>
+                <option value="Manual">Manual</option>
+                <option value="Auto">Auto</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>Validation Reason</label>
+              <select id="queueReasonFilter" onchange="executeQueueFetch(0)">
+                <option value="">— All</option>
+                <option value="Duplicate">Duplicate</option>
+                <option value="Invalid Email or Order Number">Invalid Email or Order Number</option>
+                <option value="Invalid Picture - requires more">Invalid Picture - requires more</option>
+                <option value="Invalid Picture - missing LOT">Invalid Picture - missing LOT</option>
+                <option value="Amazon Purchase">Amazon Purchase</option>
+                <option value="Uncertain refund amount">Uncertain refund amount</option>
+                <option value="Invalid LOT">Invalid LOT</option>
+                <option value="Invalid product">Invalid product</option>
+                <option value="Multiple Orders">Multiple Orders</option>
+                <option value="Alternate form used">Alternate form used</option>
+                <option value="Already Refunded">Already Refunded</option>
+                <option value="Legal">Legal</option>
+                <option value="Valid">Valid</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>Assignee</label>
+              <select id="queueAssigneeFilter" onchange="executeQueueFetch(0)">
+                <option value="">— All</option>
+                <option value="__unassigned__">Unassigned</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>Sort By</label>
+              <select id="queueSortBy" onchange="executeQueueFetch(0)">
+                <option value="task_id">Task ID</option>
+                <option value="your_email_address">Email</option>
+                <option value="created_at">Created at</option>
+                <option value="last_modified">Last modified</option>
+                <option value="assignee_email">Assignee</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label>Sort Order</label>
+              <select id="queueSortOrder" onchange="executeQueueFetch(0)">
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="status-summary-bar">
+            <span id="queueTotalBadge" class="badge-v1">TOTAL RECORDS: ...</span>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button id="queuePrevBtn" class="btn btn-secondary btn-sm" onclick="queueChangePage(-1)">&larr; Previous</button>
+              <span id="queuePageIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
+              <button id="queueNextBtn" class="btn btn-secondary btn-sm" onclick="queueChangePage(1)">Next &rarr;</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>Task ID</th>
+                  <th>Email</th>
+                  <th>Order #</th>
+                  <th>Status</th>
+                  <th>Validation Method</th>
+                  <th>Validation Reason</th>
+                  <th>Created</th>
+                  <th>Last Modified</th>
+                  <th>Assignee</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="queueTableBody">
+                <tr><td colspan="10" style="text-align: center; padding: 2rem;">Connecting to Supabase...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+            <span id="queueTotalBadgeBottom" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">Showing records</span>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button id="queuePrevBtnBottom" class="btn btn-secondary btn-sm" onclick="queueChangePage(-1)">&larr; Previous</button>
+              <span id="queuePageIndicatorBottom" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
+              <button id="queueNextBtnBottom" class="btn btn-secondary btn-sm" onclick="queueChangePage(1)">Next &rarr;</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VIEW 3: TICKET FORMS -->
+      <div id="dashboardView" class="view-page" style="max-width: 1050px;">
+        <div style="width: 100%; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Customer Support Intake Portals</h2>
+            <p style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">
+              Select a specialized workflow below to submit intake tickets. Submissions auto-sync to designated Google Sheet tabs and update Vibe records.
+            </p>
+          </div>
+          <span class="badge-v1" style="background: var(--input-bg); border-color: var(--border-color); font-size: 0.72rem;">
+            4 Active Workflows
+          </span>
+        </div>
+
+        <div class="ticket-cards-grid">
+          <div class="intake-card intake-card-emerald">
+            <div class="intake-card-header">
+              <div class="intake-icon-pill" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">🥬</div>
+              <div class="intake-chips-wrap">
+                <span class="intake-meta-chip">Tab: SGRelaunch</span>
+                <span class="intake-meta-chip">Trends Log</span>
+              </div>
+            </div>
+            <div class="intake-card-body">
+              <h3 class="intake-card-title">Super Greens Ticket Trends</h3>
+              <p class="intake-card-desc">Log customer feedback, inquiries, cancellation trends, and taste/texture tickets regarding the Super Greens relaunch formula.</p>
+            </div>
+            <div class="intake-card-footer">
+              <span class="intake-footer-note">Syncs to <code>tracker_sgrelaunch</code></span>
+              <button onclick="openFormModal('form1Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
+            </div>
+          </div>
+
+          <div class="intake-card intake-card-blue">
+            <div class="intake-card-header">
+              <div class="intake-icon-pill" style="background: rgba(2, 132, 199, 0.12); color: #0284c7;">📦</div>
+              <div class="intake-chips-wrap">
+                <span class="intake-meta-chip">Tab: Replacement Tracking</span>
+                <span class="intake-meta-chip" style="color: #0284c7;">Shipping Claims</span>
+              </div>
+            </div>
+            <div class="intake-card-body">
+              <h3 class="intake-card-title">Replacement Tracking</h3>
+              <p class="intake-card-desc">Submit requests for missing items, lost-in-transit (LIT), transit damage, mispicks, or return-to-sender fulfillments.</p>
+            </div>
+            <div class="intake-card-footer">
+              <span class="intake-footer-note">Includes Make-It-Right check</span>
+              <button onclick="openFormModal('form2Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
+            </div>
+          </div>
+
+          <div class="intake-card intake-card-amber">
+            <div class="intake-card-header">
+              <div class="intake-icon-pill" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">⚠️</div>
+              <div class="intake-chips-wrap">
+                <span class="intake-meta-chip">Tab: Recall Order Refunds</span>
+                <span class="intake-meta-chip" style="color: #f59e0b;">Smart Match</span>
+              </div>
+            </div>
+            <div class="intake-card-body">
+              <h3 class="intake-card-title">Recall Order Refunds</h3>
+              <p class="intake-card-desc">Intake customer refund requests for recalled batches. Automatically resolves matching Vibe tasks to "Refunded" with date stamping.</p>
+            </div>
+            <div class="intake-card-footer">
+              <span class="intake-footer-note">Updates Vibe queue automatically</span>
+              <button onclick="openFormModal('form3Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
+            </div>
+          </div>
+
+          <div class="intake-card intake-card-purple">
+            <div class="intake-card-header">
+              <div class="intake-icon-pill" style="background: rgba(168, 85, 247, 0.12); color: #a855f7;">💳</div>
+              <div class="intake-chips-wrap">
+                <span class="intake-meta-chip">Tab: Refund Others</span>
+                <span class="intake-meta-chip" style="color: #a855f7;">General CS</span>
+              </div>
+            </div>
+            <div class="intake-card-body">
+              <h3 class="intake-card-title">Refund Others</h3>
+              <p class="intake-card-desc">Process general refund claims for damaged packages, quality disputes, BBB complaints, and customer satisfaction escalations.</p>
+            </div>
+            <div class="intake-card-footer">
+              <span class="intake-footer-note">Updates Vibe queue automatically</span>
+              <button onclick="openFormModal('form4Modal')" class="intake-launch-btn">Launch Intake &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+	<!-- VIEW 4: SEARCH & REPORTS -->
+	<div id="reportsView" class="view-page" style="max-width: 1200px;">
+	  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+		<div>
+		  <h2 id="reportsHeaderTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Operations &amp; Tracker Intelligence</h2>
+		  <p id="reportsHeaderSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">
+			Realtime record lookups and ticket search across all intake trackers.
+		  </p>
+		</div>
+		<div style="display: flex; gap: 8px;">
+		  <button onclick="exportReportsCSV()" id="reportsExportBtn" class="btn btn-secondary btn-sm mod-or-admin-only">📥 Export Filtered CSV</button>
+		  <button onclick="fetchPortalData()" class="btn btn-sm">🔄 Refresh Data</button>
+		</div>
+	  </div>
+
+	  <div id="reportsKpiContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid var(--primary-green);">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Tracker Intake</span>
+		  <h3 id="repMetricTotal" style="color: var(--text-dark); margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">Across all 4 active sheets</small>
+		</div>
+
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #ef4444;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Refund Sum</span>
+		  <h3 id="repMetricRefundVal" style="color: #ef4444; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">$0.00</h3>
+		  <small id="repMetricRefundCount" style="font-size: 0.7rem; color: var(--text-muted);">0 refund records logged</small>
+		</div>
+
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #0284c7;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Replacements Issued</span>
+		  <h3 id="repMetricReplacements" style="color: #0284c7; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">LIT, damaged &amp; mispicks</small>
+		</div>
+
+		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #f59e0b;">
+		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Agents Logging</span>
+		  <h3 id="repMetricActiveAgents" style="color: #f59e0b; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+		  <small style="font-size: 0.7rem; color: var(--text-muted);">Contributing team members</small>
+		</div>
+	  </div>
+
+	  <div id="reportsChartsContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Intake Volume by Tracker Source</h4>
+			<span class="badge-v1" style="font-size: 0.65rem;">Tab Ratio</span>
+		  </div>
+		  <div style="height: 240px; position: relative;">
+			<canvas id="chartTrackerVolume"></canvas>
+		  </div>
+		</div>
+
+		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Top Reasons (Replacements &amp; Refunds)</h4>
+			<span class="badge-v1" style="font-size: 0.65rem;">Fulfillment Drivers</span>
+		  </div>
+		  <div style="height: 240px; position: relative;">
+			<canvas id="chartTopReasons"></canvas>
+		  </div>
+		</div>
+	  </div>
+
+	  <div class="portal-card">
+        <div style="display: flex; gap: 0.65rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
+          <input 
+            type="search" 
+            id="reportSearchInput" 
+            placeholder="Filter by Order #, Email, Reason, Sub-Status, or Agent..." 
+            onkeyup="filterReportData()" 
+            style="flex: 2; min-width: 220px;" 
+          />
+
+          <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 160px;">
+            <option value="all">All Sheet Sources</option>
+            <option value="SGRelaunch">SGRelaunch</option>
+            <option value="Replacement Tracking">Replacement Tracking Sheet</option>
+            <option value="Recall Order Refunds">Recall Order Refunds</option>
+            <option value="Refund Others">Refund Others</option>
+          </select>
+
+          <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 140px;">
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="last7">Last 7 Days</option>
+            <option value="last30">Last 30 Days</option>
+            <option value="thisMonth">This Month</option>
+            <option value="custom">Custom Range...</option>
+          </select>
+
+          <div id="customDateRangeBox" style="display: none; align-items: center; gap: 6px;">
+            <input type="date" id="reportStartDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="Start Date" />
+            <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">to</span>
+            <input type="date" id="reportEndDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="End Date" />
+            <button type="button" onclick="clearDateFilter()" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.6rem;" title="Clear date selection">✕</button>
+          </div>
+        </div>
+
+		<div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+		  <table class="refund-table">
+			<thead>
+			  <tr>
+				<th>Source Sheet</th>
+				<th>Date / Timestamp</th>
+				<th>Order #</th>
+				<th>Customer Email</th>
+				<th>Agent</th>
+				<th>Details / Reason</th>
+				<th>Amount</th>
+			  </tr>
+			</thead>
+			<tbody id="reportsTableBody">
+			  <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Supabase...</td></tr>
+			</tbody>
+		  </table>
+		 </div>
+
+         <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+           <div style="display: flex; align-items: center; gap: 8px;">
+             <span id="reportsPageSummary" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">
+               Showing 0 of 0 records
+             </span>
+             <select id="reportsPageSize" onchange="changeReportsPageSize(this.value)" style="width: auto; padding: 2px 6px; font-size: 0.75rem;">
+               <option value="50">50 / page</option>
+               <option value="100" selected>100 / page</option>
+               <option value="250">250 / page</option>
+               <option value="500">500 / page</option>
+             </select>
+           </div>
+           
+           <div style="display: flex; align-items: center; gap: 0.5rem;">
+             <button id="reportsPrevBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(-1)">&larr; Previous</button>
+             <span id="reportsPageIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
+             <button id="reportsNextBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(1)">Next &rarr;</button>
+           </div>
+         </div>
+	  </div>
+	</div>
+
+      <!-- VIEW 5: KNOWLEDGE BASE -->
+      <div id="knowledgeBaseView" class="view-page full-width">
+        <div class="kb-container">
+          <div class="kb-sidebar-panel">
+            <div class="kb-search-box">
+              <input 
+                type="search" 
+                id="kbSearchInput" 
+                placeholder="Search playbooks, macros, #tags..." 
+                onkeyup="filterKnowledgeBaseArticles()" 
+                style="padding: 0.45rem 0.65rem; font-size: 0.82rem;"
+              />
+            </div>
+            <div class="kb-category-tabs">
+              <button class="kb-tab-btn active" id="kbTabAll" onclick="selectKbCategory('all')">All</button>
+              <button class="kb-tab-btn" id="kbTabPlaybook" onclick="selectKbCategory('playbook')">📖 Playbooks</button>
+              <button class="kb-tab-btn" id="kbTabMacro" onclick="selectKbCategory('macro')">💬 Macros</button>
+              <button class="kb-tab-btn" id="kbTabFaq" onclick="selectKbCategory('faq')">❓ FAQs</button>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; padding: 0 4px;">
+              <span id="kbArticlesCountBadge" style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Articles</span>
+              <button onclick="openArticleEditorModal(null)" class="btn btn-secondary btn-sm" style="padding: 2px 7px; font-size: 0.72rem;">+ New Guide</button>
+            </div>
+            <ul id="kbArticlesList" class="kb-articles-list">
+              <li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>
+            </ul>
+          </div>
+
+          <div class="kb-reader-panel" id="kbReaderPanel">
+            <div class="kb-reader-header">
+              <div>
+                <span id="kbCurrentCategoryBadge" class="badge-v1" style="font-size: 0.68rem; margin-bottom: 0.4rem;">Category</span>
+                <h2 id="kbCurrentArticleTitle" class="kb-reader-title">Select an article</h2>
+                <div id="kbCurrentArticleMeta" style="font-size: 0.74rem; color: var(--text-muted);">Select any guide from the left to read documentation.</div>
+                <div id="kbCurrentArticleTags" style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;"></div>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button id="kbEditArticleBtn" class="btn btn-secondary btn-sm" onclick="editCurrentSelectedArticle()" style="display: none;">✏️ Edit Guide</button>
+                <button id="kbDeleteArticleBtn" class="btn btn-secondary btn-sm" onclick="deleteCurrentSelectedArticle()" style="display: none; color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">🗑️ Delete</button>
+              </div>
+            </div>
+
+            <!-- MACRO BOX -->
+            <div id="kbMacroContainer" class="kb-macro-block" style="display: none; margin-top: 0; margin-bottom: 1.25rem;">
+              <div class="kb-macro-header">
+                <span>Gorgias Canned Response</span>
+                <button onclick="copyCurrentMacroText()" id="copyMacroBtn" class="btn btn-blue btn-sm" style="padding: 2px 8px; font-size: 0.72rem;">📋 Copy Macro</button>
+              </div>
+              <div id="kbMacroContent" class="kb-macro-content"></div>
+            </div>
+
+            <div id="kbCurrentArticleBody" class="kb-reader-body">
+              <p style="color: var(--text-muted); font-size: 0.88rem;">Select an article from the left navigation pane to view details.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 6: ANNOUNCEMENTS MANAGER -->
+      <div id="announcementsManagerView" class="view-page" style="max-width: 950px;">
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.25rem; color: var(--primary-green); margin-bottom: 0.25rem;">Broadcast Team Announcement</h2>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Post a required update. Agents will be locked out until they read and confirm with your verification keyword.</p>
+
+          <form id="newAnnouncementForm" onsubmit="createAnnouncementFromUI(event)">
+            <div style="margin-bottom: 0.75rem;">
+              <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Announcement Title</label>
+              <input type="text" id="ann_create_title" placeholder="e.g. New LIT Policy Update" required />
+            </div>
+            <div style="margin-bottom: 0.75rem;">
+              <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Announcement Message / Note</label>
+              <textarea id="ann_create_body" rows="4" placeholder="Write update details here. Mention the keyword agents must remember..." required></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <label style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">Verification Keyword / Phrase</label>
+                <input type="text" id="ann_create_keyword" placeholder="e.g. Super Greens" required />
+              </div>
+              <div style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn" id="broadcastAnnBtn" style="width: 100%; height: 34px;">🚀 Publish &amp; Lock For Agents</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="portal-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.05rem; color: var(--primary-green);">Announcement History &amp; Verification Audit</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Monitor read receipts and active status.</p>
+            </div>
+            <button onclick="fetchAnnouncementsList()" class="btn btn-secondary btn-sm">🔄 Refresh List</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Title</th>
+                  <th>Required Keyword</th>
+                  <th>Published By</th>
+                  <th>Verified Agents</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="announcementsTableBody">
+                <tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Loading announcements...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 7: IN-PORTAL MESSENGER (SLACK ARCHITECTURE) -->
+      <div id="messengerView" class="view-page" style="max-width: 1250px;">
+        <div class="slack-layout">
+          <div class="slack-sidebar">
+            <div style="padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text-dark); display: flex; align-items: center; gap: 6px;">
+                  <span>💬</span> Live It Up Team
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                  <span id="slack-online-count" style="color: #22c55e; font-weight: 700;">1 online</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="slack-section-header">
+              <span>Channels</span>
+              <button onclick="openCreateChannelModal()" class="slack-add-btn" title="Create new channel">+</button>
+            </div>
+            <div id="slack-channel-list" style="display: flex; flex-direction: column; gap: 2px; padding: 2px 0;"></div>
+
+            <div class="slack-section-header" style="margin-top: 14px;">
+              <span>Direct Messages</span>
+              <span id="slack-dm-count" style="font-size: 0.68rem; font-weight: 700; color: var(--text-muted);">...</span>
+            </div>
+            <div id="slack-dm-list" style="display: flex; flex-direction: column; gap: 2px; padding: 2px 0; margin-bottom: 16px;">
+              <div style="padding: 8px 14px; font-size: 0.76rem; color: var(--text-muted);">Loading team members...</div>
+            </div>
+          </div>
+
+          <div style="flex: 1; display: flex; flex-direction: column; background: var(--card-bg); height: 100%; position: relative;">
+            <div class="slack-chat-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="slack-current-icon" style="font-size: 1.1rem; color: var(--text-muted);">#</span>
+                <div>
+                  <div id="slack-active-title" style="font-weight: 800; font-size: 0.96rem; color: var(--text-dark);">general</div>
+                  <div id="slack-active-desc" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 1px;">Company-wide announcements and team collaboration</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge-v1" style="font-size: 0.68rem; background: rgba(34, 197, 94, 0.12); color: #16a34a; border-color: rgba(34, 197, 94, 0.3);">Realtime Live</span>
+              </div>
+            </div>
+
+            <!-- EMOJI PICKER POPOVER -->
+            <div id="chatEmojiPopover" class="emoji-popover">
+              <button type="button" class="emoji-item" onclick="insertEmoji('👍')">👍</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('🙏')">🙏</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('❤️')">❤️</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('🔥')">🔥</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('🎉')">🎉</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('✅')">✅</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('😊')">😊</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('🙌')">🙌</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('🚀')">🚀</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('👀')">👀</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('⚠️')">⚠️</button>
+              <button type="button" class="emoji-item" onclick="insertEmoji('💯')">💯</button>
+            </div>
+
+            <div id="chat-messages-container" class="slack-messages-area"></div>
+
+            <form id="chat-send-form" onsubmit="sendChatMessage(event)" class="slack-input-bar">
+              <div id="chat-attachment-preview" style="display:none; align-items:center; gap:8px; padding:4px 8px; background:var(--card-bg); border:1px solid var(--border-color); border-radius:6px; font-size:0.75rem;">
+                <span id="chat-attachment-name"></span>
+                <button type="button" onclick="clearChatAttachment()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:700;">✕</button>
+              </div>
+              <div class="slack-input-controls">
+                <input type="file" id="chat-file-input" style="display:none;" onchange="handleChatFileUpload(this)" />
+                <button type="button" class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" title="Attach file or screenshot">📎</button>
+                <button type="button" class="chat-emoji-btn" onclick="toggleEmojiPopover()" title="Add emoji">😊</button>
+                <input 
+                  type="text" 
+                  id="chat-message-input" 
+                  placeholder="Message #general..." 
+                  style="flex: 1; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark); font-size: 0.85rem;" 
+                  autocomplete="off" 
+                />
+                <button type="submit" class="btn btn-sm" style="padding: 0.55rem 1.1rem; border-radius: 8px; gap: 4px;">
+                  <span>Send</span> <span>&rarr;</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- CREATE CHANNEL MODAL -->
+      <dialog id="createChannelModal" style="max-width: 440px; border-radius: 12px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
+        <div class="modal-box">
+          <div class="modal-header">
+            <h2>Add Channel</h2>
+            <button type="button" class="modal-close-btn" onclick="document.getElementById('createChannelModal').close()">✕</button>
+          </div>
+          <form id="createChannelForm" onsubmit="handleCreateChannelSubmit(event)" style="padding: 1.25rem; display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Channel Name</label>
+              <div style="display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 6px; padding: 0 8px; background: var(--card-bg);">
+                <span style="color: var(--text-muted); font-weight: 700;">#</span>
+                <input type="text" id="new_channel_name" placeholder="e.g. cs-internal" required style="border: none; background: transparent; padding: 8px 6px;" />
+              </div>
+              <small style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; display: block;">Lowercases and hyphens only.</small>
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.76rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Topic / Description (Optional)</label>
+              <input type="text" id="new_channel_desc" placeholder="e.g. Questions regarding customer support" />
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('createChannelModal').close()">Cancel</button>
+              <button type="submit" class="btn btn-sm">Create Channel</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+
+      <!-- VIEW 8: USER PROFILE & PASSWORD -->
+      <div id="profileView" class="view-page" style="max-width: 680px;">
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <h3 style="margin-bottom: 4px; font-size: 1.15rem; color: var(--primary-green);">Profile Settings</h3>
+          <p style="margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted);">Manage your portal display details and email credentials.</p>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Email Address</label>
+              <input type="email" id="profile-email" disabled style="color: var(--text-muted);" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Full Name / Display Name</label>
+              <input type="text" id="profile-fullname" />
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">Assigned Role</label>
+              <input type="text" id="profile-role" disabled style="color: var(--text-muted); text-transform: uppercase;" />
+            </div>
+            <button onclick="updateUserProfile()" class="btn btn-sm" style="width: fit-content; margin-top: 6px;">Save Profile</button>
+          </div>
+        </div>
+
+        <div class="portal-card">
+          <h3 style="margin-bottom: 4px; font-size: 1.05rem; color: var(--primary-green);">Change Password</h3>
+          <p style="margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted);">Must be at least 6 characters long.</p>
+          <form onsubmit="handlePasswordChange(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 4px;">New Password</label>
+              <input type="password" id="profile-new-password" required minlength="6" />
+            </div>
+            <button type="submit" class="btn btn-blue btn-sm" style="width: fit-content;">Update Password</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- VIEW 9: ADMIN SETTINGS & RBAC -->
+      <div id="adminSettingsView" class="view-page" style="max-width: 960px;">
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="margin: 0; font-size: 1.15rem; color: var(--primary-green);">System Maintenance Control Center</h3>
+              <p style="margin: 3px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                Manage granular maintenance modes across all portal modules and intake forms. When active, agents are completely locked out from using or launching that specific feature, while administrators retain full bypass access.
+              </p>
+            </div>
+            <button onclick="toggleAgentPreviewMode()" id="btn-agent-preview" class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">
+              👁️ Simulate Agent View: <span id="preview-mode-state" style="color:#ef4444; font-weight:700;">OFF</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>Feature / Sub-Module</th>
+                  <th>Applies To</th>
+                  <th>Current Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>🔄 Vibe Refunding</strong></td>
+                  <td>Refund Queue, Task Viewer, Modal Editor</td>
+                  <td><span id="maint-status-vibe" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('vibe')" class="btn btn-sm">Toggle Mode</button></td>
+                </tr>
+                <tr>
+                  <td><strong>🎫 Ticket Forms (All Workflows)</strong></td>
+                  <td>Intake Hub &amp; Dashboard View</td>
+                  <td><span id="maint-status-forms" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('forms')" class="btn btn-sm">Toggle Mode</button></td>
+                </tr>
+                <tr style="background: var(--input-bg);">
+                  <td style="padding-left: 1.75rem;">🥬 Super Greens Trends</td>
+                  <td>Tab: SGRelaunch Modal Intake Form</td>
+                  <td><span id="maint-status-form_super_greens" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('form_super_greens')" class="btn btn-secondary btn-sm">Toggle Form</button></td>
+                </tr>
+                <tr style="background: var(--input-bg);">
+                  <td style="padding-left: 1.75rem;">📦 Replacement Tracking</td>
+                  <td>Shipping &amp; LIT Intake Modal Form</td>
+                  <td><span id="maint-status-form_replacements" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('form_replacements')" class="btn btn-secondary btn-sm">Toggle Form</button></td>
+                </tr>
+                <tr style="background: var(--input-bg);">
+                  <td style="padding-left: 1.75rem;">⚠️ Recall Order Refunds</td>
+                  <td>Batch Recall Intake Modal Form</td>
+                  <td><span id="maint-status-form_recall" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('form_recall')" class="btn btn-secondary btn-sm">Toggle Form</button></td>
+                </tr>
+                <tr style="background: var(--input-bg);">
+                  <td style="padding-left: 1.75rem;">💳 Refund Others</td>
+                  <td>General CS Refund Modal Form</td>
+                  <td><span id="maint-status-form_refund_others" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('form_refund_others')" class="btn btn-secondary btn-sm">Toggle Form</button></td>
+                </tr>
+                <tr>
+                  <td><strong>💬 Team Messenger</strong></td>
+                  <td>Channels, DMs, Realtime Chat</td>
+                  <td><span id="maint-status-messenger" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('messenger')" class="btn btn-sm">Toggle Mode</button></td>
+                </tr>
+                <tr>
+                  <td><strong>📖 Knowledge Base</strong></td>
+                  <td>Playbooks, Macros, FAQs</td>
+                  <td><span id="maint-status-kb" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('kb')" class="btn btn-sm">Toggle Mode</button></td>
+                </tr>
+                <tr>
+                  <td><strong>⚙️ Profile &amp; Account</strong></td>
+                  <td>Display Names &amp; Password Changes</td>
+                  <td><span id="maint-status-profile" class="badge-v1">...</span></td>
+                  <td><button onclick="toggleMaintenanceKey('profile')" class="btn btn-sm">Toggle Mode</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="portal-card">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div>
+              <h3 style="margin: 0; font-size: 1.05rem; color: var(--primary-green);">Team Roles &amp; Permissions</h3>
+              <p style="margin: 2px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">Manage member privileges and approve registration access.</p>
+            </div>
+            <button onclick="loadUserProfilesTable()" class="btn btn-secondary btn-sm">Refresh List</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Access Approval</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-table-body">
+                <tr><td colspan="5" style="padding: 14px; text-align: center; color: var(--text-muted);">Loading team profiles...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+	  
+    </div>
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- JAVASCRIPT LOGIC                                             -->
+  <!-- ============================================================ -->
+  <script>
+    const SUPABASE_URL = "https://bazjggephinnwqgrzkep.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhempnZ2VwaGlubndxZ3J6a2VwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MDcwOTAsImV4cCI6MjEwOTM4MzA5MH0.jWXe1KSgWhL9mHf68o6p6h26VTjmvtteW5lS_khBGHo";
+    
+    const supabaseClientBuilder = (window.supabase && window.supabase.createClient);
+    let db = null;
+    if (supabaseClientBuilder) {
+      db = supabaseClientBuilder(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwLvR3_bwcW_D3CXNoHYqo9VAHF9JPwuozjHNrxgVLHKtcPD45Un98R2RbfM4t1Sc/exec';
+    const ASANA_BASE = "https://app.asana.com/1/1178573996924741/project/1212819193341041/task";
+    const SHOPIFY_ORDERS = "https://admin.shopify.com/store/artofenso/orders/";
+    const SHOPIFY_CUSTOMERS = "https://admin.shopify.com/store/artofenso/customers/";
+
+    let globalPortalData = [];
+    let queueCurrentPage = 0;
+    const QUEUE_PAGE_SIZE = 20;
+    let queueTotalRecords = 0;
+    let currentEditingRecord = null;
+    let currentActiveTaskId = null;
+
+    let currentUserProfile = { role: 'agent', full_name: 'Agent', is_approved: false };
+    let currentChatAttachment = null;
+
+    let systemMaintenanceState = {
+      vibe: true,
+      forms: false,
+      form_super_greens: false,
+      form_replacements: false,
+      form_recall: false,
+      form_refund_others: false,
+      messenger: false,
+      kb: false,
+      profile: false
+    };
+
+    let isAgentPreviewSimulated = false;
+
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('portalToastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `portal-toast ${type}`;
+      const icon = type === 'error' ? '⚠️' : type === 'info' ? 'ℹ️' : '✓';
+      toast.innerHTML = `<span style="font-size:1.05rem;">${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    };
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme_preference') || 'light';
+      applyTheme(savedTheme);
+    }
+
+    window.toggleDarkMode = function() {
+      const isDark = document.body.classList.contains('dark-mode');
+      const nextTheme = isDark ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      localStorage.setItem('theme_preference', nextTheme);
+    };
+
+    function applyTheme(theme) {
+      const icon = document.getElementById('themeToggleIcon');
+      const text = document.getElementById('themeToggleText');
+      if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (icon) icon.innerText = '☀️';
+        if (text) text.innerText = 'Light';
+      } else {
+        document.body.classList.remove('dark-mode');
+        if (icon) icon.innerText = '🌙';
+        if (text) text.innerText = 'Dark';
+      }
+    }
+
+    function formatOrderNumber(input) {
+      const trimmed = String(input || '').trim();
+      if (!trimmed) return '';
+      return trimmed.startsWith('#') ? trimmed : '#' + trimmed;
+    }
+	
+    function formatCurrency(input) {
+      const trimmed = String(input || '').trim();
+      if (!trimmed || trimmed.toUpperCase() === 'N/A') return trimmed || 'N/A';
+      const cleanNum = trimmed.replace(/[^0-9.]/g, '');
+      return cleanNum ? `$${cleanNum}` : '';
+    }
+
+    function formatDateInput(d) {
+      if (!d) return "";
+      try {
+        const dt = new Date(d);
+        if (!isNaN(dt.getTime())) return dt.toISOString().split("T")[0];
+      } catch (e) {}
+      return String(d).slice(0, 10);
+    }
+
+    // STRICT UNIFIED VIEW ROUTER
+    window.switchView = function(viewId) {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || null;
+
+      if (!userSession && viewId !== 'loginView') {
+        viewId = 'loginView';
+      }
+
+      const isAdminActual = userSession && (currentUserProfile.role === 'admin');
+      const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+      const isModerator = (currentUserProfile.role === 'moderator');
+
+      // Restrict announcement manager strictly to admins/moderators
+      if (viewId === 'announcementsManagerView' && !isAdmin && !isModerator) {
+        showToast('Announcement creation is restricted to administrators and moderators.', 'error');
+        viewId = 'dashboardView';
+      }
+
+      // Restrict Admin Settings strictly to admins
+      if (viewId === 'adminSettingsView' && !isAdminActual) {
+        showToast('Admin Settings are restricted to administrators.', 'error');
+        viewId = 'dashboardView';
+      }
+
+      // Granular Module-Level Maintenance Enforcement
+      if (!isAdmin) {
+        if (viewId === 'refundsQueueView' && systemMaintenanceState.vibe) {
+          showToast('Vibe Refunding is currently offline for maintenance.', 'error');
+          viewId = 'dashboardView';
+        } else if (viewId === 'dashboardView' && systemMaintenanceState.forms) {
+          showToast('Ticket Submission Hub is currently offline for maintenance.', 'error');
+          viewId = 'reportsView';
+        } else if (viewId === 'messengerView' && systemMaintenanceState.messenger) {
+          showToast('Team Messenger is currently offline for maintenance.', 'error');
+          viewId = 'dashboardView';
+        } else if (viewId === 'knowledgeBaseView' && systemMaintenanceState.kb) {
+          showToast('Knowledge Base is currently offline for maintenance.', 'error');
+          viewId = 'dashboardView';
+        } else if (viewId === 'profileView' && systemMaintenanceState.profile) {
+          showToast('Profile management is currently offline for maintenance.', 'error');
+          viewId = 'dashboardView';
+        }
+      }
+
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+
+      const sidebar = document.getElementById('sidebar');
+      const topNavbar = document.querySelector('.top-navbar');
+      const heading = document.getElementById('topPageHeading');
+
+      if (viewId === 'loginView' || !userSession) {
+        if (sidebar) sidebar.style.display = 'none';
+        if (topNavbar) topNavbar.style.display = 'none';
+      } else {
+        if (sidebar) sidebar.style.display = 'flex';
+        if (topNavbar) topNavbar.style.display = 'flex';
+        
+        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+        const activeLink = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId));
+        if (activeLink) activeLink.classList.add('active');
+
+        if (viewId === 'refundsQueueView') {
+          heading.innerText = 'Refund Requests';
+          executeQueueFetch(0);
+        } else if (viewId === 'dashboardView') {
+          heading.innerText = 'Ticket Submission Forms';
+        } else if (viewId === 'reportsView') {
+          const isModOrAdmin = isAdmin || isModerator;
+          heading.innerText = isModOrAdmin ? 'Search & Reports' : 'Record Search';
+          if (globalPortalData.length === 0) fetchPortalData();
+        } else if (viewId === 'announcementsManagerView') {
+          heading.innerText = 'Announcement Manager';
+          fetchAnnouncementsList();
+        } else if (viewId === 'knowledgeBaseView') {
+          heading.innerText = 'Knowledge Base & Playbooks';
+          loadKnowledgeBaseArticles();
+        } else if (viewId === 'messengerView') {
+          heading.innerText = 'Team Messenger';
+          renderSlackSidebar();
+          loadActiveMessages();
+        } else if (viewId === 'profileView') {
+          heading.innerText = 'Account Profile';
+        } else if (viewId === 'adminSettingsView') {
+          heading.innerText = 'Admin Settings';
+          loadUserProfilesTable();
+          applyMaintenanceUI();
+        }
+
+        checkForUnreadAnnouncements();
+      }
+    };
+
+    window.toggleAgentPreviewMode = function() {
+      isAgentPreviewSimulated = !isAgentPreviewSimulated;
+      const stateEl = document.getElementById('preview-mode-state');
+      if (stateEl) {
+        stateEl.textContent = isAgentPreviewSimulated ? 'ON' : 'OFF';
+        stateEl.style.color = isAgentPreviewSimulated ? '#16a34a' : '#ef4444';
+      }
+      showToast(`Agent view simulation ${isAgentPreviewSimulated ? 'ENABLED' : 'DISABLED'}`, 'info');
+      applyMaintenanceUI();
+      loadUserProfile(currentUserProfile.email);
+    };
+
+    // ============================================================
+    // MODULE 2: GRANULAR SYSTEM-WIDE MAINTENANCE ENGINE
+    // ============================================================
+    async function loadMaintenanceSettings() {
+      const localCached = localStorage.getItem('portal_maintenance_settings');
+      if (localCached) {
+        try { Object.assign(systemMaintenanceState, JSON.parse(localCached)); } catch(e) {}
+      }
+
+      if (db) {
+        try {
+          const { data, error } = await db.from('app_settings').select('key, value');
+          if (!error && data && data.length > 0) {
+            data.forEach(item => {
+              if (item.key === 'vibe_maintenance') systemMaintenanceState.vibe = (item.value === true);
+              if (item.key === 'forms_maintenance') systemMaintenanceState.forms = (item.value === true);
+              if (item.key === 'messenger_maintenance') systemMaintenanceState.messenger = (item.value === true);
+              if (item.key === 'kb_maintenance') systemMaintenanceState.kb = (item.value === true);
+              if (item.key === 'profile_maintenance') systemMaintenanceState.profile = (item.value === true);
+              if (item.key === 'form_sg_maintenance') systemMaintenanceState.form_super_greens = (item.value === true);
+              if (item.key === 'form_rep_maintenance') systemMaintenanceState.form_replacements = (item.value === true);
+              if (item.key === 'form_recall_maintenance') systemMaintenanceState.form_recall = (item.value === true);
+              if (item.key === 'form_others_maintenance') systemMaintenanceState.form_refund_others = (item.value === true);
+            });
+            localStorage.setItem('portal_maintenance_settings', JSON.stringify(systemMaintenanceState));
+          }
+        } catch(err) {
+          console.warn('Maintenance sync notice:', err.message);
+        }
+      }
+
+      applyMaintenanceUI();
+    }
+
+    function applyMaintenanceUI() {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdminActual = userSession && (currentUserProfile.role === 'admin');
+      const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+
+      const setBadge = (elId, isMaint) => {
+        const el = document.getElementById(elId);
+        if (el) {
+          el.textContent = isMaint ? 'ACTIVE (OFFLINE)' : 'INACTIVE (ONLINE)';
+          el.style.color = isMaint ? '#ef4444' : '#16a34a';
+          el.style.background = isMaint ? 'rgba(239, 68, 68, 0.15)' : 'rgba(34, 197, 94, 0.15)';
+        }
+      };
+
+      setBadge('maint-status-vibe', systemMaintenanceState.vibe);
+      setBadge('maint-status-forms', systemMaintenanceState.forms);
+      setBadge('maint-status-form_super_greens', systemMaintenanceState.form_super_greens);
+      setBadge('maint-status-form_replacements', systemMaintenanceState.form_replacements);
+      setBadge('maint-status-form_recall', systemMaintenanceState.form_recall);
+      setBadge('maint-status-form_refund_others', systemMaintenanceState.form_refund_others);
+      setBadge('maint-status-messenger', systemMaintenanceState.messenger);
+      setBadge('maint-status-kb', systemMaintenanceState.kb);
+      setBadge('maint-status-profile', systemMaintenanceState.profile);
+
+      const updateNavLink = (navId, isMaint) => {
+        const navEl = document.getElementById(navId);
+        if (!navEl) return;
+
+        if (isMaint) {
+          if (!isAdmin) {
+            navEl.style.display = 'none';
+          } else {
+            navEl.style.display = 'flex';
+            if (!navEl.querySelector('.maintenance-tag')) {
+              const tag = document.createElement('span');
+              tag.className = 'maintenance-tag';
+              tag.style = 'font-size: 0.65rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 2px 6px; border-radius: 4px; margin-left: auto; font-weight: 700;';
+              tag.textContent = 'MAINT';
+              navEl.appendChild(tag);
+            }
+          }
+        } else {
+          navEl.style.display = 'flex';
+          const tag = navEl.querySelector('.maintenance-tag');
+          if (tag) tag.remove();
+        }
+      };
+
+      updateNavLink('nav-vibe-refunds', systemMaintenanceState.vibe);
+      updateNavLink('nav-ticket-forms', systemMaintenanceState.forms);
+      updateNavLink('nav-messenger', systemMaintenanceState.messenger);
+      updateNavLink('nav-profile', systemMaintenanceState.profile);
+      updateNavLink('nav-kb-playbooks', systemMaintenanceState.kb);
+      updateNavLink('nav-kb-macros', systemMaintenanceState.kb);
+      updateNavLink('nav-kb-faqs', systemMaintenanceState.kb);
+
+      const updateCardLaunchBtn = (formKey, modalId) => {
+        const isOffline = systemMaintenanceState.forms || systemMaintenanceState[formKey];
+        const btn = document.querySelector(`button[onclick*="${modalId}"]`);
+        if (!btn) return;
+
+        if (isOffline && !isAdmin) {
+          btn.disabled = true;
+          btn.style.opacity = '0.55';
+          btn.innerText = 'Offline (Maintenance)';
+        } else {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.innerHTML = 'Launch Intake &rarr;';
+        }
+      };
+
+      updateCardLaunchBtn('form_super_greens', 'form1Modal');
+      updateCardLaunchBtn('form_replacements', 'form2Modal');
+      updateCardLaunchBtn('form_recall', 'form3Modal');
+      updateCardLaunchBtn('form_refund_others', 'form4Modal');
+    }
+
+    window.toggleMaintenanceKey = async function(key) {
+      const nextVal = !systemMaintenanceState[key];
+      systemMaintenanceState[key] = nextVal;
+      
+      localStorage.setItem('portal_maintenance_settings', JSON.stringify(systemMaintenanceState));
+      applyMaintenanceUI();
+
+      const dbKeyMap = {
+        vibe: 'vibe_maintenance',
+        forms: 'forms_maintenance',
+        form_super_greens: 'form_sg_maintenance',
+        form_replacements: 'form_rep_maintenance',
+        form_recall: 'form_recall_maintenance',
+        form_refund_others: 'form_others_maintenance',
+        messenger: 'messenger_maintenance',
+        kb: 'kb_maintenance',
+        profile: 'profile_maintenance'
+      };
+
+      const dbKey = dbKeyMap[key];
+
+      if (db) {
+        try {
+          const { error: updErr } = await db.from('app_settings').update({ value: nextVal, updated_at: new Date().toISOString() }).eq('key', dbKey);
+          if (updErr) {
+            await db.from('app_settings').upsert([{ key: dbKey, value: nextVal, updated_at: new Date().toISOString() }], { onConflict: 'key' });
+          }
+        } catch(e) {
+          console.warn('DB note (local state saved):', e.message);
+        }
+      }
+
+      showToast(`Maintenance for ${key.replace(/_/g, ' ').toUpperCase()} set to ${nextVal ? 'Active' : 'Offline'}!`, 'info');
+    };
+
+    // ============================================================
+    // MODULE 3: AUTH, PROFILES & RBAC WITH STRICT ANNOUNCEMENT GATE
+    // ============================================================
+    async function loadUserProfile(email) {
+      if (!db || !email) return;
+      try {
+        const { data, error } = await db.from('profiles').select('*').eq('email', email).maybeSingle();
+        if (!error && data) {
+          currentUserProfile = data;
+        } else {
+          currentUserProfile = {
+            email: email,
+            full_name: email.split('@')[0],
+            role: 'agent',
+            is_approved: false
+          };
+        }
+      } catch (e) {
+        currentUserProfile = { email: email, full_name: 'Agent', role: 'agent', is_approved: false };
+      }
+
+      const pEmail = document.getElementById('profile-email');
+      const pName = document.getElementById('profile-fullname');
+      const pRole = document.getElementById('profile-role');
+      if (pEmail) pEmail.value = currentUserProfile.email || '';
+      if (pName) pName.value = currentUserProfile.full_name || '';
+      if (pRole) pRole.value = currentUserProfile.role || 'agent';
+
+      const isAdminActual = (currentUserProfile.role === 'admin');
+      const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+      const isModerator = (currentUserProfile.role === 'moderator');
+      const hasReportsPrivileges = isAdmin || isModerator;
+
+      // Strict visibility control for admin elements
+      document.querySelectorAll('.admin-only').forEach(el => {
+        el.style.setProperty('display', (isAdmin || isModerator) ? 'block' : 'none', 'important');
+      });
+      const adminSectionHeader = document.querySelector('.admin-section-header');
+      if (adminSectionHeader) {
+        adminSectionHeader.style.display = (isAdmin || isModerator) ? 'block' : 'none';
+      }
+
+      // Hide Admin Settings link specifically from moderators and non-admins
+      const adminSettingsItem = document.getElementById('sidebar-admin-settings-item');
+      if (adminSettingsItem) {
+        adminSettingsItem.style.setProperty('display', isAdmin ? 'block' : 'none', 'important');
+      }
+
+      const navReportsLabel = document.getElementById('nav-reports-label');
+      const navReportsIcon = document.getElementById('nav-reports-icon');
+      const repTitle = document.getElementById('reportsHeaderTitle');
+      const repSubtitle = document.getElementById('reportsHeaderSubtitle');
+      const kpiBox = document.getElementById('reportsKpiContainer');
+      const chartsBox = document.getElementById('reportsChartsContainer');
+      const exportBtn = document.getElementById('reportsExportBtn');
+
+      if (hasReportsPrivileges) {
+        if (navReportsLabel) navReportsLabel.innerText = 'Search & Reports';
+        if (navReportsIcon) navReportsIcon.innerText = '📊';
+        if (repTitle) repTitle.innerText = 'Operations & Tracker Intelligence';
+        if (repSubtitle) repSubtitle.innerText = 'Realtime aggregation across all tracker submission logs directly from Supabase.';
+        if (kpiBox) kpiBox.style.setProperty('display', 'grid', 'important');
+        if (chartsBox) chartsBox.style.setProperty('display', 'grid', 'important');
+        if (exportBtn) exportBtn.style.setProperty('display', 'inline-flex', 'important');
+      } else {
+        if (navReportsLabel) navReportsLabel.innerText = 'Record Search';
+        if (navReportsIcon) navReportsIcon.innerText = '🔍';
+        if (repTitle) repTitle.innerText = 'Tracker Record Search';
+        if (repSubtitle) repSubtitle.innerText = 'Search and browse customer support intake logs across all trackers.';
+        if (kpiBox) kpiBox.style.setProperty('display', 'none', 'important');
+        if (chartsBox) chartsBox.style.setProperty('display', 'none', 'important');
+        if (exportBtn) exportBtn.style.setProperty('display', 'none', 'important');
+      }
+
+      applyMaintenanceUI();
+    }
+
+    window.updateUserProfile = async function() {
+      if (!db) return;
+      const name = document.getElementById('profile-fullname').value.trim();
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const { error } = await db.from('profiles').update({ full_name: name, updated_at: new Date().toISOString() }).eq('email', userSession.email);
+      if (error) {
+        showToast('Failed to save profile: ' + error.message, 'error');
+      } else {
+        currentUserProfile.full_name = name;
+        showToast('Profile updated!', 'success');
+      }
+    };
+
+    window.handlePasswordChange = async function(e) {
+      e.preventDefault();
+      if (!db) return;
+      const pwd = document.getElementById('profile-new-password').value;
+      if (pwd.length < 6) {
+        showToast('Password must be 6+ characters.', 'error');
+        return;
+      }
+      try {
+        const { error } = await db.auth.updateUser({ password: pwd });
+        if (error) throw error;
+        showToast('Password updated successfully!', 'success');
+        document.getElementById('profile-new-password').value = '';
+      } catch (err) {
+        showToast('Error updating password: ' + err.message, 'error');
+      }
+    };
+
+    window.loadUserProfilesTable = async function() {
+      const tbody = document.getElementById('admin-user-table-body');
+      if (!tbody || !db) return;
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:12px;">Loading profiles...</td></tr>';
+
+      const { data: profiles, error } = await db.from('profiles').select('*').order('created_at', { ascending: false });
+      if (error || !profiles || profiles.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:12px; color:var(--text-muted);">No profiles recorded yet.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = profiles.map(p => {
+        const isApproved = p.is_approved === true;
+        const approvalBadge = isApproved
+          ? '<span style="color:#16a34a; font-weight:700; font-size:0.75rem;">APPROVED</span>'
+          : '<span style="color:#f59e0b; font-weight:700; font-size:0.75rem;">PENDING</span>';
+
+        const actionBtn = isApproved
+          ? `<button class="btn btn-secondary btn-sm" style="font-size:0.72rem; color:#ef4444;" onclick="setUserApproval('${p.id}', false)">Revoke</button>`
+          : `<button class="btn btn-sm" style="font-size:0.72rem; background:#16a34a;" onclick="setUserApproval('${p.id}', true)">Approve ✓</button>`;
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <td style="font-weight: 700;">${p.full_name || 'Agent'}</td>
+            <td>${p.email}</td>
+            <td>
+              <select onchange="updateUserRole('${p.id}', this.value)" style="padding: 3px 6px; font-size: 0.78rem;">
+                <option value="agent" ${p.role === 'agent' ? 'selected' : ''}>Agent</option>
+                <option value="moderator" ${p.role === 'moderator' ? 'selected' : ''}>Moderator</option>
+                <option value="admin" ${p.role === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            </td>
+            <td>${approvalBadge}</td>
+            <td>${actionBtn}</td>
+          </tr>
+        `;
+      }).join('');
+    };
+
+    window.updateUserRole = async function(userId, newRole) {
+      if (!db) return;
+      const { error } = await db.from('profiles').update({ role: newRole }).eq('id', userId);
+      if (error) showToast('Failed to update role: ' + error.message, 'error');
+      else showToast('User role updated!', 'success');
+    };
+
+    window.setUserApproval = async function(userId, approved) {
+      if (!db) return;
+      const { error } = await db.from('profiles').update({ is_approved: approved, updated_at: new Date().toISOString() }).eq('id', userId);
+      if (error) {
+        showToast('Failed to update status: ' + error.message, 'error');
+      } else {
+        showToast(`User ${approved ? 'approved' : 'access revoked'}!`, 'success');
+        loadUserProfilesTable();
+      }
+    };
+
+    // ============================================================
+    // MODULE 5: SLACK ARCHITECTURE (CHANNELS, DMS, PRESENCE, EMOJIS, UPLOADS)
+    // ============================================================
+    let activeChatTarget = { type: 'channel', id: 'general', name: 'general', desc: 'Company announcements & team chat' };
+    let unreadChatCounts = JSON.parse(localStorage.getItem('portal_chat_unreads') || '{}');
+    let dynamicChannels = JSON.parse(localStorage.getItem('portal_custom_channels') || '[]');
+    let onlineUsersMap = new Set();
+    let presenceChannelInstance = null;
+
+    const DEFAULT_CHANNELS = [
+      { id: 'general', name: 'general', desc: 'Company-wide team chat' },
+      { id: 'cs-escalations', name: 'cs-escalations', desc: 'Refund & order escalation coordination' },
+      { id: 'qa-feedback', name: 'qa-feedback', desc: 'QA coaching and ticket reviews' }
+    ];
+
+    function getAllChannels() {
+      const merged = [...DEFAULT_CHANNELS];
+      dynamicChannels.forEach(dc => {
+        if (!merged.some(m => m.id === dc.id)) merged.push(dc);
+      });
+      return merged;
+    }
+
+    async function ensureChannelExistsInDatabase(channelId, channelName, channelDesc = '') {
+      if (!db || !channelId) return;
+      try {
+        // Only sends columns id and name to prevent 400 Bad Request on tables without created_by
+        await db.from('chat_channels').upsert([{
+          id: channelId,
+          name: channelName || channelId
+        }], { onConflict: 'id' });
+      } catch(e) {
+        console.warn('Channel registration notice:', e.message);
+      }
+    }
+
+    window.openCreateChannelModal = function() {
+      document.getElementById('createChannelForm').reset();
+      document.getElementById('createChannelModal').showModal();
+    };
+
+    window.handleCreateChannelSubmit = async function(e) {
+      e.preventDefault();
+      const rawName = document.getElementById('new_channel_name').value.trim().toLowerCase();
+      const cleanId = rawName.replace(/[^a-z0-9_-]/g, '-');
+      const desc = document.getElementById('new_channel_desc').value.trim() || 'Custom team channel';
+
+      if (!cleanId) return;
+
+      const channels = getAllChannels();
+      if (channels.some(c => c.id === cleanId)) {
+        showToast(`Channel #${cleanId} already exists.`, 'error');
+        return;
+      }
+
+      const newChan = { id: cleanId, name: cleanId, desc: desc };
+      dynamicChannels.push(newChan);
+      localStorage.setItem('portal_custom_channels', JSON.stringify(dynamicChannels));
+
+      await ensureChannelExistsInDatabase(cleanId, cleanId, desc);
+
+      if (db) {
+        db.channel('public:chat_channels_sync').send({
+          type: 'broadcast',
+          event: 'new_channel',
+          payload: newChan
+        });
+      }
+
+      document.getElementById('createChannelModal').close();
+      showToast(`Channel #${cleanId} created!`, 'success');
+      renderSlackSidebar();
+      selectChatTarget('channel', cleanId, cleanId, desc);
+    };
+
+    function getDmChannelId(myEmail, otherEmail) {
+      const sorted = [String(myEmail || '').toLowerCase(), String(otherEmail || '').toLowerCase()].sort();
+      return `dm_${sorted[0].replace(/[^a-z0-9]/g, '')}_${sorted[1].replace(/[^a-z0-9]/g, '')}`;
+    }
+
+    window.selectChatTarget = async function(type, id, name, desc = '') {
+      activeChatTarget = { type, id, name, desc };
+
+      await ensureChannelExistsInDatabase(id, name, desc);
+
+      if (unreadChatCounts[id]) {
+        delete unreadChatCounts[id];
+        localStorage.setItem('portal_chat_unreads', JSON.stringify(unreadChatCounts));
+        updateGlobalUnreadBadge();
+      }
+
+      const iconEl = document.getElementById('slack-current-icon');
+      const titleEl = document.getElementById('slack-active-title');
+      const descEl = document.getElementById('slack-active-desc');
+      const inputEl = document.getElementById('chat-message-input');
+
+      if (iconEl) iconEl.innerText = type === 'channel' ? '#' : '@';
+      if (titleEl) titleEl.innerText = name;
+      if (descEl) descEl.innerText = desc || (type === 'dm' ? `Direct conversation with ${name}` : '');
+      if (inputEl) inputEl.placeholder = `Message ${type === 'channel' ? '#' : '@'}${name}...`;
+
+      renderSlackSidebar();
+      loadActiveMessages();
+    };
+
+    window.toggleEmojiPopover = function() {
+      const popover = document.getElementById('chatEmojiPopover');
+      if (popover) {
+        popover.style.display = (popover.style.display === 'grid') ? 'none' : 'grid';
+      }
+    };
+
+    window.insertEmoji = function(emoji) {
+      const input = document.getElementById('chat-message-input');
+      if (input) {
+        input.value += emoji;
+        input.focus();
+      }
+      document.getElementById('chatEmojiPopover').style.display = 'none';
+    };
+
+    window.handleChatFileUpload = function(inputEl) {
+      const file = inputEl.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentChatAttachment = {
+          name: file.name,
+          type: file.type,
+          dataUrl: e.target.result
+        };
+        const preview = document.getElementById('chat-attachment-preview');
+        const nameSpan = document.getElementById('chat-attachment-name');
+        if (preview && nameSpan) {
+          nameSpan.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+          preview.style.display = 'inline-flex';
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.clearChatAttachment = function() {
+      currentChatAttachment = null;
+      document.getElementById('chat-file-input').value = '';
+      document.getElementById('chat-attachment-preview').style.display = 'none';
+    };
+
+    async function renderSlackSidebar() {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const myEmail = userSession.email || '';
+
+      const chanListEl = document.getElementById('slack-channel-list');
+      if (chanListEl) {
+        const channels = getAllChannels();
+        chanListEl.innerHTML = channels.map(c => {
+          const isActive = (activeChatTarget.type === 'channel' && activeChatTarget.id === c.id);
+          const unreads = unreadChatCounts[c.id] || 0;
+          const badgeHtml = unreads > 0 ? `<span class="unread-counter-badge">${unreads}</span>` : '';
+          return `
+            <button class="slack-item-btn ${isActive ? 'active' : ''}" onclick="selectChatTarget('channel', '${c.id}', '${c.name}', '${escapeHtml(c.desc)}')">
+              <span style="color: var(--text-muted); font-weight: 700;">#</span>
+              <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.name}</span>
+              ${badgeHtml}
+            </button>
+          `;
+        }).join('');
+      }
+
+      const dmListEl = document.getElementById('slack-dm-list');
+      if (dmListEl && db) {
+        const { data: teamProfiles } = await db.from('profiles').select('email, full_name, role, is_approved').order('full_name', { ascending: true });
+        if (teamProfiles && teamProfiles.length > 0) {
+          const otherMembers = teamProfiles.filter(p => (p.email || '').toLowerCase() !== myEmail.toLowerCase());
+          const dmCountEl = document.getElementById('slack-dm-count');
+          if (dmCountEl) dmCountEl.innerText = `${otherMembers.length} members`;
+
+          dmListEl.innerHTML = otherMembers.map(p => {
+            const dmId = getDmChannelId(myEmail, p.email);
+            const isActive = (activeChatTarget.type === 'dm' && activeChatTarget.id === dmId);
+            const isOnline = onlineUsersMap.has((p.email || '').toLowerCase());
+            const unreads = unreadChatCounts[dmId] || 0;
+            const badgeHtml = unreads > 0 ? `<span class="unread-counter-badge">${unreads}</span>` : '';
+            const displayName = p.full_name || (p.email ? p.email.split('@')[0] : 'Agent');
+
+            return `
+              <button class="slack-item-btn ${isActive ? 'active' : ''}" onclick="selectChatTarget('dm', '${dmId}', '${escapeHtml(displayName)}', '${p.email}')">
+                <span class="online-indicator ${isOnline ? 'online' : ''}" title="${isOnline ? 'Online now' : 'Offline'}"></span>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${displayName}</span>
+                ${badgeHtml}
+              </button>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function updateGlobalUnreadBadge() {
+      const totalUnreads = Object.values(unreadChatCounts).reduce((acc, count) => acc + count, 0);
+      const globalBadge = document.getElementById('unread-chat-badge');
+      if (globalBadge) {
+        if (totalUnreads > 0) {
+          globalBadge.innerText = totalUnreads > 99 ? '99+' : totalUnreads;
+          globalBadge.style.display = 'inline-block';
+        } else {
+          globalBadge.style.display = 'none';
+        }
+      }
+    }
+
+    async function loadActiveMessages() {
+      const container = document.getElementById('chat-messages-container');
+      container.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:2rem;">Loading messages...</div>';
+
+      if (!db) return;
+      const { data: messages } = await db
+        .from('chat_messages')
+        .select('*')
+        .eq('channel_id', activeChatTarget.id)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      container.innerHTML = '';
+      if (messages && messages.length > 0) {
+        messages.forEach(renderChatMessage);
+      } else {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 3rem 1rem; color:var(--text-muted);">
+            <div style="font-size: 1.8rem; margin-bottom: 6px;">💬</div>
+            <div style="font-weight: 700; color: var(--text-dark);">Start of ${activeChatTarget.type === 'channel' ? '#' : '@'}${activeChatTarget.name}</div>
+            <div style="font-size: 0.8rem; margin-top: 4px;">Send a message to start the conversation!</div>
+          </div>
+        `;
+      }
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function renderChatMessage(msg) {
+      const container = document.getElementById('chat-messages-container');
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isSelf = userSession.email && msg.user_email === userSession.email;
+      const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      let attachmentHtml = '';
+      if (msg.attachment_url) {
+        if (msg.attachment_type && msg.attachment_type.startsWith('image/')) {
+          attachmentHtml = `<div style="margin-top:6px;"><img src="${msg.attachment_url}" alt="Attachment" style="max-width:280px; max-height:200px; border-radius:6px; border:1px solid var(--border-color); display:block;" /></div>`;
+        } else {
+          attachmentHtml = `<div style="margin-top:6px;"><a href="${msg.attachment_url}" download="${msg.attachment_name || 'attachment'}" class="btn btn-secondary btn-sm" style="font-size:0.75rem;">📎 ${escapeHtml(msg.attachment_name || 'Download Attachment')}</a></div>`;
+        }
+      }
+
+      const msgDiv = document.createElement('div');
+      msgDiv.style = `display:flex; flex-direction:column; max-width:75%; align-self:${isSelf ? 'flex-end' : 'flex-start'};`;
+      msgDiv.innerHTML = `
+        <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 2px; align-self: ${isSelf ? 'flex-end' : 'flex-start'};">
+          <strong style="color: ${isSelf ? 'var(--primary-green)' : 'var(--text-dark)'};">${escapeHtml(msg.user_name || msg.user_email)}</strong> • ${time}
+        </div>
+        <div style="background: ${isSelf ? 'var(--primary-green)' : 'var(--input-bg)'}; color: ${isSelf ? '#ffffff' : 'var(--text-dark)'}; padding: 9px 13px; border-radius: 8px; font-size: 0.84rem; line-height: 1.4; border: 1px solid var(--border-color); word-break: break-word;">
+          ${escapeHtml(msg.content)}
+          ${attachmentHtml}
+        </div>
+      `;
+      container.appendChild(msgDiv);
+    }
+
+    window.sendChatMessage = async function(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-message-input');
+      const content = input.value.trim();
+      if (!content && !currentChatAttachment) return;
+      if (!db) return;
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const senderEmail = userSession.email || 'agent@letsliveitup.com';
+      const senderName = currentUserProfile.full_name || (senderEmail ? senderEmail.split('@')[0] : 'Agent');
+
+      let senderId = currentUserProfile.id;
+      if (!senderId) {
+        const { data: prof } = await db.from('profiles').select('id').eq('email', senderEmail).maybeSingle();
+        senderId = prof?.id;
+      }
+
+      await ensureChannelExistsInDatabase(activeChatTarget.id, activeChatTarget.name, activeChatTarget.desc);
+
+      const msgPayload = {
+        channel_id: activeChatTarget.id,
+        user_id: senderId,
+        user_name: senderName,
+        user_email: senderEmail,
+        content: content || (currentChatAttachment ? `Shared file: ${currentChatAttachment.name}` : '')
+      };
+
+      if (currentChatAttachment) {
+        msgPayload.attachment_url = currentChatAttachment.dataUrl;
+        msgPayload.attachment_name = currentChatAttachment.name;
+        msgPayload.attachment_type = currentChatAttachment.type;
+      }
+
+      input.value = '';
+      clearChatAttachment();
+
+      const { error } = await db.from('chat_messages').insert([msgPayload]);
+
+      if (error) {
+        showToast('Failed to send: ' + error.message, 'error');
+      }
+    };
+
+    function initChatRealtime() {
+      if (!db) return;
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const myEmail = userSession.email;
+
+      if (myEmail) {
+        presenceChannelInstance = db.channel('online-presence-room', {
+          config: { presence: { key: myEmail.toLowerCase() } }
+        });
+
+        presenceChannelInstance
+          .on('presence', { event: 'sync' }, () => {
+            const state = presenceChannelInstance.presenceState();
+            onlineUsersMap = new Set(Object.keys(state));
+            const countEl = document.getElementById('slack-online-count');
+            if (countEl) countEl.innerText = `${onlineUsersMap.size} online`;
+            renderSlackSidebar();
+          })
+          .subscribe(async (status) => {
+            if (status === 'SUBSCRIBED') {
+              await presenceChannelInstance.track({
+                email: myEmail.toLowerCase(),
+                online_at: new Date().toISOString()
+              });
+            }
+          });
+      }
+
+      db.channel('public:chat_messages')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
+          const newMsg = payload.new;
+          if (newMsg.channel_id === activeChatTarget.id) {
+            renderChatMessage(newMsg);
+            const container = document.getElementById('chat-messages-container');
+            if (container) container.scrollTop = container.scrollHeight;
+          } else {
+            unreadChatCounts[newMsg.channel_id] = (unreadChatCounts[newMsg.channel_id] || 0) + 1;
+            localStorage.setItem('portal_chat_unreads', JSON.stringify(unreadChatCounts));
+            updateGlobalUnreadBadge();
+            renderSlackSidebar();
+
+            showToast(`New message from ${newMsg.user_name || 'Team member'}`, 'info');
+          }
+        })
+        .subscribe();
+
+      db.channel('public:chat_channels_sync')
+        .on('broadcast', { event: 'new_channel' }, payload => {
+          const incomingChan = payload.payload;
+          if (!dynamicChannels.some(dc => dc.id === incomingChan.id)) {
+            dynamicChannels.push(incomingChan);
+            localStorage.setItem('portal_custom_channels', JSON.stringify(dynamicChannels));
+            renderSlackSidebar();
+          }
+        })
+        .subscribe();
+
+      updateGlobalUnreadBadge();
+      renderSlackSidebar();
+      selectChatTarget('channel', 'general', 'general', 'Company announcements & team chat');
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // ============================================================
+    // INTAKE FORMS DISPATCHER
+    // ============================================================
+    window.openFormModal = function(id) {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdmin = (currentUserProfile.role === 'admin') && !isAgentPreviewSimulated;
+
+      if (!isAdmin) {
+        if (systemMaintenanceState.forms) {
+          showToast('Ticket Submission Hub is offline for maintenance.', 'error');
+          return;
+        }
+        if (id === 'form1Modal' && systemMaintenanceState.form_super_greens) {
+          showToast('Super Greens Trends intake is offline for maintenance.', 'error');
+          return;
+        }
+        if (id === 'form2Modal' && systemMaintenanceState.form_replacements) {
+          showToast('Replacement Tracking intake is offline for maintenance.', 'error');
+          return;
+        }
+        if (id === 'form3Modal' && systemMaintenanceState.form_recall) {
+          showToast('Recall Order Refunds intake is offline for maintenance.', 'error');
+          return;
+        }
+        if (id === 'form4Modal' && systemMaintenanceState.form_refund_others) {
+          showToast('Refund Others intake is offline for maintenance.', 'error');
+          return;
+        }
+      }
+
+      document.getElementById(id)?.showModal();
+    };
+
+    window.closeFormModal = function(id) { document.getElementById(id)?.close(); };
+    function checkPolicyReminder(val) {
+      const alertBox = document.getElementById('replacementPolicyAlert');
+      if (alertBox) alertBox.style.display = (val === 'LIT' || val === 'Damaged') ? 'block' : 'none';
+    }
+
+    window.handleFormSubmit = async function(e, modalId, formType) {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Processing...';
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email || 'agent@letsliveitup.com';
+      const now = new Date();
+      const nowIso = now.toISOString();
+      const todayDate = nowIso.split('T')[0];
+
+      let sheetPayload = { form_type: formType, submitted_by_agent: agentEmail };
+      let matchNotification = "";
+
+      try {
+        if (formType === 'super_greens') {
+          const orderNum = formatOrderNumber(document.getElementById('sg_order_num').value);
+          const custEmail = document.getElementById('sg_customer_email').value.trim();
+          const refundAmt = formatCurrency(document.getElementById('sg_refund_amount').value);
+          const subStatus = document.getElementById('sg_sub_status').value;
+
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus });
+          if (db) {
+            await db.from('tracker_sgrelaunch').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus }]);
+          }
+        } else if (formType === 'replacement_tracking') {
+          const orderNum = formatOrderNumber(document.getElementById('rep_order_num').value);
+          const custEmail = document.getElementById('rep_customer_email').value.trim();
+          const repReason = document.getElementById('rep_reason').value;
+          const repOrderNum = formatOrderNumber(document.getElementById('rep_replacement_order').value);
+
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, reason: repReason, replacement_order_num: repOrderNum });
+          if (db) {
+            await db.from('tracker_replacements').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, replacement_reason: repReason, replacement_order_number: repOrderNum }]);
+          }
+        } else if (formType === 'recall_order_refunds' || formType === 'refund_others') {
+          const isRecall = formType === 'recall_order_refunds';
+          const orderNum = formatOrderNumber(isRecall ? document.getElementById('recall_order_num').value : document.getElementById('ro_order_num').value);
+          const cleanOrderNum = orderNum.replace('#', '').trim();
+          const custEmail = (isRecall ? document.getElementById('recall_customer_email').value : document.getElementById('ro_customer_email').value).trim();
+          const refundAmtWithSymbol = formatCurrency(isRecall ? document.getElementById('recall_refund_amount').value : document.getElementById('ro_refund_amount').value);
+          const cleanRefundAmt = refundAmtWithSymbol.replace(/[^0-9.]/g, '');
+          const subStatus = isRecall ? document.getElementById('recall_sub_status').value : document.getElementById('ro_sub_status').value;
+          const refReason = isRecall ? document.getElementById('recall_reason').value : document.getElementById('ro_reason').value;
+
+          Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason });
+
+          if (db) {
+            const targetTable = isRecall ? 'tracker_recall_refunds' : 'tracker_refund_others';
+            await db.from(targetTable).insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason }]);
+
+            const { data: matchedRecords } = await db.from('refunds').select('task_id, order_number, notes').ilike('your_email_address', custEmail).or(`order_number.eq.${cleanOrderNum},order_number.eq.#${cleanOrderNum}`).limit(5);
+
+            if (matchedRecords && matchedRecords.length > 0) {
+              for (const record of matchedRecords) {
+                const appendNote = `\n[${todayDate}] Updated to Refunded ($${cleanRefundAmt}) via Tracker by ${agentEmail}`;
+                await db.from('refunds').update({ status: 'Refunded', refund_amount: cleanRefundAmt, refund_date: todayDate, last_modified: nowIso, last_modified_by: agentEmail, notes: (record.notes || '') + appendNote }).eq('task_id', record.task_id);
+              }
+              matchNotification = ` Matched & updated task #${matchedRecords[0].task_id} to Refunded.`;
+            }
+          }
+        }
+
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sheetPayload) }).catch(console.warn);
+        showToast(`Intake logged successfully!${matchNotification}`, 'success');
+      } catch (err) {
+        showToast('Error recording intake: ' + err.message, 'error');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerText = originalText;
+      form.reset();
+      closeFormModal(modalId);
+      executeQueueFetch(queueCurrentPage);
+    };
+
+    // ============================================================
+    // VIBE QUEUE DATA TABLE
+    // ============================================================
+    window.executeQueueFetch = async function(pageIndex = 0) {
+      queueCurrentPage = pageIndex;
+      const tbody = document.getElementById('queueTableBody');
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 1.5rem;">Loading live database records...</td></tr>';
+      if (!db) return;
+
+      const search = document.getElementById('queueSearchInput').value.trim();
+      const status = document.getElementById('queueStatusFilter').value;
+      const method = document.getElementById('queueMethodFilter').value;
+      const reason = document.getElementById('queueReasonFilter').value;
+      const assignee = document.getElementById('queueAssigneeFilter').value;
+      const sortBy = document.getElementById('queueSortBy').value;
+      const sortOrder = document.getElementById('queueSortOrder').value === 'asc';
+
+      try {
+        let query = db.from('refunds').select('*', { count: 'exact' });
+        if (status) query = query.eq('status', status);
+        if (method) query = query.eq('validation_mechanism', method);
+        if (reason) query = query.eq('validation_reason', reason);
+        if (assignee === '__unassigned__') query = query.or('assignee_email.is.null,assignee_email.eq.""');
+        else if (assignee) query = query.eq('assignee_email', assignee);
+
+        if (search) query = query.or(`your_email_address.ilike.%${search}%,order_number.ilike.%${search}%,task_id.ilike.%${search}%,name.ilike.%${search}%`);
+
+        const from = queueCurrentPage * QUEUE_PAGE_SIZE;
+        const to = from + QUEUE_PAGE_SIZE - 1;
+
+        const { data, count, error } = await query.order(sortBy, { ascending: sortOrder, nullsFirst: false }).range(from, to);
+        if (error) throw error;
+
+        queueTotalRecords = count || 0;
+        document.getElementById('queueTotalBadge').textContent = `TOTAL RECORDS: ${queueTotalRecords.toLocaleString()}`;
+        const totalPages = Math.ceil(queueTotalRecords / QUEUE_PAGE_SIZE) || 1;
+        const pageText = `Page ${queueCurrentPage + 1} of ${totalPages}`;
+        document.getElementById('queuePageIndicator').textContent = pageText;
+        document.getElementById('queuePageIndicatorBottom').textContent = pageText;
+
+        document.getElementById('queuePrevBtn').disabled = (queueCurrentPage === 0);
+        document.getElementById('queuePrevBtnBottom').disabled = (queueCurrentPage === 0);
+        document.getElementById('queueNextBtn').disabled = ((queueCurrentPage + 1) * QUEUE_PAGE_SIZE >= queueTotalRecords);
+        document.getElementById('queueNextBtnBottom').disabled = ((queueCurrentPage + 1) * QUEUE_PAGE_SIZE >= queueTotalRecords);
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 1.5rem;">No refund records found matching your filters.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        data.forEach(row => {
+          const tr = document.createElement('tr');
+          const shortTaskId = row.task_id ? `#${row.task_id.slice(-6)}` : '—';
+          const asanaLink = row.task_id ? `<a class="link-tag" href="${ASANA_BASE}/${row.task_id}" target="_blank">${shortTaskId} &nearr;</a>` : '—';
+          const shopifyOrder = row.shopify_order_id ? `<a class="link-tag" href="${SHOPIFY_ORDERS}${row.shopify_order_id}" target="_blank">${row.order_number || '—'} &nearr;</a>` : (row.order_number || '—');
+          const shopifyCustomer = row.shopify_customer_id ? `<a class="link-tag" href="${SHOPIFY_CUSTOMERS}${row.shopify_customer_id}" target="_blank">${row.your_email_address || '—'} &nearr;</a>` : (row.your_email_address || '—');
+          const safeRowJson = JSON.stringify(row).replace(/'/g, "&apos;");
+          const commentCount = Number(row.comment_count) || 0;
+          const commentBadge = commentCount > 0 ? `<span class="comments-count-badge">${commentCount > 99 ? '99+' : commentCount}</span>` : '';
+
+          tr.innerHTML = `
+            <td>${asanaLink}</td>
+            <td>${shopifyCustomer}</td>
+            <td>${shopifyOrder}</td>
+            <td><strong>${row.status || '—'}</strong></td>
+            <td>${row.validation_mechanism || '—'}</td>
+            <td>${row.validation_reason || '—'}</td>
+            <td>${row.created_at ? String(row.created_at).slice(0, 10) : '—'}</td>
+            <td>${row.last_modified_by ? row.last_modified_by.split('@')[0] : '—'}</td>
+            <td>${row.assignee_email ? row.assignee_email.split('@')[0] : '—'}</td>
+            <td>
+              <div class="actions-cell-wrap">
+                <span class="comments-btn-wrap">
+                  <button class="btn-action-show" onclick="openCommentsModal('${row.task_id}')">Show comments</button>
+                  ${commentBadge}
+                </span>
+                <button class="btn-action-edit" onclick='openEditModal(${safeRowJson})'>Edit</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Query Error: ${e.message}</td></tr>`;
+      }
+    };
+
+    window.queueChangePage = function(delta) {
+      const newPage = queueCurrentPage + delta;
+      if (newPage >= 0 && newPage * QUEUE_PAGE_SIZE < queueTotalRecords) {
+        executeQueueFetch(newPage);
+      }
+    };
+
+    window.openEditModal = function(record) {
+      currentEditingRecord = record;
+      document.getElementById('editModalHeading').textContent = `Edit refund — Order # ${record.order_number || record.task_id || '—'}`;
+      document.getElementById('edit_task_id').value = record.task_id || '';
+      document.getElementById('edit_status').value = record.status || '';
+      document.getElementById('edit_product').value = record.product || '';
+      document.getElementById('edit_refund_options').value = record.refund_options || '';
+      document.getElementById('edit_channel').value = record.channel || '';
+      document.getElementById('edit_order_number').value = record.order_number || '';
+      document.getElementById('edit_your_email_address').value = record.your_email_address || '';
+
+      const shopifyLink = document.getElementById('edit_shopify_customer_link');
+      if (record.shopify_customer_id) {
+        shopifyLink.href = `${SHOPIFY_CUSTOMERS}${record.shopify_customer_id}`;
+        shopifyLink.style.display = 'inline-block';
+      } else {
+        shopifyLink.style.display = 'none';
+      }
+
+      document.getElementById('edit_first_name').value = record.first_name || '';
+      document.getElementById('edit_last_name').value = record.last_name || '';
+      document.getElementById('edit_name').value = record.name || '';
+
+      const asanaLink = document.getElementById('edit_asana_link');
+      if (record.task_id) {
+        asanaLink.href = `${ASANA_BASE}/${record.task_id}`;
+        asanaLink.style.display = 'inline-block';
+      } else {
+        asanaLink.style.display = 'none';
+      }
+
+      document.getElementById('edit_refund_amount').value = record.refund_amount != null ? record.refund_amount : '';
+      document.getElementById('edit_original_order_amount').textContent = record.original_order_amount ? `$${record.original_order_amount}` : '—';
+      document.getElementById('edit_number_of_units').value = record.number_of_units != null ? record.number_of_units : '';
+      document.getElementById('edit_notes').value = record.notes || '';
+
+      const lastModifiedDate = record.last_modified ? new Date(record.last_modified).toLocaleDateString() : '—';
+      document.getElementById('edit_last_modified_banner').textContent = `Last modified: ${lastModifiedDate} by ${record.last_modified_by || '—'}`;
+
+      document.getElementById('edit_assignee_email').value = record.assignee_email || '';
+      document.getElementById('edit_validation_reason').value = record.validation_reason || '';
+      document.getElementById('edit_failed_refund_reason').textContent = record.failed_refund_reason || '—';
+
+      document.getElementById('edit_created_at').value = formatDateInput(record.created_at);
+      document.getElementById('edit_completed_at').value = formatDateInput(record.completed_at);
+      document.getElementById('edit_due_date').value = formatDateInput(record.due_date);
+      document.getElementById('edit_start_date').value = formatDateInput(record.start_date);
+      document.getElementById('edit_refund_date').value = formatDateInput(record.refund_date);
+
+      const commentBadge = document.getElementById('editModalCommentBadge');
+      if (record.comment_count && Number(record.comment_count) > 0) {
+        commentBadge.textContent = record.comment_count;
+        commentBadge.style.display = 'inline-block';
+      } else {
+        commentBadge.style.display = 'none';
+      }
+
+      document.getElementById('editRefundModal').showModal();
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('editRefundModal').close();
+      currentEditingRecord = null;
+    };
+
+    window.saveRefundRecord = async function(e) {
+      e.preventDefault();
+      const taskId = document.getElementById('edit_task_id').value;
+      if (!taskId || !db) return;
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const activeAgentEmail = userSession.email || 'agent@letsliveitup.com';
+
+      const updates = {
+        status: document.getElementById('edit_status').value,
+        product: document.getElementById('edit_product').value,
+        refund_options: document.getElementById('edit_refund_options').value,
+        channel: document.getElementById('edit_channel').value,
+        order_number: document.getElementById('edit_order_number').value,
+        your_email_address: document.getElementById('edit_your_email_address').value,
+        first_name: document.getElementById('edit_first_name').value,
+        last_name: document.getElementById('edit_last_name').value,
+        name: document.getElementById('edit_name').value,
+        refund_amount: document.getElementById('edit_refund_amount').value,
+        number_of_units: document.getElementById('edit_number_of_units').value,
+        notes: document.getElementById('edit_notes').value,
+        assignee_email: document.getElementById('edit_assignee_email').value,
+        validation_reason: document.getElementById('edit_validation_reason').value,
+        created_at: document.getElementById('edit_created_at').value,
+        completed_at: document.getElementById('edit_completed_at').value,
+        due_date: document.getElementById('edit_due_date').value,
+        start_date: document.getElementById('edit_start_date').value,
+        refund_date: document.getElementById('edit_refund_date').value,
+        last_modified: new Date().toISOString(),
+        last_modified_by: activeAgentEmail
+      };
+
+      const { error } = await db.from('refunds').update(updates).eq('task_id', taskId);
+      if (error) {
+        showToast('Failed to update record: ' + error.message, 'error');
+      } else {
+        showToast(`Record #${taskId} updated!`, 'success');
+        closeEditModal();
+        executeQueueFetch(queueCurrentPage);
+      }
+    };
+
+    window.openCommentsFromEdit = function() {
+      if (currentEditingRecord && currentEditingRecord.task_id) openCommentsModal(currentEditingRecord.task_id);
+    };
+
+    window.openCommentsModal = async function(taskId) {
+      currentActiveTaskId = taskId;
+      document.getElementById('commentsModalTitle').textContent = `Task #${taskId} Comments`;
+      const feed = document.getElementById('commentsFeed');
+      feed.innerHTML = '<p style="font-size: 0.82rem; color: var(--text-muted);">Loading comments...</p>';
+
+      if (db) {
+        const { data } = await db.from('comments').select('*').eq('task_id', taskId).order('created_at', { ascending: false });
+        renderCommentsList(data || []);
+      }
+      document.getElementById('commentsModal').showModal();
+    };
+
+    function renderCommentsList(comments) {
+      const feed = document.getElementById('commentsFeed');
+      if (!comments || comments.length === 0) {
+        feed.innerHTML = '<p style="font-size: 0.82rem; color: var(--text-muted);">No comments logged yet.</p>';
+        return;
+      }
+      feed.innerHTML = '';
+      comments.forEach(c => {
+        const item = document.createElement('div');
+        item.style.borderBottom = '1px solid var(--border-color)';
+        item.style.paddingBottom = '0.4rem';
+        item.style.marginBottom = '0.4rem';
+        item.innerHTML = `
+          <small style="color: var(--text-muted); font-size: 0.74rem;">${new Date(c.created_at).toLocaleString()} — <strong>${c.author_email || 'Agent'}</strong></small>
+          <p style="margin: 2px 0 0 0; font-size: 0.82rem;">${c.body}</p>
+        `;
+        feed.appendChild(item);
+      });
+    }
+
+    window.closeCommentsModal = function() {
+      document.getElementById('commentsModal').close();
+      currentActiveTaskId = null;
+    };
+
+    window.submitNewComment = async function(e) {
+      e.preventDefault();
+      const textInput = document.getElementById('commentInputText');
+      const text = textInput.value.trim();
+      if (!text || !currentActiveTaskId || !db) return;
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const authorEmail = userSession.email || 'agent@letsliveitup.com';
+
+      const { data, error } = await db.from('comments').insert([{
+        task_id: currentActiveTaskId,
+        body: text,
+        author_email: authorEmail
+      }]).select();
+
+      if (!error && data) {
+        textInput.value = '';
+        showToast('Comment posted', 'info');
+        openCommentsModal(currentActiveTaskId);
+      } else {
+        showToast('Failed to post comment', 'error');
+      }
+    };
+
+	// ============================================================
+    // MODULE 4: SUPABASE INTELLIGENCE & REPORTING ENGINE
+    // ============================================================
+    let chartVolumeInstance = null;
+    let chartReasonsInstance = null;
+
+    async function fetchAllTableRows(tableName, batchSize = 1000) {
+      let records = [];
+      let from = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const to = from + batchSize - 1;
+        const { data, error } = await db
+          .from(tableName)
+          .select('*')
+          .range(from, to);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          records = records.concat(data);
+          if (data.length < batchSize) {
+            hasMore = false;
+          } else {
+            from += batchSize;
+          }
+        } else {
+          hasMore = false;
+        }
+      }
+
+      return records;
+    }
+
+    window.fetchPortalData = async function() {
+      const tbody = document.getElementById('reportsTableBody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Fetching complete dataset from Supabase...</td></tr>';
+
+      if (!db) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 1.5rem;">Database not connected.</td></tr>';
+        return;
+      }
+
+      try {
+        const [sgRows, repRows, recallRows, othersRows] = await Promise.all([
+          fetchAllTableRows('tracker_sgrelaunch'),
+          fetchAllTableRows('tracker_replacements'),
+          fetchAllTableRows('tracker_recall_refunds'),
+          fetchAllTableRows('tracker_refund_others')
+        ]);
+
+        let combined = [];
+
+        sgRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'SGRelaunch',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: r.sub_status ? `Sub-status: ${r.sub_status}` : 'General Feedback',
+            amount: r.refund_amount || ''
+          });
+        });
+
+        repRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Replacement Tracking',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.replacement_reason || 'Replacement'} (New: ${r.replacement_order_number || '—'})`,
+            amount: 'N/A'
+          });
+        });
+
+        recallRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Recall Order Refunds',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.refund_reason || 'Recall'} | ${r.sub_status || ''}`,
+            amount: r.refund_amount || ''
+          });
+        });
+
+        othersRows.forEach(r => {
+          combined.push({
+            _sourceSheet: 'Refund Others',
+            timestamp: r.timestamp || '',
+            order_number: r.order_number || '—',
+            customer_email: r.customer_email || '—',
+            agent_email: r.agent_email || '—',
+            reason: `${r.refund_reason || 'Other'} | ${r.sub_status || ''}`,
+            amount: r.refund_amount || ''
+          });
+        });
+
+        combined.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+
+        globalPortalData = combined;
+        filterReportData();
+        showToast(`Loaded all ${globalPortalData.length.toLocaleString()} records from Supabase!`, 'success');
+
+      } catch (err) {
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:1.5rem;">Fetch error: ${err.message}</td></tr>`;
+      }
+    };
+
+    window.applyDatePreset = function(preset) {
+      const customBox = document.getElementById('customDateRangeBox');
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+      
+      const now = new Date();
+      const formatDate = d => d.toISOString().split('T')[0];
+
+      if (preset === 'custom') {
+        if (customBox) customBox.style.display = 'inline-flex';
+        return;
+      } else {
+        if (customBox) customBox.style.display = 'none';
+      }
+
+      if (preset === 'all') {
+        startInput.value = '';
+        endInput.value = '';
+      } else if (preset === 'today') {
+        const todayStr = formatDate(now);
+        startInput.value = todayStr;
+        endInput.value = todayStr;
+      } else if (preset === 'yesterday') {
+        const yest = new Date(now);
+        yest.setDate(yest.getDate() - 1);
+        const yestStr = formatDate(yest);
+        startInput.value = yestStr;
+        endInput.value = yestStr;
+      } else if (preset === 'last7') {
+        const past7 = new Date(now);
+        past7.setDate(past7.getDate() - 7);
+        startInput.value = formatDate(past7);
+        endInput.value = formatDate(now);
+      } else if (preset === 'last30') {
+        const past30 = new Date(now);
+        past30.setDate(past30.getDate() - 30);
+        startInput.value = formatDate(past30);
+        endInput.value = formatDate(now);
+      } else if (preset === 'thisMonth') {
+        const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+        startInput.value = formatDate(firstDay);
+        endInput.value = formatDate(now);
+      }
+
+      filterReportData();
+    };
+
+    window.clearDateFilter = function() {
+      const presetSelect = document.getElementById('reportDatePreset');
+      const customBox = document.getElementById('customDateRangeBox');
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+
+      if (presetSelect) presetSelect.value = 'all';
+      if (customBox) customBox.style.display = 'none';
+      if (startInput) startInput.value = '';
+      if (endInput) endInput.value = '';
+
+      filterReportData();
+    };
+
+    function parseRecordDate(ts) {
+      if (!ts) return null;
+      const parsed = new Date(ts);
+      if (!isNaN(parsed.getTime())) return parsed;
+      
+      const parts = String(ts).split(' ')[0].split('/');
+      if (parts.length === 3) {
+        const month = parseInt(parts[0], 10) - 1;
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+        const manualDate = new Date(year, month, day);
+        if (!isNaN(manualDate.getTime())) return manualDate;
+      }
+      return null;
+    }
+
+    let reportsCurrentPage = 0;
+    let reportsPageSize = 100;
+    let currentFilteredReportsData = [];
+
+    window.changeReportsPageSize = function(val) {
+      reportsPageSize = parseInt(val, 10) || 100;
+      reportsCurrentPage = 0;
+      renderReportTable(currentFilteredReportsData);
+    };
+
+    window.changeReportsPage = function(delta) {
+      const totalPages = Math.ceil(currentFilteredReportsData.length / reportsPageSize) || 1;
+      const next = reportsCurrentPage + delta;
+      if (next >= 0 && next < totalPages) {
+        reportsCurrentPage = next;
+        renderReportTable(currentFilteredReportsData);
+        const container = document.querySelector('#reportsView .table-responsive');
+        if (container) container.scrollTop = 0;
+      }
+    };
+
+    window.filterReportData = function() {
+      const query = (document.getElementById('reportSearchInput')?.value || '').toLowerCase().trim();
+      const category = document.getElementById('reportCategoryFilter')?.value || 'all';
+      const startDateVal = document.getElementById('reportStartDate')?.value;
+      const endDateVal = document.getElementById('reportEndDate')?.value;
+
+      let startBound = null;
+      let endBound = null;
+
+      if (startDateVal) {
+        startBound = new Date(startDateVal + 'T00:00:00');
+      }
+      if (endDateVal) {
+        endBound = new Date(endDateVal + 'T23:59:59.999');
+      }
+
+      const filtered = globalPortalData.filter(item => {
+        const matchesCategory = (category === 'all') || (item._sourceSheet === category);
+        if (!matchesCategory) return false;
+
+        const matchesSearch = !query || 
+          String(item.order_number).toLowerCase().includes(query) ||
+          String(item.customer_email).toLowerCase().includes(query) ||
+          String(item.agent_email).toLowerCase().includes(query) ||
+          String(item.reason).toLowerCase().includes(query) ||
+          String(item.amount).toLowerCase().includes(query);
+        if (!matchesSearch) return false;
+
+        if (startBound || endBound) {
+          const recDate = parseRecordDate(item.timestamp);
+          if (!recDate) return false;
+          if (startBound && recDate < startBound) return false;
+          if (endBound && recDate > endBound) return false;
+        }
+
+        return true;
+      });
+
+      currentFilteredReportsData = filtered;
+      reportsCurrentPage = 0;
+
+      renderReportMetrics(filtered);
+      renderReportCharts(filtered);
+      renderReportTable(filtered);
+    };
+
+    function renderReportMetrics(data) {
+      const totalCount = data.length;
+      let totalRefundDollars = 0;
+      let refundCount = 0;
+      let replacementCount = 0;
+      const agentsSet = new Set();
+
+      data.forEach(item => {
+        if (item.agent_email && item.agent_email !== '—') agentsSet.add(item.agent_email);
+
+        if (item._sourceSheet === 'Replacement Tracking') {
+          replacementCount++;
+        } else if (item.amount && item.amount !== 'N/A') {
+          const num = parseFloat(String(item.amount).replace(/[^0-9.]/g, ''));
+          if (!isNaN(num)) {
+            totalRefundDollars += num;
+            refundCount++;
+          }
+        }
+      });
+
+      const totalEl = document.getElementById('repMetricTotal');
+      const refundValEl = document.getElementById('repMetricRefundVal');
+      const refundCountEl = document.getElementById('repMetricRefundCount');
+      const replacementsEl = document.getElementById('repMetricReplacements');
+      const activeAgentsEl = document.getElementById('repMetricActiveAgents');
+
+      if (totalEl) totalEl.innerText = totalCount.toLocaleString();
+      if (refundValEl) refundValEl.innerText = `$${totalRefundDollars.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      if (refundCountEl) refundCountEl.innerText = `${refundCount} refund records logged`;
+      if (replacementsEl) replacementsEl.innerText = replacementCount.toLocaleString();
+      if (activeAgentsEl) activeAgentsEl.innerText = agentsSet.size;
+    }
+
+    function renderReportCharts(data) {
+      if (typeof Chart === 'undefined') return;
+
+      const sourceCounts = {
+        'SGRelaunch': 0,
+        'Replacement Tracking': 0,
+        'Recall Order Refunds': 0,
+        'Refund Others': 0
+      };
+
+      const reasonCounts = {};
+
+      data.forEach(item => {
+        if (sourceCounts[item._sourceSheet] !== undefined) {
+          sourceCounts[item._sourceSheet]++;
+        }
+
+        let cleanReason = (item.reason || 'Unspecified').split('|')[0].split('(')[0].replace('Sub-status:', '').trim();
+        if (cleanReason) {
+          reasonCounts[cleanReason] = (reasonCounts[cleanReason] || 0) + 1;
+        }
+      });
+
+      const isDark = document.body.classList.contains('dark-mode');
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+
+      const ctxVolume = document.getElementById('chartTrackerVolume')?.getContext('2d');
+      if (ctxVolume) {
+        if (chartVolumeInstance) chartVolumeInstance.destroy();
+        chartVolumeInstance = new Chart(ctxVolume, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(sourceCounts),
+            datasets: [{
+              data: Object.values(sourceCounts),
+              backgroundColor: ['#10b981', '#0284c7', '#f59e0b', '#a855f7'],
+              borderWidth: isDark ? 2 : 1,
+              borderColor: isDark ? '#121e1a' : '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: textColor, boxWidth: 12, font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      const sortedReasons = Object.entries(reasonCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6);
+
+      const ctxReasons = document.getElementById('chartTopReasons')?.getContext('2d');
+      if (ctxReasons) {
+        if (chartReasonsInstance) chartReasonsInstance.destroy();
+        chartReasonsInstance = new Chart(ctxReasons, {
+          type: 'bar',
+          data: {
+            labels: sortedReasons.map(r => r[0]),
+            datasets: [{
+              label: 'Occurrences',
+              data: sortedReasons.map(r => r[1]),
+              backgroundColor: isDark ? '#22c55e' : '#0E3A2F',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                ticks: { color: textColor, precision: 0 },
+                grid: { color: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)' }
+              },
+              y: {
+                ticks: { color: textColor, font: { size: 11 } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function renderReportTable(data) {
+      const tbody = document.getElementById('reportsTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const total = data.length;
+      const totalPages = Math.ceil(total / reportsPageSize) || 1;
+
+      if (reportsCurrentPage >= totalPages) reportsCurrentPage = totalPages - 1;
+      if (reportsCurrentPage < 0) reportsCurrentPage = 0;
+
+      const from = reportsCurrentPage * reportsPageSize;
+      const to = Math.min(from + reportsPageSize, total);
+
+      const indicator = document.getElementById('reportsPageIndicator');
+      if (indicator) indicator.innerText = `Page ${reportsCurrentPage + 1} of ${totalPages}`;
+
+      const summary = document.getElementById('reportsPageSummary');
+      if (summary) summary.innerText = total > 0 ? `Showing ${from + 1}–${to} of ${total.toLocaleString()} records` : 'Showing 0 records';
+
+      const prevBtn = document.getElementById('reportsPrevBtn');
+      const nextBtn = document.getElementById('reportsNextBtn');
+      if (prevBtn) prevBtn.disabled = (reportsCurrentPage === 0);
+      if (nextBtn) nextBtn.disabled = (reportsCurrentPage + 1 >= totalPages);
+
+      if (total === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">No records found matching filters.</td></tr>';
+        return;
+      }
+
+      const pageSlice = data.slice(from, to);
+      pageSlice.forEach(item => {
+        const tr = document.createElement('tr');
+        const badgeColor = item._sourceSheet === 'SGRelaunch' ? '#10b981' :
+                           item._sourceSheet === 'Replacement Tracking' ? '#0284c7' :
+                           item._sourceSheet === 'Recall Order Refunds' ? '#f59e0b' : '#a855f7';
+
+        tr.innerHTML = `
+          <td><span class="badge-v1" style="font-size:0.68rem; color:${badgeColor}; border-color:${badgeColor}33;">${item._sourceSheet}</span></td>
+          <td style="font-size:0.75rem; color:var(--text-muted);">${item.timestamp ? String(item.timestamp).slice(0, 16) : '—'}</td>
+          <td style="font-weight: 700;">${item.order_number}</td>
+          <td>${item.customer_email}</td>
+          <td>${item.agent_email ? item.agent_email.split('@')[0] : '—'}</td>
+          <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.reason)}">${escapeHtml(item.reason)}</td>
+          <td style="font-weight: 700; color: ${item.amount && item.amount !== 'N/A' ? '#ef4444' : 'var(--text-muted)'};">${item.amount || '—'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.exportReportsCSV = function() {
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdmin = (currentUserProfile.role === 'admin');
+      const isModerator = (currentUserProfile.role === 'moderator');
+
+      if (!isAdmin && !isModerator) {
+        showToast('Exporting reports is restricted to Moderators and Admins.', 'error');
+        return;
+      }
+
+      if (!globalPortalData || globalPortalData.length === 0) {
+        showToast('No data available to export.', 'error');
+        return;
+      }
+
+      const headers = ["Source Sheet", "Timestamp", "Order Number", "Customer Email", "Agent Email", "Details", "Amount"];
+      const rows = globalPortalData.map(d => [
+        `"${d._sourceSheet || ''}"`,
+        `"${d.timestamp || ''}"`,
+        `"${d.order_number || ''}"`,
+        `"${d.customer_email || ''}"`,
+        `"${d.agent_email || ''}"`,
+        `"${(d.reason || '').replace(/"/g, '""')}"`,
+        `"${d.amount || ''}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `LiveItUp_Tracker_Report_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('CSV export downloaded!', 'success');
+    };
+	
+    // ============================================================
+    // ANNOUNCEMENTS ENGINE
+    // ============================================================
+    window.createAnnouncementFromUI = async function(e) {
+      e.preventDefault();
+      if (!db) return;
+
+      const btn = document.getElementById('broadcastAnnBtn');
+      const originalText = btn.innerText;
+      btn.disabled = true;
+      btn.innerText = 'Publishing...';
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email || 'agent@letsliveitup.com';
+      const title = document.getElementById('ann_create_title').value.trim();
+      const body = document.getElementById('ann_create_body').value.trim();
+      const keyword = document.getElementById('ann_create_keyword').value.trim();
+
+      const { error } = await db.from('portal_announcements').insert([{
+        title: title,
+        body: body,
+        verification_keyword: keyword,
+        created_by: agentEmail,
+        is_active: true
+      }]);
+
+      btn.disabled = false;
+      btn.innerText = originalText;
+
+      if (error) {
+        showToast('Failed to publish: ' + error.message, 'error');
+        return;
+      }
+
+      document.getElementById('newAnnouncementForm').reset();
+      showToast(`Announcement "${title}" published!`, 'success');
+      fetchAnnouncementsList();
+    };
+
+    window.fetchAnnouncementsList = async function() {
+      if (!db) return;
+      const tbody = document.getElementById('announcementsTableBody');
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">Fetching...</td></tr>';
+
+      const { data: list, error } = await db.from('portal_announcements').select('*').order('created_at', { ascending: false });
+      if (error || !list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No announcements created yet.</td></tr>';
+        return;
+      }
+
+      const { data: reads } = await db.from('announcement_reads').select('announcement_id, agent_email');
+
+      tbody.innerHTML = '';
+      list.forEach(ann => {
+        const tr = document.createElement('tr');
+        const annReads = (reads || []).filter(r => String(r.announcement_id) === String(ann.id));
+        const statusBadge = ann.is_active 
+          ? '<span class="badge-v1" style="background:#dcfce7; color:#15803d; border-color:#86efac;">ACTIVE</span>' 
+          : '<span class="badge-v1" style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;">INACTIVE</span>';
+
+        tr.innerHTML = `
+          <td>${statusBadge}</td>
+          <td><strong>${ann.title}</strong></td>
+          <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${ann.verification_keyword}</code></td>
+          <td>${ann.created_by ? ann.created_by.split('@')[0] : '—'}</td>
+          <td><strong>${annReads.length} verified</strong></td>
+          <td>
+            <div style="display:flex; gap:4px;">
+              <button class="btn btn-secondary btn-sm" onclick="toggleAnnouncementStatus(${ann.id}, ${!ann.is_active})">${ann.is_active ? 'Deactivate' : 'Activate'}</button>
+              <button class="btn btn-secondary btn-sm" style="color:#ef4444;" onclick="deleteAnnouncement(${ann.id})">Delete</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    };
+
+    window.toggleAnnouncementStatus = async function(id, nextState) {
+      if (!db) return;
+      await db.from('portal_announcements').update({ is_active: nextState }).eq('id', id);
+      fetchAnnouncementsList();
+    };
+
+    window.deleteAnnouncement = async function(id) {
+      if (!confirm('Are you sure you want to delete this announcement?')) return;
+      if (!db) return;
+      await db.from('portal_announcements').delete().eq('id', id);
+      showToast('Announcement removed', 'info');
+      fetchAnnouncementsList();
+    };
+
+    let pendingUnreadAnnouncements = [];
+    let currentActiveAnnouncement = null;
+
+    async function checkForUnreadAnnouncements() {
+      if (!db) return;
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email;
+      if (!agentEmail) return;
+
+      try {
+        const { data: activeList } = await db.from('portal_announcements').select('*').eq('is_active', true).order('created_at', { ascending: true });
+        if (!activeList || activeList.length === 0) return;
+
+        const { data: readRecords } = await db.from('announcement_reads').select('announcement_id').eq('agent_email', agentEmail);
+        const readIds = new Set((readRecords || []).map(r => String(r.announcement_id)));
+        pendingUnreadAnnouncements = activeList.filter(ann => !readIds.has(String(ann.id)));
+
+        showNextQueuedAnnouncement();
+      } catch (err) {
+        console.warn('Notice check:', err);
+      }
+    }
+
+    function showNextQueuedAnnouncement() {
+      if (pendingUnreadAnnouncements.length === 0) {
+        currentActiveAnnouncement = null;
+        const modal = document.getElementById('mandatoryUpdateModal');
+        if (modal && modal.open) modal.close();
+        return;
+      }
+      currentActiveAnnouncement = pendingUnreadAnnouncements.shift();
+      document.getElementById('announcementTitle').innerText = currentActiveAnnouncement.title;
+      document.getElementById('announcementBody').innerHTML = currentActiveAnnouncement.body;
+      document.getElementById('verificationKeywordInput').value = '';
+      document.getElementById('verificationErrorMsg').style.display = 'none';
+      
+      const modal = document.getElementById('mandatoryUpdateModal');
+      if (modal && !modal.open) {
+        modal.showModal();
+        modal.oncancel = (e) => e.preventDefault();
+      }
+    }
+
+    window.confirmAnnouncementRead = async function() {
+      if (!currentActiveAnnouncement || !db) return;
+      const entered = document.getElementById('verificationKeywordInput').value.trim().toLowerCase();
+      const required = String(currentActiveAnnouncement.verification_keyword || '').trim().toLowerCase();
+
+      if (entered !== required) {
+        document.getElementById('verificationErrorMsg').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('verificationErrorMsg').style.display = 'none';
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email || 'agent@letsliveitup.com';
+
+      await db.from('announcement_reads').insert([{
+        announcement_id: currentActiveAnnouncement.id,
+        agent_email: agentEmail,
+        entered_keyword: document.getElementById('verificationKeywordInput').value.trim()
+      }]);
+
+      showToast('Notice acknowledged!', 'success');
+      showNextQueuedAnnouncement();
+    };
+
+    window.openAgentNoticeBoard = async function() {
+      const modal = document.getElementById('agentNoticeBoardModal');
+      const listEl = document.getElementById('agentNoticeBoardList');
+      modal.showModal();
+      listEl.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:1.5rem;">Loading announcements...</p>';
+
+      if (!db) return;
+      const { data: announcements } = await db.from('portal_announcements').select('*').order('created_at', { ascending: false }).limit(20);
+      if (!announcements || announcements.length === 0) {
+        listEl.innerHTML = '<p style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:1.5rem;">No notices currently on the board.</p>';
+        return;
+      }
+      listEl.innerHTML = '';
+      announcements.forEach(ann => {
+        const item = document.createElement('div');
+        item.style.borderBottom = '1px solid var(--border-color)';
+        item.style.padding = '0.75rem 0';
+        item.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <strong style="color:var(--primary-green); font-size:0.9rem;">${ann.title}</strong>
+            <small style="color:var(--text-muted); font-size:0.72rem;">${new Date(ann.created_at).toLocaleDateString()}</small>
+          </div>
+          <div style="font-size:0.82rem; line-height:1.45; color:var(--text-dark);">${ann.body}</div>
+        `;
+        listEl.appendChild(item);
+      });
+    };
+
+    // ============================================================
+    // KNOWLEDGE BASE ENGINE
+    // ============================================================
+    let globalKbArticles = [];
+    let currentKbCategory = 'all';
+    let currentSelectedArticle = null;
+
+    window.openKnowledgeBaseCategory = function(category) {
+      switchView('knowledgeBaseView');
+      selectKbCategory(category);
+    };
+
+    window.selectKbCategory = function(cat) {
+      currentKbCategory = cat;
+      document.querySelectorAll('.kb-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtnId = cat === 'all' ? 'kbTabAll' : cat === 'playbook' ? 'kbTabPlaybook' : cat === 'macro' ? 'kbTabMacro' : 'kbTabFaq';
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add('active');
+      filterKnowledgeBaseArticles();
+    };
+
+    async function loadKnowledgeBaseArticles(targetArticleId = null) {
+      if (!db) return;
+      const listEl = document.getElementById('kbArticlesList');
+      if (listEl && (!globalKbArticles || globalKbArticles.length === 0)) {
+        listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>';
+      }
+
+      const { data, error } = await db.from('knowledge_base').select('*').order('category', { ascending: true }).order('title', { ascending: true });
+      if (error || !data || data.length === 0) {
+        globalKbArticles = [];
+        currentSelectedArticle = null;
+        if (listEl) listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">No guides found.</li>';
+        return;
+      }
+      globalKbArticles = data;
+      filterKnowledgeBaseArticles();
+
+      const idToFind = targetArticleId || (currentSelectedArticle ? currentSelectedArticle.id : null);
+      if (idToFind) {
+        const found = globalKbArticles.find(a => String(a.id) === String(idToFind));
+        if (found) {
+          renderSelectedArticle(found);
+          return;
+        }
+      }
+
+      if (globalKbArticles.length > 0) {
+        renderSelectedArticle(globalKbArticles[0]);
+      }
+    }
+
+    window.filterByTag = function(tag) {
+      const searchBox = document.getElementById('kbSearchInput');
+      searchBox.value = tag;
+      filterKnowledgeBaseArticles();
+      showToast(`Filtered by #${tag}`, 'info');
+    };
+
+    window.filterKnowledgeBaseArticles = function() {
+      const query = (document.getElementById('kbSearchInput').value || '').toLowerCase().trim();
+      const listEl = document.getElementById('kbArticlesList');
+
+      const filtered = globalKbArticles.filter(item => {
+        const matchesCategory = (currentKbCategory === 'all') || (item.category === currentKbCategory);
+        const matchesSearch = !query || 
+          (item.title && item.title.toLowerCase().includes(query)) ||
+          (item.content && item.content.toLowerCase().includes(query)) ||
+          (item.tags && item.tags.some(t => t.toLowerCase().includes(query.replace('#', ''))));
+        return matchesCategory && matchesSearch;
+      });
+
+      document.getElementById('kbArticlesCountBadge').innerText = `${filtered.length} Articles`;
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">No matching guides.</li>';
+        return;
+      }
+      listEl.innerHTML = '';
+      filtered.forEach(art => {
+        const li = document.createElement('li');
+        const isActive = currentSelectedArticle && String(currentSelectedArticle.id) === String(art.id);
+        li.className = `kb-article-item ${isActive ? 'active' : ''}`;
+        li.onclick = () => renderSelectedArticle(art);
+        const icon = art.category === 'playbook' ? '📖' : art.category === 'macro' ? '💬' : '❓';
+        const tagsHtml = (art.tags && art.tags.length > 0)
+          ? art.tags.slice(0, 3).map(t => `<span class="kb-chip-tag" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('')
+          : `<span style="font-size:0.7rem; color:var(--text-muted);">${art.category}</span>`;
+        li.innerHTML = `<div class="kb-article-item-title">${icon} ${art.title}</div><div style="display:flex; flex-wrap:wrap; align-items:center;">${tagsHtml}</div>`;
+        listEl.appendChild(li);
+      });
+    };
+
+    function renderSelectedArticle(article) {
+      currentSelectedArticle = article;
+      filterKnowledgeBaseArticles();
+
+      document.getElementById('kbCurrentCategoryBadge').innerText = article.category.toUpperCase();
+      document.getElementById('kbCurrentArticleTitle').innerText = article.title;
+      const lastEdited = article.updated_at ? new Date(article.updated_at).toLocaleDateString() : 'Recently';
+      document.getElementById('kbCurrentArticleMeta').innerText = `Last updated ${lastEdited} by ${article.last_edited_by || 'Team'}`;
+      
+      const tagsContainer = document.getElementById('kbCurrentArticleTags');
+      tagsContainer.innerHTML = (article.tags && article.tags.length > 0)
+        ? article.tags.map(t => `<span class="kb-chip-tag" onclick="filterByTag('${t}')">#${t}</span>`).join('')
+        : '';
+
+      document.getElementById('kbEditArticleBtn').style.display = 'inline-flex';
+      document.getElementById('kbDeleteArticleBtn').style.display = 'inline-flex';
+      document.getElementById('kbCurrentArticleBody').innerHTML = article.content;
+
+      const macroBox = document.getElementById('kbMacroContainer');
+      const macroContent = document.getElementById('kbMacroContent');
+      const catNormalized = String(article.category || '').toLowerCase().trim();
+      const macroString = (article.macro_text || article.macro || '').trim();
+
+      if (catNormalized === 'macro' && macroString) {
+        macroBox.style.display = 'block';
+        macroContent.innerText = macroString;
+      } else {
+        macroBox.style.display = 'none';
+      }
+    }
+
+    window.copyCurrentMacroText = function() {
+      if (!currentSelectedArticle || !currentSelectedArticle.macro_text) return;
+      navigator.clipboard.writeText(currentSelectedArticle.macro_text).then(() => {
+        const btn = document.getElementById('copyMacroBtn');
+        const orig = btn.innerText;
+        btn.innerText = 'Copied! ✓';
+        btn.style.backgroundColor = '#16a34a';
+        showToast('Macro copied to clipboard!', 'info');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.style.backgroundColor = '';
+        }, 1800);
+      });
+    };
+
+    window.toggleMacroFieldVisibility = function(category) {
+      const row = document.getElementById('kb_macro_field_row');
+      if (row) row.style.display = (category === 'macro') ? 'grid' : 'none';
+    };
+
+    window.closeArticleEditorModal = function() {
+      document.getElementById('kbEditorModal')?.close();
+    };
+
+    window.editCurrentSelectedArticle = function() {
+      if (!currentSelectedArticle) return;
+      openArticleEditorModal(currentSelectedArticle);
+    };
+
+    window.deleteCurrentSelectedArticle = async function() {
+      if (!currentSelectedArticle || !db) return;
+      if (!confirm(`Are you sure you want to delete "${currentSelectedArticle.title}"?`)) return;
+
+      const { error } = await db.from('knowledge_base').delete().eq('id', currentSelectedArticle.id);
+      if (error) showToast('Failed to delete: ' + error.message, 'error');
+      else {
+        showToast(`Guide deleted.`, 'info');
+        currentSelectedArticle = null;
+        loadKnowledgeBaseArticles();
+      }
+    };
+
+    window.openArticleEditorModal = function(article) {
+      const modal = document.getElementById('kbEditorModal');
+      const form = document.getElementById('kbEditorForm');
+      form.reset();
+
+      if (article) {
+        document.getElementById('kbEditorModalTitle').innerText = 'Edit Guide';
+        document.getElementById('kb_edit_id').value = article.id || '';
+        document.getElementById('kb_edit_category').value = article.category || 'playbook';
+        document.getElementById('kb_edit_title').value = article.title || '';
+        document.getElementById('kb_edit_tags').value = (article.tags || []).join(', ');
+        document.getElementById('kb_edit_content').value = article.content || '';
+        document.getElementById('kb_edit_macro_text').value = article.macro_text || '';
+        toggleMacroFieldVisibility(article.category);
+      } else {
+        document.getElementById('kbEditorModalTitle').innerText = 'Create Guide';
+        document.getElementById('kb_edit_id').value = '';
+        document.getElementById('kb_edit_category').value = currentKbCategory !== 'all' ? currentKbCategory : 'playbook';
+        toggleMacroFieldVisibility(document.getElementById('kb_edit_category').value);
+      }
+      modal.showModal();
+    };
+
+    window.saveKnowledgeBaseArticle = async function(e) {
+      e.preventDefault();
+      if (!db) return;
+
+      const editId = document.getElementById('kb_edit_id').value;
+      const category = document.getElementById('kb_edit_category').value;
+      const title = document.getElementById('kb_edit_title').value.trim();
+      const tagsRaw = document.getElementById('kb_edit_tags').value;
+      const content = document.getElementById('kb_edit_content').value.trim();
+      const macroText = document.getElementById('kb_edit_macro_text').value.trim();
+
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const agentEmail = userSession.email || 'agent@letsliveitup.com';
+      const tagsArray = tagsRaw ? tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean) : [];
+
+      const payload = {
+        category: category,
+        title: title,
+        tags: tagsArray,
+        content: content,
+        macro_text: String(category).toLowerCase() === 'macro' ? macroText : null,
+        last_edited_by: agentEmail,
+        updated_at: new Date().toISOString()
+      };
+
+      try {
+        let savedId = editId;
+        if (editId) {
+          const { data, error } = await db.from('knowledge_base').update(payload).eq('id', editId).select();
+          if (error) throw error;
+          if (data && data.length > 0) savedId = data[0].id;
+        } else {
+          const { data, error } = await db.from('knowledge_base').insert([payload]).select();
+          if (error) throw error;
+          if (data && data.length > 0) savedId = data[0].id;
+        }
+        closeArticleEditorModal();
+        await loadKnowledgeBaseArticles(savedId);
+        showToast('Guide published and updated successfully!', 'success');
+      } catch (err) {
+        showToast('Error saving guide: ' + err.message, 'error');
+      }
+    };
+
+    // ============================================================
+    // NATIVE SUPABASE AUTH (LOGIN & REGISTRATION WITH APPROVAL GATE)
+    // ============================================================
+    let isRegisterMode = false;
+
+    window.toggleAuthMode = function() {
+      isRegisterMode = !isRegisterMode;
+
+      const title = document.getElementById('authCardTitle');
+      const subtitle = document.getElementById('authCardSubtitle');
+      const nameGroup = document.getElementById('authFullNameGroup');
+      const confirmGroup = document.getElementById('authConfirmPasswordGroup');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const toggleQuestion = document.getElementById('authToggleQuestion');
+      const toggleLink = document.getElementById('authToggleLink');
+      const nameInput = document.getElementById('auth_fullname');
+      const confirmInput = document.getElementById('auth_confirm_password');
+
+      if (isRegisterMode) {
+        if (title) title.innerText = 'Create Account';
+        if (subtitle) subtitle.innerText = 'Register an agent account. New accounts require admin approval before access.';
+        if (nameGroup) nameGroup.style.display = 'block';
+        if (confirmGroup) confirmGroup.style.display = 'block';
+        if (nameInput) nameInput.required = true;
+        if (confirmInput) confirmInput.required = true;
+        if (submitBtn) submitBtn.innerText = 'Create Account';
+        if (toggleQuestion) toggleQuestion.innerText = 'Already have an account?';
+        if (toggleLink) toggleLink.innerText = 'Sign In';
+      } else {
+        if (title) title.innerText = 'Welcome Back';
+        if (subtitle) subtitle.innerText = 'Sign in to your Live It Up agent portal account.';
+        if (nameGroup) nameGroup.style.display = 'none';
+        if (confirmGroup) confirmGroup.style.display = 'none';
+        if (nameInput) nameInput.required = false;
+        if (confirmInput) confirmInput.required = false;
+        if (submitBtn) submitBtn.innerText = 'Sign In';
+        if (toggleQuestion) toggleQuestion.innerText = "Don't have an account?";
+        if (toggleLink) toggleLink.innerText = 'Register here';
+      }
+    };
+
+    window.handleAuthSubmit = async function(e) {
+      e.preventDefault();
+      if (!db) {
+        showToast('Supabase client not connected.', 'error');
+        return;
+      }
+
+      const email = document.getElementById('auth_email').value.trim().toLowerCase();
+      const password = document.getElementById('auth_password').value;
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const originalText = submitBtn ? submitBtn.innerText : 'Submit';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = isRegisterMode ? 'Creating Account...' : 'Signing In...';
+      }
+
+      try {
+        if (isRegisterMode) {
+          const fullName = document.getElementById('auth_fullname').value.trim();
+          const confirmPassword = document.getElementById('auth_confirm_password').value;
+
+          if (password !== confirmPassword) {
+            showToast('Passwords do not match.', 'error');
+            if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = originalText; }
+            return;
+          }
+
+          const { data: authData, error: authErr } = await db.auth.signUp({
+            email: email,
+            password: password,
+            options: { data: { full_name: fullName } }
+          });
+
+          if (authErr) throw authErr;
+
+          await db.from('profiles').upsert([{
+            id: authData.user ? authData.user.id : undefined,
+            email: email,
+            full_name: fullName,
+            role: 'agent',
+            is_approved: false
+          }], { onConflict: 'email' });
+
+          await db.auth.signOut();
+          localStorage.removeItem('user_session');
+
+          showToast('Registration submitted! Your account is pending admin approval before access is granted.', 'info');
+
+          toggleAuthMode();
+
+        } else {
+          // --- LOGIN ---
+          const { data: loginData, error: loginErr } = await db.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+          if (loginErr) throw loginErr;
+
+          const { data: prof, error: profErr } = await db
+            .from('profiles')
+            .select('id, full_name, role, is_approved')
+            .eq('email', email)
+            .maybeSingle();
+
+          const isApproved = prof && prof.is_approved === true;
+
+          if (!isApproved) {
+            await db.auth.signOut();
+            localStorage.removeItem('user_session');
+            showToast('Your account is pending admin approval. Please contact an administrator.', 'error');
+            return;
+          }
+
+          const displayName = prof?.full_name || email.split('@')[0];
+          const sessionPayload = {
+            email: email,
+            name: displayName,
+            expiry: new Date().getTime() + (7 * 24 * 60 * 60 * 1000)
+          };
+          localStorage.setItem('user_session', JSON.stringify(sessionPayload));
+
+          document.getElementById('auth_password').value = '';
+
+          showToast(`Welcome back, ${displayName}!`, 'success');
+
+          document.getElementById('userEmail').innerText = email;
+          const avatarEl = document.getElementById('topNavAvatar');
+          if (avatarEl) avatarEl.innerText = displayName.charAt(0).toUpperCase();
+
+          await loadUserProfile(email);
+          await loadMaintenanceSettings();
+
+          const isAdmin = (currentUserProfile.role === 'admin');
+          const targetView = (systemMaintenanceState.vibe && !isAdmin) ? 'dashboardView' : 'refundsQueueView';
+
+          switchView(targetView);
+
+          initDropdownOptions();
+          initChatRealtime();
+        }
+      } catch (err) {
+        showToast(err.message || 'Authentication failed', 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = originalText;
+        }
+      }
+    };
+
+    window.logout = async function() {
+      if (db) {
+        try { await db.auth.signOut(); } catch(e) {}
+      }
+      localStorage.removeItem('user_session');
+      currentUserProfile = { role: 'agent', full_name: 'Agent', is_approved: false };
+
+      document.querySelectorAll('.view-page').forEach(page => page.classList.remove('active'));
+
+      switchView('loginView');
+      showToast('You have been signed out.', 'info');
+    };
+
+    async function initAuth() {
+      let session = null;
+      const sessionRaw = localStorage.getItem('user_session');
+      if (sessionRaw) {
+        try {
+          session = JSON.parse(sessionRaw);
+          if (new Date().getTime() > session.expiry) {
+            localStorage.removeItem('user_session');
+            session = null;
+          }
+        } catch(e) { session = null; }
+      }
+
+      if (session && session.email) {
+        document.getElementById('userEmail').innerText = session.email;
+        const avatarEl = document.getElementById('topNavAvatar');
+        if (avatarEl) avatarEl.innerText = (session.name || session.email || 'A').charAt(0).toUpperCase();
+
+        await loadUserProfile(session.email);
+
+        if (currentUserProfile && currentUserProfile.is_approved !== true) {
+          await logout();
+          showToast('Account approval revoked or pending. Access blocked.', 'error');
+          return;
+        }
+
+        await loadMaintenanceSettings();
+        initDropdownOptions();
+        initChatRealtime();
+
+        const isAdmin = (currentUserProfile.role === 'admin');
+
+        if (systemMaintenanceState.vibe && !isAdmin) {
+          switchView('dashboardView');
+        } else {
+          switchView('refundsQueueView');
+        }
+      } else {
+        switchView('loginView');
+      }
+    }
+
+   async function initDropdownOptions() {
+      if (!db) return;
+      try {
+        const { data: users } = await db.from('profiles').select('email').order('email', { ascending: true });
+        if (users && users.length > 0) {
+          const filterSelect = document.getElementById('queueAssigneeFilter');
+          const editSelect = document.getElementById('edit_assignee_email');
+
+          if (filterSelect) filterSelect.innerHTML = '<option value="">— All</option><option value="__unassigned__">Unassigned</option>';
+          if (editSelect) editSelect.innerHTML = '<option value="">— Unassigned —</option>';
+
+          users.forEach(u => {
+            if (u.email) {
+              const opt1 = document.createElement('option');
+              opt1.value = u.email;
+              opt1.textContent = u.email;
+              if (filterSelect) filterSelect.appendChild(opt1);
+
+              const opt2 = document.createElement('option');
+              opt2.value = u.email;
+              opt2.textContent = u.email;
+              if (editSelect) editSelect.appendChild(opt2);
+            }
+          });
+        }
+
+        const { data: prods } = await db.from('refunds').select('product').not('product', 'is', null).limit(1000);
+        if (prods) {
+          const unique = [...new Set(prods.map(p => p.product).filter(Boolean))].sort();
+          const pSelect = document.getElementById('edit_product');
+          if (pSelect) {
+            pSelect.innerHTML = '<option value="">—</option>';
+            unique.forEach(prod => {
+              const opt = document.createElement('option');
+              opt.value = prod;
+              opt.textContent = prod;
+              pSelect.appendChild(opt);
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Dropdown notice:", err);
+      }
+    }
+
+    initTheme();
+    initAuth();
+  </script>
+</body>
+</html>
