@@ -1999,7 +1999,7 @@
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Refund Amount</span>
-          <div class="vibe-input-wrap"><input type="text" id="sg_refund_amount" placeholder="$74.19 or N/A" required></div>
+          <div class="vibe-input-wrap"><input type="text" id="sg_refund_amount" inputmode="decimal" placeholder="74.19" oninput="sanitizeAmountInput(this)" required></div>
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Sub_Status</span>
@@ -2087,7 +2087,7 @@
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Refund Amount</span>
-          <div class="vibe-input-wrap"><input type="text" id="recall_refund_amount" placeholder="$43.49" required></div>
+          <div class="vibe-input-wrap"><input type="text" id="recall_refund_amount" inputmode="decimal" placeholder="43.49" oninput="sanitizeAmountInput(this)" required></div>
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Sub Status</span>
@@ -2143,7 +2143,7 @@
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Refund Amount</span>
-          <div class="vibe-input-wrap"><input type="text" id="ro_refund_amount" placeholder="$34.75" required></div>
+          <div class="vibe-input-wrap"><input type="text" id="ro_refund_amount" inputmode="decimal" placeholder="34.75" oninput="sanitizeAmountInput(this)" required></div>
         </div>
         <div class="vibe-row">
           <span class="vibe-label">Sub Status</span>
@@ -3268,6 +3268,27 @@
       executeQueueFetch(queueCurrentPage);
     };
 
+
+		// Real-time input cleaner: allows only digits and a single decimal point
+		function sanitizeAmountInput(el) {
+		  let val = el.value;
+
+		  // Remove any character that is not a digit (0-9) or a dot (.)
+		  val = val.replace(/[^0-9.]/g, '');
+
+		  // If there are multiple dots, preserve only the first one
+		  const parts = val.split('.');
+		  if (parts.length > 2) {
+			val = parts[0] + '.' + parts.slice(1).join('');
+		  }
+
+		  // Limit to 2 decimal places if decimals exist
+		  if (parts.length === 2 && parts[1].length > 2) {
+			val = parts[0] + '.' + parts[1].slice(0, 2);
+		  }
+
+		  el.value = val;
+		}
     // ============================================================
     // VIBE QUEUE DATA TABLE
     // ============================================================
