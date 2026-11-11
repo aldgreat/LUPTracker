@@ -4001,31 +4001,47 @@
         return;
       }
 
-      if (!globalPortalData || globalPortalData.length === 0) {
-        showToast('No data available to export.', 'error');
+      // Use the filtered records currently displayed on your screen, or fallback to all records
+      const exportSet = (typeof currentFilteredReportsData !== 'undefined' && currentFilteredReportsData.length > 0)
+        ? currentFilteredReportsData
+        : (globalPortalData || []);
+
+      if (!exportSet || exportSet.length === 0) {
+        showToast('No records available to export.', 'error');
         return;
       }
 
-      const headers = ["Source Sheet", "Timestamp", "Order Number", "Customer Email", "Agent Email", "Details", "Amount"];
-      const rows = globalPortalData.map(d => [
-        `"${d._sourceSheet || ''}"`,
-        `"${d.timestamp || ''}"`,
-        `"${d.order_number || ''}"`,
-        `"${d.customer_email || ''}"`,
-        `"${d.agent_email || ''}"`,
-        `"${(d.reason || '').replace(/"/g, '""')}"`,
-        `"${d.amount || ''}"`
+      const headers = ["Source Sheet", "Timestamp", "Order Number", "Customer Email", "Agent Email", "Details / Reason", "Amount"];
+      
+      const rows = exportSet.map(d => [
+        `"${String(d._sourceSheet || '').replace(/"/g, '""')}"`,
+        `"${String(d.timestamp || '').replace(/"/g, '""')}"`,
+        `"${String(d.order_number || '').replace(/"/g, '""')}"`,
+        `"${String(d.customer_email || '').replace(/"/g, '""')}"`,
+        `"${String(d.agent_email || '').replace(/"/g, '""')}"`,
+        `"${String(d.reason || '').replace(/"/g, '""')}"`,
+        `"${String(d.amount || '').replace(/[^0-9.]/g, '')}"`
       ]);
 
-      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-      const encodedUri = encodeURI(csvContent);
+      const csvString = [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
+
+      // Use a Blob with UTF-8 BOM (\uFEFF) to support large exports and preserve Excel formatting
+      const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
+      const blobUrl = URL.createObjectURL(blob);
+
       const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
+      link.href = blobUrl;
       link.setAttribute("download", `LiveItUp_Tracker_Report_${new Date().toISOString().slice(0, 10)}.csv`);
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      showToast('CSV export downloaded!', 'success');
+      
+      // Clean up memory
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }, 500);
+
+      showToast(`Exported ${exportSet.length.toLocaleString()} records successfully!`, 'success');
     };
 	
     // ============================================================
