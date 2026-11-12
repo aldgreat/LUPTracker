@@ -1279,7 +1279,7 @@
                 </tr>
               </thead>
               <tbody id="queueTableBody">
-                <tr><td colspan="10" style="text-align: center; padding: 2rem;">Connecting to Supabase...</td></tr>
+                <tr><td colspan="10" style="text-align: center; padding: 2rem;">Connecting to Database...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1387,7 +1387,7 @@
       </div>
 
 	<!-- VIEW 4: SEARCH & REPORTS -->
-	<div id="reportsView" class="view-page" style="max-width: 1200px;">
+	<div id="reportsView" class="view-page" >
 	  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
 		<div>
 		  <h2 id="reportsHeaderTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Operations &amp; Tracker Intelligence</h2>
@@ -1428,6 +1428,7 @@
 	  </div>
 
 	  <div id="reportsChartsContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+	  
 		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
 		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
 			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Intake Volume by Tracker Source</h4>
@@ -1449,42 +1450,127 @@
 		</div>
 	  </div>
 
+	<!-- Dynamic Totals Breakdown (Restricted to Moderator / Admin) -->
+	<div id="reportBreakdownContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+
+	  <!-- Card 1: Totals by Agent (Left) -->
+	  <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+		  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Agent</h4>
+		  <span id="badgeAgentCount" class="badge-v1" style="font-size: 0.65rem;">0 AGENTS</span>
+		</div>
+		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
+		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="padding: 0.65rem 0.85rem; text-align: left;">AGENT</th>
+                <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
+                <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownAgentsTbody">
+              <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading agent totals...</td></tr>
+            </tbody>
+            <!-- Sticky Total Footer -->
+            <tfoot id="breakdownAgentsTfoot" style="position: sticky; bottom: 0; background: var(--bg-card, #121815); border-top: 2px solid var(--border-color, #2a3830);">
+              <tr>
+                <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">TOTAL</td>
+                <td id="totalAgentTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">0</td>
+                <td id="totalAgentDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+		</div>
+	  </div>
+
+	  <!-- Card 2: Totals by Reason / Detail (Right) -->
+	  <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+		  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Reason / Detail</h4>
+		  <span id="badgeReasonCount" class="badge-v1" style="font-size: 0.65rem;">0 REASONS</span>
+		</div>
+		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
+		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="padding: 0.65rem 0.85rem; text-align: left;">REASON</th>
+                <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
+                <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownReasonsTbody">
+              <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading reason totals...</td></tr>
+            </tbody>
+            <!-- Sticky Total Footer -->
+            <tfoot id="breakdownReasonsTfoot" style="position: sticky; bottom: 0; background: var(--bg-card, #121815); border-top: 2px solid var(--border-color, #2a3830);">
+              <tr>
+                <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">TOTAL</td>
+                <td id="totalReasonTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">0</td>
+                <td id="totalReasonDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+		</div>
+	  </div>
+
+	</div>
+
 	  <div class="portal-card">
-        <div style="display: flex; gap: 0.65rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
-          <input 
-            type="search" 
-            id="reportSearchInput" 
-            placeholder="Filter by Order #, Email, Reason, Sub-Status, or Agent..." 
-            onkeyup="filterReportData()" 
-            style="flex: 2; min-width: 220px;" 
-          />
+<!-- Main Filter Controls -->
+    <div style="display: flex; gap: 0.65rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center;">
+      <!-- Search Input -->
+      <input 
+        type="search" 
+        id="reportSearchInput" 
+        placeholder="Filter by Order #, Email, or Amount..." 
+        onkeyup="filterReportData()" 
+        style="flex: 2; min-width: 180px;" 
+      />
 
-          <select id="reportCategoryFilter" onchange="filterReportData()" style="flex: 1; min-width: 160px;">
-            <option value="all">All Sheet Sources</option>
-            <option value="SGRelaunch">SGRelaunch</option>
-            <option value="Replacement Tracking">Replacement Tracking Sheet</option>
-            <option value="Recall Order Refunds">Recall Order Refunds</option>
-            <option value="Refund Others">Refund Others</option>
-          </select>
+      <!-- Sheet Source Filter -->
+      <select id="reportCategoryFilter" onchange="updateReasonDropdown(this.value); filterReportData();" style="flex: 1; min-width: 140px;">
+        <option value="all">All Sheet Sources</option>
+        <option value="SGRelaunch">SGRelaunch</option>
+        <option value="Replacement Tracking">Replacement Tracking</option>
+        <option value="Recall Order Refunds">Recall Order Refunds</option>
+        <option value="Refund Others">Refund Others</option>
+      </select>
 
-          <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 140px;">
-            <option value="all">All Time</option>
-            <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="last7">Last 7 Days</option>
-            <option value="last30">Last 30 Days</option>
-            <option value="thisMonth">This Month</option>
-            <option value="custom">Custom Range...</option>
-          </select>
+      <!-- Agent Dropdown Filter -->
+      <select id="reportAgentFilter" onchange="filterReportData()" style="flex: 1; min-width: 120px;">
+        <option value="all">All Agents</option>
+      </select>
 
-          <div id="customDateRangeBox" style="display: none; align-items: center; gap: 6px;">
-            <input type="date" id="reportStartDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="Start Date" />
-            <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700;">to</span>
-            <input type="date" id="reportEndDate" onchange="filterReportData()" style="width: 135px; padding: 0.4rem;" title="End Date" />
-            <button type="button" onclick="clearDateFilter()" class="btn btn-secondary btn-sm" style="padding: 0.35rem 0.6rem;" title="Clear date selection">✕</button>
-          </div>
-        </div>
+      <!-- Details / Reason Dropdown Filter -->
+      <select id="reportReasonFilter" onchange="filterReportData()" style="flex: 1.2; min-width: 150px;">
+        <option value="all">All Reasons / Details</option>
+      </select>
 
+      <!-- Date Presets -->
+      <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 125px;">
+        <option value="all">All Time</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="last7">Last 7 Days</option>
+        <option value="last30">Last 30 Days</option>
+        <option value="thisMonth">This Month</option>
+        <option value="custom">Custom Range...</option>
+      </select>
+    </div>
+
+    <!-- Secondary Row: Custom Range Sub-bar (Expands cleanly underneath) -->
+    <div id="reportCustomDateContainer" style="display: none; align-items: center; justify-content: flex-end; gap: 0.65rem; margin-bottom: 1rem; padding: 0.5rem 0.85rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px;">
+      <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Custom Date Range:</span>
+      <input type="date" id="reportStartDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
+      <span style="color: var(--text-muted); font-size: 0.82rem;">to</span>
+      <input type="date" id="reportEndDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
+      <button type="button" class="btn btn-secondary" onclick="resetDateFilter()" style="padding: 0.35rem 0.65rem; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Clear date filter">
+        ✕ Clear
+      </button>
+    </div>
+
+
+	
 		<div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
 		  <table class="refund-table">
 			<thead>
@@ -1499,7 +1585,7 @@
 			  </tr>
 			</thead>
 			<tbody id="reportsTableBody">
-			  <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Supabase...</td></tr>
+			  <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Database...</td></tr>
 			</tbody>
 		  </table>
 		 </div>
@@ -2600,6 +2686,7 @@
       const repSubtitle = document.getElementById('reportsHeaderSubtitle');
       const kpiBox = document.getElementById('reportsKpiContainer');
       const chartsBox = document.getElementById('reportsChartsContainer');
+      const breakdownBox = document.getElementById('reportBreakdownContainer');
       const exportBtn = document.getElementById('reportsExportBtn');
 
       if (hasReportsPrivileges) {
@@ -2609,6 +2696,7 @@
         if (repSubtitle) repSubtitle.innerText = 'Realtime aggregation across all tracker submission logs directly from Supabase.';
         if (kpiBox) kpiBox.style.setProperty('display', 'grid', 'important');
         if (chartsBox) chartsBox.style.setProperty('display', 'grid', 'important');
+        if (breakdownBox) breakdownBox.style.setProperty('display', 'grid', 'important');
         if (exportBtn) exportBtn.style.setProperty('display', 'inline-flex', 'important');
       } else {
         if (navReportsLabel) navReportsLabel.innerText = 'Record Search';
@@ -2617,6 +2705,7 @@
         if (repSubtitle) repSubtitle.innerText = 'Search and browse customer support intake logs across all trackers.';
         if (kpiBox) kpiBox.style.setProperty('display', 'none', 'important');
         if (chartsBox) chartsBox.style.setProperty('display', 'none', 'important');
+        if (breakdownBox) breakdownBox.style.setProperty('display', 'none', 'important');
         if (exportBtn) exportBtn.style.setProperty('display', 'none', 'important');
       }
 
@@ -3594,7 +3683,7 @@
 
     window.fetchPortalData = async function() {
       const tbody = document.getElementById('reportsTableBody');
-      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Fetching complete dataset from Supabase...</td></tr>';
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Fetching complete dataset from Database...</td></tr>';
 
       if (!db) {
         if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #ef4444; padding: 1.5rem;">Database not connected.</td></tr>';
@@ -3662,6 +3751,9 @@
         combined.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
 
         globalPortalData = combined;
+		if (typeof populateReportFilterDropdowns === 'function') {
+          populateReportFilterDropdowns();
+        }
         filterReportData();
         showToast(`Loaded all ${globalPortalData.length.toLocaleString()} records from Supabase!`, 'success');
 
@@ -3671,19 +3763,20 @@
     };
 
     window.applyDatePreset = function(preset) {
-      const customBox = document.getElementById('customDateRangeBox');
+      const container = document.getElementById('reportCustomDateContainer');
       const startInput = document.getElementById('reportStartDate');
       const endInput = document.getElementById('reportEndDate');
-      
+      if (!startInput || !endInput) return;
+
       const now = new Date();
       const formatDate = d => d.toISOString().split('T')[0];
 
       if (preset === 'custom') {
-        if (customBox) customBox.style.display = 'inline-flex';
+        if (container) container.style.display = 'flex';
         return;
-      } else {
-        if (customBox) customBox.style.display = 'none';
       }
+
+      if (container) container.style.display = 'none';
 
       if (preset === 'all') {
         startInput.value = '';
@@ -3699,20 +3792,34 @@
         startInput.value = yestStr;
         endInput.value = yestStr;
       } else if (preset === 'last7') {
-        const past7 = new Date(now);
-        past7.setDate(past7.getDate() - 7);
-        startInput.value = formatDate(past7);
+        const past = new Date(now);
+        past.setDate(past.getDate() - 7);
+        startInput.value = formatDate(past);
         endInput.value = formatDate(now);
       } else if (preset === 'last30') {
-        const past30 = new Date(now);
-        past30.setDate(past30.getDate() - 30);
-        startInput.value = formatDate(past30);
+        const past = new Date(now);
+        past.setDate(past.getDate() - 30);
+        startInput.value = formatDate(past);
         endInput.value = formatDate(now);
       } else if (preset === 'thisMonth') {
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
         startInput.value = formatDate(firstDay);
         endInput.value = formatDate(now);
       }
+
+      filterReportData();
+    };
+
+    window.resetDateFilter = function() {
+      const startInput = document.getElementById('reportStartDate');
+      const endInput = document.getElementById('reportEndDate');
+      const presetSelect = document.getElementById('reportDatePreset');
+      const container = document.getElementById('reportCustomDateContainer');
+
+      if (startInput) startInput.value = '';
+      if (endInput) endInput.value = '';
+      if (presetSelect) presetSelect.value = 'all';
+      if (container) container.style.display = 'none';
 
       filterReportData();
     };
@@ -3768,9 +3875,121 @@
       }
     };
 
+	function renderFilteredBreakdowns(filteredData) {
+      const reasonTbody = document.getElementById('breakdownReasonsTbody');
+      const agentTbody = document.getElementById('breakdownAgentsTbody');
+      const badgeReason = document.getElementById('badgeReasonCount');
+      const badgeAgent = document.getElementById('badgeAgentCount');
+
+      const totalAgentTicketsEl = document.getElementById('totalAgentTickets');
+      const totalAgentDollarsEl = document.getElementById('totalAgentDollars');
+      const totalReasonTicketsEl = document.getElementById('totalReasonTickets');
+      const totalReasonDollarsEl = document.getElementById('totalReasonDollars');
+
+      if (!reasonTbody || !agentTbody) return;
+
+      if (!filteredData || filteredData.length === 0) {
+        reasonTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No matching records.</td></tr>';
+        agentTbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No matching records.</td></tr>';
+        if (badgeReason) badgeReason.innerText = '0 REASONS';
+        if (badgeAgent) badgeAgent.innerText = '0 AGENTS';
+        if (totalAgentTicketsEl) totalAgentTicketsEl.innerText = '0';
+        if (totalAgentDollarsEl) totalAgentDollarsEl.innerText = '$0.00';
+        if (totalReasonTicketsEl) totalReasonTicketsEl.innerText = '0';
+        if (totalReasonDollarsEl) totalReasonDollarsEl.innerText = '$0.00';
+        return;
+      }
+
+      const reasonMap = {};
+      const agentMap = {};
+      let grandTotalDollars = 0;
+      let grandTotalTickets = filteredData.length;
+
+      filteredData.forEach(item => {
+        let amount = 0;
+        if (item.amount && item.amount !== 'N/A') {
+          const parsed = parseFloat(String(item.amount).replace(/[^0-9.]/g, ''));
+          if (!isNaN(parsed)) {
+            amount = parsed;
+            grandTotalDollars += parsed;
+          }
+        }
+
+        // Reason mapping
+        let rawReason = (item.reason || '').trim();
+        if (!rawReason || rawReason === '—') rawReason = 'Unspecified';
+        const primaryReason = rawReason.includes('|') ? rawReason.split('|')[0].trim() : rawReason;
+
+        if (!reasonMap[primaryReason]) {
+          reasonMap[primaryReason] = { count: 0, total: 0 };
+        }
+        reasonMap[primaryReason].count++;
+        reasonMap[primaryReason].total += amount;
+
+        // Agent mapping
+        let rawAgent = (item.agent_email || '').trim();
+        if (!rawAgent || rawAgent === '—') rawAgent = 'Unassigned';
+        const cleanAgent = rawAgent.includes('@') ? rawAgent.split('@')[0] : rawAgent;
+
+        if (!agentMap[cleanAgent]) {
+          agentMap[cleanAgent] = { count: 0, total: 0 };
+        }
+        agentMap[cleanAgent].count++;
+        agentMap[cleanAgent].total += amount;
+      });
+
+      // Render Agents (Left Box)
+      const sortedAgents = Object.entries(agentMap).sort((a, b) => b[1].total - a[1].total);
+      if (badgeAgent) badgeAgent.innerText = `${sortedAgents.length} AGENT${sortedAgents.length === 1 ? '' : 'S'}`;
+
+      agentTbody.innerHTML = sortedAgents.map(([agent, stats]) => `
+        <tr>
+          <td style="padding: 0.6rem 0.85rem; font-weight: 700; color: var(--primary-green); font-size: 0.84rem;">
+            ${escapeHtml(agent)}
+          </td>
+          <td style="padding: 0.6rem 0.85rem; text-align: center; font-weight: 600; font-size: 0.84rem;">
+            ${stats.count.toLocaleString()}
+          </td>
+          <td style="padding: 0.6rem 0.85rem; text-align: right; font-weight: 700; font-size: 0.86rem; color: ${stats.total > 0 ? '#ef4444' : 'var(--text-muted)'};">
+            $${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </td>
+        </tr>
+      `).join('');
+
+      // Render Reasons (Right Box)
+      const sortedReasons = Object.entries(reasonMap).sort((a, b) => b[1].count - a[1].count);
+      if (badgeReason) badgeReason.innerText = `${sortedReasons.length} REASON${sortedReasons.length === 1 ? '' : 'S'}`;
+
+      reasonTbody.innerHTML = sortedReasons.map(([reason, stats]) => `
+        <tr>
+          <td style="padding: 0.6rem 0.85rem; font-weight: 600; color: var(--text-dark); font-size: 0.84rem;">
+            ${escapeHtml(reason)}
+          </td>
+          <td style="padding: 0.6rem 0.85rem; text-align: center; font-weight: 600; font-size: 0.84rem;">
+            ${stats.count.toLocaleString()}
+          </td>
+          <td style="padding: 0.6rem 0.85rem; text-align: right; font-weight: 700; font-size: 0.86rem; color: ${stats.total > 0 ? '#ef4444' : 'var(--text-muted)'};">
+            $${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </td>
+        </tr>
+      `).join('');
+
+      // Update Both Footers
+      const formattedTotalDollars = `$${grandTotalDollars.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      const formattedTotalTickets = grandTotalTickets.toLocaleString();
+
+      if (totalAgentTicketsEl) totalAgentTicketsEl.innerText = formattedTotalTickets;
+      if (totalAgentDollarsEl) totalAgentDollarsEl.innerText = formattedTotalDollars;
+
+      if (totalReasonTicketsEl) totalReasonTicketsEl.innerText = formattedTotalTickets;
+      if (totalReasonDollarsEl) totalReasonDollarsEl.innerText = formattedTotalDollars;
+    }
+	
     window.filterReportData = function() {
       const query = (document.getElementById('reportSearchInput')?.value || '').toLowerCase().trim();
       const category = document.getElementById('reportCategoryFilter')?.value || 'all';
+      const selectedAgent = document.getElementById('reportAgentFilter')?.value || 'all';
+      const selectedReason = document.getElementById('reportReasonFilter')?.value || 'all';
       const startDateVal = document.getElementById('reportStartDate')?.value;
       const endDateVal = document.getElementById('reportEndDate')?.value;
 
@@ -3785,9 +4004,23 @@
       }
 
       const filtered = globalPortalData.filter(item => {
-        const matchesCategory = (category === 'all') || (item._sourceSheet === category);
-        if (!matchesCategory) return false;
+        // Source Sheet filter
+        if (category !== 'all' && item._sourceSheet !== category) return false;
 
+        // Agent dropdown filter
+        if (selectedAgent !== 'all') {
+          let agent = (item.agent_email || '').toLowerCase().trim();
+          if (agent.includes('@')) agent = agent.split('@')[0];
+          if (agent !== selectedAgent.toLowerCase()) return false;
+        }
+
+        // Reason dropdown filter
+        if (selectedReason !== 'all') {
+          const itemReason = (item.reason || '').toLowerCase();
+          if (!itemReason.includes(selectedReason.toLowerCase())) return false;
+        }
+
+        // Search text box (checks order #, customer email, amount)
         const matchesSearch = !query || 
           String(item.order_number).toLowerCase().includes(query) ||
           String(item.customer_email).toLowerCase().includes(query) ||
@@ -3796,6 +4029,7 @@
           String(item.amount).toLowerCase().includes(query);
         if (!matchesSearch) return false;
 
+        // Date bounds
         if (startBound || endBound) {
           const recDate = parseRecordDate(item.timestamp);
           if (!recDate) return false;
@@ -3807,10 +4041,10 @@
       });
 
       currentFilteredReportsData = filtered;
-      reportsCurrentPage = 0;
 
       renderReportMetrics(filtered);
       renderReportCharts(filtered);
+	  renderFilteredBreakdowns(filtered);
       renderReportTable(filtered);
     };
 
@@ -4776,6 +5010,73 @@
       }
     }
 
+// Exact reasons defined in each form modal
+    const SOURCE_REASONS_MAP = {
+      'all': [
+        'Delivered not Received', 'LIT (Lost In Transit)', 'Damaged', 'Mispicks', 'Missing', 'RTS (Return to Sender)',
+        'Recall Refund', 'Complaint', 'Legal', 'Health', 'BBB', 'Unfulfilled', 'Multiple Follow ups',
+        'Negative Reaction', 'CS', 'Complaint/BBB', 'Damaged Order', 'Missing order', 'Taste', 'Texture', 'Quantity (too much)', 'Quality', 'Testing & Safety', 'Other'
+      ],
+      'Replacement Tracking': [
+        'Delivered not Received', 'LIT (Lost In Transit)', 'Damaged', 'Mispicks', 'Missing', 'RTS (Return to Sender)', 'Other'
+      ],
+      'Recall Order Refunds': [
+        'Recall Refund', 'Complaint', 'Legal', 'Health', 'BBB', 'Unfulfilled', 'Multiple Follow ups'
+      ],
+      'Refund Others': [
+        'Other', 'Negative Reaction', 'CS', 'Complaint/BBB', 'Damaged Order', 'Missing order', 'Unfulfilled',
+        'LIT (Lost In Transit)', 'Delivered Not Received', 'Mispicks', 'Taste', 'Texture', 'Health',
+        'Quantity (too much)', 'Quality', 'Testing & Safety', 'RTS'
+      ],
+      'SGRelaunch': [
+        'Active', 'Canceled', 'Paused', 'General Feedback', 'Other'
+      ]
+    };
+
+    function updateReasonDropdown(selectedSheet) {
+      const reasonSelect = document.getElementById('reportReasonFilter');
+      if (!reasonSelect) return;
+
+      const currentVal = reasonSelect.value;
+      const reasonsList = SOURCE_REASONS_MAP[selectedSheet] || SOURCE_REASONS_MAP['all'];
+
+      let html = '<option value="all">All Reasons / Details</option>';
+      reasonsList.forEach(r => {
+        const isSel = (currentVal === r) ? 'selected' : '';
+        html += `<option value="${escapeHtml(r)}" ${isSel}>${escapeHtml(r)}</option>`;
+      });
+
+      reasonSelect.innerHTML = html;
+    }
+
+    function populateReportFilterDropdowns() {
+      const agentSelect = document.getElementById('reportAgentFilter');
+      if (!agentSelect || !globalPortalData) return;
+
+      const currentAgent = agentSelect.value;
+      const agentsSet = new Set();
+
+      globalPortalData.forEach(item => {
+        let raw = (item.agent_email || '').trim();
+        if (raw && raw !== '—' && raw.toLowerCase() !== 'unassigned') {
+          const clean = raw.includes('@') ? raw.split('@')[0] : raw;
+          agentsSet.add(clean.toLowerCase());
+        }
+      });
+
+      const sortedAgents = Array.from(agentsSet).sort();
+      let agentHtml = '<option value="all">All Agents</option>';
+      sortedAgents.forEach(ag => {
+        const isSel = (currentAgent.toLowerCase() === ag) ? 'selected' : '';
+        agentHtml += `<option value="${escapeHtml(ag)}" ${isSel}>${escapeHtml(ag)}</option>`;
+      });
+      agentSelect.innerHTML = agentHtml;
+
+      // Initialize Reason dropdown based on currently selected sheet
+      const currentSheet = document.getElementById('reportCategoryFilter')?.value || 'all';
+      updateReasonDropdown(currentSheet);
+    }
+	
     initTheme();
     initAuth();
   </script>
