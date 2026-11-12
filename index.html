@@ -1462,12 +1462,18 @@
 		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
 		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
             <thead>
-              <tr>
-                <th style="padding: 0.65rem 0.75rem; text-align: left;">AGENT</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: center;">COUNT</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: right;">TOTAL AMOUNT</th>
-              </tr>
-            </thead>
+			  <tr>
+				<th onclick="toggleBreakdownSort('agent', 'label')" style="padding: 0.65rem 0.75rem; text-align: left; cursor: pointer; user-select: none;" title="Sort by Agent Name">
+				  AGENT <span id="sortIcon_agent_label" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+				<th onclick="toggleBreakdownSort('agent', 'count')" style="padding: 0.65rem 0.75rem; text-align: center; cursor: pointer; user-select: none;" title="Sort by Ticket Count">
+				  COUNT <span id="sortIcon_agent_count" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+				<th onclick="toggleBreakdownSort('agent', 'total')" style="padding: 0.65rem 0.75rem; text-align: right; cursor: pointer; user-select: none;" title="Sort by Total Amount">
+				  TOTAL AMOUNT <span id="sortIcon_agent_total" style="font-size: 0.65rem;">▼</span>
+				</th>
+			  </tr>
+			</thead>
             <tbody id="breakdownAgentsTbody">
               <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading agent totals...</td></tr>
             </tbody>
@@ -1491,12 +1497,18 @@
 		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
 		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
             <thead>
-              <tr>
-                <th style="padding: 0.65rem 0.75rem; text-align: left;">REASON</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: center;">COUNT</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: right;">TOTAL AMOUNT</th>
-              </tr>
-            </thead>
+			  <tr>
+				<th onclick="toggleBreakdownSort('reason', 'label')" style="padding: 0.65rem 0.75rem; text-align: left; cursor: pointer; user-select: none;" title="Sort by Reason">
+				  REASON <span id="sortIcon_reason_label" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+				<th onclick="toggleBreakdownSort('reason', 'count')" style="padding: 0.65rem 0.75rem; text-align: center; cursor: pointer; user-select: none;" title="Sort by Ticket Count">
+				  COUNT <span id="sortIcon_reason_count" style="font-size: 0.65rem;">▼</span>
+				</th>
+				<th onclick="toggleBreakdownSort('reason', 'total')" style="padding: 0.65rem 0.75rem; text-align: right; cursor: pointer; user-select: none;" title="Sort by Total Amount">
+				  TOTAL AMOUNT <span id="sortIcon_reason_total" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+			  </tr>
+			</thead>
             <tbody id="breakdownReasonsTbody">
               <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading reason totals...</td></tr>
             </tbody>
@@ -1520,12 +1532,18 @@
 		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
 		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
             <thead>
-              <tr>
-                <th style="padding: 0.65rem 0.75rem; text-align: left;">SUB STATUS</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: center;">COUNT</th>
-                <th style="padding: 0.65rem 0.75rem; text-align: right;">TOTAL AMOUNT</th>
-              </tr>
-            </thead>
+			  <tr>
+				<th onclick="toggleBreakdownSort('subStatus', 'label')" style="padding: 0.65rem 0.75rem; text-align: left; cursor: pointer; user-select: none;" title="Sort by Sub Status">
+				  SUB STATUS <span id="sortIcon_subStatus_label" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+				<th onclick="toggleBreakdownSort('subStatus', 'count')" style="padding: 0.65rem 0.75rem; text-align: center; cursor: pointer; user-select: none;" title="Sort by Ticket Count">
+				  COUNT <span id="sortIcon_subStatus_count" style="font-size: 0.65rem;">▼</span>
+				</th>
+				<th onclick="toggleBreakdownSort('subStatus', 'total')" style="padding: 0.65rem 0.75rem; text-align: right; cursor: pointer; user-select: none;" title="Sort by Total Amount">
+				  TOTAL AMOUNT <span id="sortIcon_subStatus_total" style="font-size: 0.65rem; opacity: 0.4;">↕</span>
+				</th>
+			  </tr>
+			</thead>
             <tbody id="breakdownSubStatusTbody">
               <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading statuses...</td></tr>
             </tbody>
@@ -4004,6 +4022,52 @@
       }
     };
 
+	let breakdownSortState = {
+		  agent: { key: 'total', dir: 'desc' },
+		  reason: { key: 'count', dir: 'desc' },
+		  subStatus: { key: 'count', dir: 'desc' }
+		};
+
+		window.toggleBreakdownSort = function(cardKey, colKey) {
+		  const current = breakdownSortState[cardKey];
+		  if (current.key === colKey) {
+			current.dir = current.dir === 'desc' ? 'asc' : 'desc';
+		  } else {
+			current.key = colKey;
+			current.dir = colKey === 'label' ? 'asc' : 'desc';
+		  }
+		  updateBreakdownSortIcons(cardKey);
+		  renderFilteredBreakdowns(currentFilteredReportsData);
+		};
+
+		function updateBreakdownSortIcons(cardKey) {
+		  const state = breakdownSortState[cardKey];
+		  ['label', 'count', 'total'].forEach(col => {
+			const iconEl = document.getElementById(`sortIcon_${cardKey}_${col}`);
+			if (!iconEl) return;
+			if (state.key === col) {
+			  iconEl.textContent = state.dir === 'desc' ? '▼' : '▲';
+			  iconEl.style.opacity = '1';
+			  iconEl.style.color = 'var(--primary-green)';
+			} else {
+			  iconEl.textContent = '↕';
+			  iconEl.style.opacity = '0.4';
+			  iconEl.style.color = '';
+			}
+		  });
+		}
+
+		function sortBreakdownEntries(entries, cardKey) {
+		  const { key, dir } = breakdownSortState[cardKey];
+		  const mult = dir === 'asc' ? 1 : -1;
+		  return entries.sort((a, b) => {
+			if (key === 'label') {
+			  return a[0].localeCompare(b[0]) * mult;
+			}
+			return (a[1][key] - b[1][key]) * mult;
+		  });
+		}
+
 	function renderFilteredBreakdowns(filteredData) {
       const reasonTbody = document.getElementById('breakdownReasonsTbody');
       const agentTbody = document.getElementById('breakdownAgentsTbody');
@@ -4019,6 +4083,8 @@
       const totalReasonDollarsEl = document.getElementById('totalReasonDollars');
       const totalSubStatusTicketsEl = document.getElementById('totalSubStatusTickets');
       const totalSubStatusDollarsEl = document.getElementById('totalSubStatusDollars');
+
+
 
       if (!reasonTbody || !agentTbody) return;
 
@@ -4104,7 +4170,7 @@
       });
 
       // Render Agents (Card 1)
-      const sortedAgents = Object.entries(agentMap).sort((a, b) => b[1].total - a[1].total);
+      const sortedAgents = sortBreakdownEntries(Object.entries(agentMap), 'agent');
       if (badgeAgent) badgeAgent.innerText = `${sortedAgents.length} AGENT${sortedAgents.length === 1 ? '' : 'S'}`;
 
       agentTbody.innerHTML = sortedAgents.map(([agent, stats]) => `
@@ -4122,7 +4188,7 @@
       `).join('');
 
       // Render Reasons Only (Card 2)
-      const sortedReasons = Object.entries(reasonMap).sort((a, b) => b[1].count - a[1].count);
+      const sortedReasons = sortBreakdownEntries(Object.entries(reasonMap), 'reason');
       if (badgeReason) badgeReason.innerText = `${sortedReasons.length} REASON${sortedReasons.length === 1 ? '' : 'S'}`;
 
       if (sortedReasons.length === 0) {
@@ -4145,7 +4211,7 @@
 
       // Render Subscription Statuses (Card 3)
       if (subStatusTbody) {
-        const sortedSubStatuses = Object.entries(subStatusMap).sort((a, b) => b[1].count - a[1].count);
+        const sortedSubStatuses = sortBreakdownEntries(Object.entries(subStatusMap), 'subStatus');
         if (badgeSubStatus) badgeSubStatus.innerText = `${sortedSubStatuses.length} STATUS${sortedSubStatuses.length === 1 ? '' : 'ES'}`;
 
         if (sortedSubStatuses.length === 0) {
