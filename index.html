@@ -3945,7 +3945,19 @@
 
         let rawReason = (item.reason || '').trim();
         if (!rawReason || rawReason === '—') rawReason = 'Unspecified';
-        const primaryReason = rawReason.includes('|') ? rawReason.split('|')[0].trim() : rawReason;
+        
+        let primaryReason = rawReason
+          .split('|')[0]
+          .split('(')[0]
+          .replace(/^Sub-status:\s*/i, '')
+          .trim();
+
+        if (!primaryReason) primaryReason = 'Unspecified';
+
+        // Normalize minor capitalization differences (e.g. "Delivered Not Received" vs "Delivered not Received")
+        if (primaryReason.toLowerCase() === 'delivered not received') {
+          primaryReason = 'Delivered not Received';
+        }
 
         if (!reasonMap[primaryReason]) {
           reasonMap[primaryReason] = { count: 0, total: 0 };
@@ -5020,7 +5032,7 @@
 
     const SOURCE_REASONS_MAP = {
       'all': [
-        'Delivered not Received', 'LIT (Lost In Transit)', 'Damaged', 'Mispicks', 'Missing', 'RTS (Return to Sender)',
+        'Delivered not Received', 'LIT', 'Damaged', 'Mispicks', 'Missing', 'RTS',
         'Recall Refund', 'Complaint', 'Legal', 'Health', 'BBB', 'Unfulfilled', 'Multiple Follow ups',
         'Negative Reaction', 'CS', 'Complaint/BBB', 'Damaged Order', 'Missing order', 'Taste', 'Texture', 'Quantity (too much)', 'Quality', 'Testing & Safety', 'Other'
       ],
