@@ -779,15 +779,15 @@
       color: var(--text-dark);
     }
 
-	.kb-macro-block {
-	  background: var(--input-bg);
-	  border: 1px solid var(--border-color);
-	  border-radius: 8px;
-	  margin-bottom: 1.25rem;
-	  flex-shrink: 0;           /* Prevents flex parent from crushing the box */
-	  display: block !important;/* Overrides any flex collapse */
-	  overflow: visible;        /* Allows text to render regardless of zoom */
-	}
+    .kb-macro-block {
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      flex-shrink: 0;
+      display: block !important;
+      overflow: visible;
+    }
 
     .kb-macro-header {
       background: rgba(0,0,0,0.03);
@@ -802,17 +802,17 @@
       text-transform: uppercase;
     }
 
-	.kb-macro-content {
-	  padding: 1rem 1.25rem;
-	  font-family: 'Consolas', 'Courier New', monospace;
-	  font-size: 0.86rem;
-	  white-space: pre-wrap;
-	  word-break: break-word;
-	  color: var(--text-dark);
-	  line-height: 1.6;
-	  min-height: 60px;     
-	  display: block;
-	}
+    .kb-macro-content {
+      padding: 1rem 1.25rem;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 60px;     
+      display: block;
+    }
 
     /* ROLE PERMISSION UTILITIES */
     .mod-or-admin-only {
@@ -1386,231 +1386,219 @@
         </div>
       </div>
 
-	<!-- VIEW 4: SEARCH & REPORTS -->
-	<div id="reportsView" class="view-page" >
-	  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
-		<div>
-		  <h2 id="reportsHeaderTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Operations &amp; Tracker Intelligence</h2>
-		  <p id="reportsHeaderSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">
-			Realtime record lookups and ticket search across all intake trackers.
-		  </p>
-		</div>
-		<div style="display: flex; gap: 8px;">
-		  <button onclick="exportReportsCSV()" id="reportsExportBtn" class="btn btn-secondary btn-sm mod-or-admin-only">📥 Export Filtered CSV</button>
-		  <button onclick="fetchPortalData()" class="btn btn-sm">🔄 Refresh Data</button>
-		</div>
-	  </div>
+      <!-- VIEW 4: SEARCH & REPORTS -->
+      <div id="reportsView" class="view-page">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 id="reportsHeaderTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.3px;">Operations &amp; Tracker Intelligence</h2>
+            <p id="reportsHeaderSubtitle" style="font-size: 0.83rem; color: var(--text-muted); margin-top: 2px;">
+              Realtime record lookups and ticket search across all intake trackers.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="exportReportsCSV()" id="reportsExportBtn" class="btn btn-secondary btn-sm mod-or-admin-only">📥 Export Filtered CSV</button>
+            <button onclick="fetchPortalData()" class="btn btn-sm">🔄 Refresh Data</button>
+          </div>
+        </div>
 
-	  <div id="reportsKpiContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
-		<div class="portal-card" style="padding: 1rem; border-left: 4px solid var(--primary-green);">
-		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Tracker Intake</span>
-		  <h3 id="repMetricTotal" style="color: var(--text-dark); margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
-		  <small style="font-size: 0.7rem; color: var(--text-muted);">Across all 4 active sheets</small>
-		</div>
+        <div id="reportsKpiContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+          <div class="portal-card" style="padding: 1rem; border-left: 4px solid var(--primary-green);">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Tracker Intake</span>
+            <h3 id="repMetricTotal" style="color: var(--text-dark); margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+            <small style="font-size: 0.7rem; color: var(--text-muted);">Across all 4 active sheets</small>
+          </div>
 
-		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #ef4444;">
-		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Refund Sum</span>
-		  <h3 id="repMetricRefundVal" style="color: #ef4444; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">$0.00</h3>
-		  <small id="repMetricRefundCount" style="font-size: 0.7rem; color: var(--text-muted);">0 refund records logged</small>
-		</div>
+          <div class="portal-card" style="padding: 1rem; border-left: 4px solid #ef4444;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Refund Sum</span>
+            <h3 id="repMetricRefundVal" style="color: #ef4444; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">$0.00</h3>
+            <small id="repMetricRefundCount" style="font-size: 0.7rem; color: var(--text-muted);">0 refund records logged</small>
+          </div>
 
-		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #0284c7;">
-		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Replacements Issued</span>
-		  <h3 id="repMetricReplacements" style="color: #0284c7; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
-		  <small style="font-size: 0.7rem; color: var(--text-muted);">LIT, damaged &amp; mispicks</small>
-		</div>
+          <div class="portal-card" style="padding: 1rem; border-left: 4px solid #0284c7;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Replacements Issued</span>
+            <h3 id="repMetricReplacements" style="color: #0284c7; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+            <small style="font-size: 0.7rem; color: var(--text-muted);">LIT, damaged &amp; mispicks</small>
+          </div>
 
-		<div class="portal-card" style="padding: 1rem; border-left: 4px solid #f59e0b;">
-		  <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Agents Logging</span>
-		  <h3 id="repMetricActiveAgents" style="color: #f59e0b; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
-		  <small style="font-size: 0.7rem; color: var(--text-muted);">Contributing team members</small>
-		</div>
-	  </div>
+          <div class="portal-card" style="padding: 1rem; border-left: 4px solid #f59e0b;">
+            <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Agents Logging</span>
+            <h3 id="repMetricActiveAgents" style="color: #f59e0b; margin-top: 4px; font-size: 1.45rem; font-weight: 800;">0</h3>
+            <small style="font-size: 0.7rem; color: var(--text-muted);">Contributing team members</small>
+          </div>
+        </div>
 
-	  <div id="reportsChartsContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
-	  
-		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
-		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Intake Volume by Tracker Source</h4>
-			<span class="badge-v1" style="font-size: 0.65rem;">Tab Ratio</span>
-		  </div>
-		  <div style="height: 240px; position: relative;">
-			<canvas id="chartTrackerVolume"></canvas>
-		  </div>
-		</div>
+        <div id="reportsChartsContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Intake Volume by Tracker Source</h4>
+              <span class="badge-v1" style="font-size: 0.65rem;">Tab Ratio</span>
+            </div>
+            <div style="height: 240px; position: relative;">
+              <canvas id="chartTrackerVolume"></canvas>
+            </div>
+          </div>
 
-		<div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
-		  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-			<h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Top Reasons (Replacements &amp; Refunds)</h4>
-			<span class="badge-v1" style="font-size: 0.65rem;">Fulfillment Drivers</span>
-		  </div>
-		  <div style="height: 240px; position: relative;">
-			<canvas id="chartTopReasons"></canvas>
-		  </div>
-		</div>
-	  </div>
+          <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Top Reasons (Replacements &amp; Refunds)</h4>
+              <span class="badge-v1" style="font-size: 0.65rem;">Fulfillment Drivers</span>
+            </div>
+            <div style="height: 240px; position: relative;">
+              <canvas id="chartTopReasons"></canvas>
+            </div>
+          </div>
+        </div>
 
-	<!-- Dynamic Totals Breakdown (Restricted to Moderator / Admin) -->
-	<div id="reportBreakdownContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+        <!-- Dynamic Totals Breakdown (Restricted to Moderator / Admin) -->
+        <div id="reportBreakdownContainer" class="mod-or-admin-only" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <!-- Card 1: Totals by Agent (Left) -->
+          <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+              <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Agent</h4>
+              <span id="badgeAgentCount" class="badge-v1" style="font-size: 0.65rem;">0 AGENTS</span>
+            </div>
+            <div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
+              <table class="refund-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr>
+                    <th style="padding: 0.65rem 0.85rem; text-align: left;">AGENT</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdownAgentsTbody">
+                  <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading agent totals...</td></tr>
+                </tbody>
+                <tfoot id="breakdownAgentsTfoot" style="position: sticky; bottom: 0; background: var(--card-bg); border-top: 2px solid var(--border-color);">
+                  <tr>
+                    <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark);">TOTAL</td>
+                    <td id="totalAgentTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark);">0</td>
+                    <td id="totalAgentDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
 
-	  <!-- Card 1: Totals by Agent (Left) -->
-	  <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-		  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Agent</h4>
-		  <span id="badgeAgentCount" class="badge-v1" style="font-size: 0.65rem;">0 AGENTS</span>
-		</div>
-		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
-		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr>
-                <th style="padding: 0.65rem 0.85rem; text-align: left;">AGENT</th>
-                <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
-                <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
-              </tr>
-            </thead>
-            <tbody id="breakdownAgentsTbody">
-              <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading agent totals...</td></tr>
-            </tbody>
-            <!-- Sticky Total Footer -->
-            <tfoot id="breakdownAgentsTfoot" style="position: sticky; bottom: 0; background: var(--bg-card, #121815); border-top: 2px solid var(--border-color, #2a3830);">
-              <tr>
-                <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">TOTAL</td>
-                <td id="totalAgentTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">0</td>
-                <td id="totalAgentDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
-              </tr>
-            </tfoot>
-          </table>
-		</div>
-	  </div>
+          <!-- Card 2: Totals by Reason / Detail (Right) -->
+          <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+              <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Reason / Detail</h4>
+              <span id="badgeReasonCount" class="badge-v1" style="font-size: 0.65rem;">0 REASONS</span>
+            </div>
+            <div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
+              <table class="refund-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr>
+                    <th style="padding: 0.65rem 0.85rem; text-align: left;">REASON</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
+                  </tr>
+                </thead>
+                <tbody id="breakdownReasonsTbody">
+                  <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading reason totals...</td></tr>
+                </tbody>
+                <tfoot id="breakdownReasonsTfoot" style="position: sticky; bottom: 0; background: var(--card-bg); border-top: 2px solid var(--border-color);">
+                  <tr>
+                    <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark);">TOTAL</td>
+                    <td id="totalReasonTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark);">0</td>
+                    <td id="totalReasonDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
 
-	  <!-- Card 2: Totals by Reason / Detail (Right) -->
-	  <div class="portal-card" style="padding: 1.15rem; display: flex; flex-direction: column;">
-		<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-		  <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--text-dark);">Totals by Reason / Detail</h4>
-		  <span id="badgeReasonCount" class="badge-v1" style="font-size: 0.65rem;">0 REASONS</span>
-		</div>
-		<div class="table-responsive" style="flex: 1; max-height: 290px; overflow-y: auto;">
-		  <table class="refund-table" style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr>
-                <th style="padding: 0.65rem 0.85rem; text-align: left;">REASON</th>
-                <th style="padding: 0.65rem 0.85rem; text-align: center;">COUNT</th>
-                <th style="padding: 0.65rem 0.85rem; text-align: right;">TOTAL AMOUNT</th>
-              </tr>
-            </thead>
-            <tbody id="breakdownReasonsTbody">
-              <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading reason totals...</td></tr>
-            </tbody>
-            <!-- Sticky Total Footer -->
-            <tfoot id="breakdownReasonsTfoot" style="position: sticky; bottom: 0; background: var(--bg-card, #121815); border-top: 2px solid var(--border-color, #2a3830);">
-              <tr>
-                <td style="padding: 0.75rem 0.85rem; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">TOTAL</td>
-                <td id="totalReasonTickets" style="padding: 0.75rem 0.85rem; text-align: center; font-weight: 800; font-size: 0.88rem; color: var(--text-dark, #fff);">0</td>
-                <td id="totalReasonDollars" style="padding: 0.75rem 0.85rem; text-align: right; font-weight: 800; font-size: 0.95rem; color: #ef4444;">$0.00</td>
-              </tr>
-            </tfoot>
-          </table>
-		</div>
-	  </div>
+        <div class="portal-card">
+          <!-- Main Filter Controls -->
+          <div style="display: flex; gap: 0.65rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <input 
+              type="search" 
+              id="reportSearchInput" 
+              placeholder="Filter by Order #, Email, or Amount..." 
+              onkeyup="filterReportData()" 
+              style="flex: 2; min-width: 180px;" 
+            />
 
-	</div>
+            <select id="reportCategoryFilter" onchange="updateReasonDropdown(this.value); filterReportData();" style="flex: 1; min-width: 140px;">
+              <option value="all">All Sheet Sources</option>
+              <option value="SGRelaunch">SGRelaunch</option>
+              <option value="Replacement Tracking">Replacement Tracking</option>
+              <option value="Recall Order Refunds">Recall Order Refunds</option>
+              <option value="Refund Others">Refund Others</option>
+            </select>
 
-	  <div class="portal-card">
-<!-- Main Filter Controls -->
-    <div style="display: flex; gap: 0.65rem; margin-bottom: 0.75rem; flex-wrap: wrap; align-items: center;">
-      <!-- Search Input -->
-      <input 
-        type="search" 
-        id="reportSearchInput" 
-        placeholder="Filter by Order #, Email, or Amount..." 
-        onkeyup="filterReportData()" 
-        style="flex: 2; min-width: 180px;" 
-      />
+            <select id="reportAgentFilter" onchange="filterReportData()" style="flex: 1; min-width: 120px;">
+              <option value="all">All Agents</option>
+            </select>
 
-      <!-- Sheet Source Filter -->
-      <select id="reportCategoryFilter" onchange="updateReasonDropdown(this.value); filterReportData();" style="flex: 1; min-width: 140px;">
-        <option value="all">All Sheet Sources</option>
-        <option value="SGRelaunch">SGRelaunch</option>
-        <option value="Replacement Tracking">Replacement Tracking</option>
-        <option value="Recall Order Refunds">Recall Order Refunds</option>
-        <option value="Refund Others">Refund Others</option>
-      </select>
+            <select id="reportReasonFilter" onchange="filterReportData()" style="flex: 1.2; min-width: 150px;">
+              <option value="all">All Reasons / Details</option>
+            </select>
 
-      <!-- Agent Dropdown Filter -->
-      <select id="reportAgentFilter" onchange="filterReportData()" style="flex: 1; min-width: 120px;">
-        <option value="all">All Agents</option>
-      </select>
+            <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 125px;">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="last7">Last 7 Days</option>
+              <option value="last30">Last 30 Days</option>
+              <option value="thisMonth">This Month</option>
+              <option value="custom">Custom Range...</option>
+            </select>
+          </div>
 
-      <!-- Details / Reason Dropdown Filter -->
-      <select id="reportReasonFilter" onchange="filterReportData()" style="flex: 1.2; min-width: 150px;">
-        <option value="all">All Reasons / Details</option>
-      </select>
+          <!-- Secondary Row: Custom Range Sub-bar -->
+          <div id="reportCustomDateContainer" style="display: none; align-items: center; justify-content: flex-end; gap: 0.65rem; margin-bottom: 1rem; padding: 0.5rem 0.85rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Custom Date Range:</span>
+            <input type="date" id="reportStartDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--card-bg); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
+            <span style="color: var(--text-muted); font-size: 0.82rem;">to</span>
+            <input type="date" id="reportEndDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--card-bg); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
+            <button type="button" class="btn btn-secondary" onclick="resetDateFilter()" style="padding: 0.35rem 0.65rem; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Clear date filter">
+              ✕ Clear
+            </button>
+          </div>
 
-      <!-- Date Presets -->
-      <select id="reportDatePreset" onchange="applyDatePreset(this.value)" style="flex: 1; min-width: 125px;">
-        <option value="all">All Time</option>
-        <option value="today">Today</option>
-        <option value="yesterday">Yesterday</option>
-        <option value="last7">Last 7 Days</option>
-        <option value="last30">Last 30 Days</option>
-        <option value="thisMonth">This Month</option>
-        <option value="custom">Custom Range...</option>
-      </select>
-    </div>
+          <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+            <table class="refund-table">
+              <thead>
+                <tr>
+                  <th>Source Sheet</th>
+                  <th>Date / Timestamp</th>
+                  <th>Order #</th>
+                  <th>Customer Email</th>
+                  <th>Agent</th>
+                  <th>Details / Reason</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="reportsTableBody">
+                <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Database...</td></tr>
+              </tbody>
+            </table>
+          </div>
 
-    <!-- Secondary Row: Custom Range Sub-bar (Expands cleanly underneath) -->
-    <div id="reportCustomDateContainer" style="display: none; align-items: center; justify-content: flex-end; gap: 0.65rem; margin-bottom: 1rem; padding: 0.5rem 0.85rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px;">
-      <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Custom Date Range:</span>
-      <input type="date" id="reportStartDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
-      <span style="color: var(--text-muted); font-size: 0.82rem;">to</span>
-      <input type="date" id="reportEndDate" onchange="filterReportData()" style="padding: 0.35rem 0.6rem; font-size: 0.82rem; background: var(--bg-card); color: var(--text-dark); border: 1px solid var(--border-color); border-radius: 6px;" />
-      <button type="button" class="btn btn-secondary" onclick="resetDateFilter()" style="padding: 0.35rem 0.65rem; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Clear date filter">
-        ✕ Clear
-      </button>
-    </div>
-
-
-	
-		<div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
-		  <table class="refund-table">
-			<thead>
-			  <tr>
-				<th>Source Sheet</th>
-				<th>Date / Timestamp</th>
-				<th>Order #</th>
-				<th>Customer Email</th>
-				<th>Agent</th>
-				<th>Details / Reason</th>
-				<th>Amount</th>
-			  </tr>
-			</thead>
-			<tbody id="reportsTableBody">
-			  <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Loading tracker data from Database...</td></tr>
-			</tbody>
-		  </table>
-		 </div>
-
-         <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
-           <div style="display: flex; align-items: center; gap: 8px;">
-             <span id="reportsPageSummary" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">
-               Showing 0 of 0 records
-             </span>
-             <select id="reportsPageSize" onchange="changeReportsPageSize(this.value)" style="width: auto; padding: 2px 6px; font-size: 0.75rem;">
-               <option value="50">50 / page</option>
-               <option value="100" selected>100 / page</option>
-               <option value="250">250 / page</option>
-               <option value="500">500 / page</option>
-             </select>
-           </div>
-           
-           <div style="display: flex; align-items: center; gap: 0.5rem;">
-             <button id="reportsPrevBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(-1)">&larr; Previous</button>
-             <span id="reportsPageIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
-             <button id="reportsNextBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(1)">Next &rarr;</button>
-           </div>
-         </div>
-	  </div>
-	</div>
+          <div class="status-summary-bar" style="margin-top: 0.85rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="reportsPageSummary" style="font-size: 0.78rem; font-weight: 600; color: var(--text-muted);">
+                Showing 0 of 0 records
+              </span>
+              <select id="reportsPageSize" onchange="changeReportsPageSize(this.value)" style="width: auto; padding: 2px 6px; font-size: 0.75rem;">
+                <option value="50">50 / page</option>
+                <option value="100" selected>100 / page</option>
+                <option value="250">250 / page</option>
+                <option value="500">500 / page</option>
+              </select>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <button id="reportsPrevBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(-1)">&larr; Previous</button>
+              <span id="reportsPageIndicator" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Page 1 of 1</span>
+              <button id="reportsNextBtn" class="btn btn-secondary btn-sm" onclick="changeReportsPage(1)">Next &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- VIEW 5: KNOWLEDGE BASE -->
       <div id="knowledgeBaseView" class="view-page full-width">
@@ -1633,7 +1621,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; padding: 0 4px;">
               <span id="kbArticlesCountBadge" style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Articles</span>            
-			  <button id="kbNewArticleBtn" onclick="openArticleEditorModal(null)" class="btn btn-secondary btn-sm admin-only" style="padding: 2px 7px; font-size: 0.72rem;">+ New Guide</button>
+              <button id="kbNewArticleBtn" onclick="openArticleEditorModal(null)" class="btn btn-secondary btn-sm admin-only" style="padding: 2px 7px; font-size: 0.72rem;">+ New Guide</button>
             </div>
             <ul id="kbArticlesList" class="kb-articles-list">
               <li style="text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: var(--text-muted);">Loading articles...</li>
@@ -1649,28 +1637,22 @@
                 <div id="kbCurrentArticleTags" style="display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap;"></div>
               </div>
               <div style="display: flex; gap: 6px;">
-                <div style="display: flex; gap: 6px;">
-				  <button id="kbEditArticleBtn" class="btn btn-secondary btn-sm admin-only" onclick="editCurrentSelectedArticle()" style="display: none;">✏️ Edit Guide</button>
-				  <button id="kbDeleteArticleBtn" class="btn btn-secondary btn-sm admin-only" onclick="deleteCurrentSelectedArticle()" style="display: none; color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">🗑️ Delete</button>
-				</div>
+                <button id="kbEditArticleBtn" class="btn btn-secondary btn-sm admin-only" onclick="editCurrentSelectedArticle()" style="display: none;">✏️ Edit Guide</button>
+                <button id="kbDeleteArticleBtn" class="btn btn-secondary btn-sm admin-only" onclick="deleteCurrentSelectedArticle()" style="display: none; color: #ef4444; border-color: rgba(239, 68, 68, 0.35);">🗑️ Delete</button>
               </div>
             </div>
 
-
-			<!-- MACRO GUIDES -->
             <div id="kbCurrentArticleBody" class="kb-reader-body">
               <p style="color: var(--text-muted); font-size: 0.88rem;">Select an article from the left navigation pane to view details.</p>
             </div>
 			
-			<!-- MACRO BOX -->
-			<div id="kbMacroContainer" class="kb-macro-block" style="display: none; margin-top: 0; margin-bottom: 1.25rem;">
-			  <div class="kb-macro-header">
-				<span>Gorgias Canned Response</span>
-				<button type="button" onclick="copyCurrentMacroText()" id="copyMacroBtn" class="btn btn-blue btn-sm" style="padding: 2px 8px; font-size: 0.72rem;">📋 Copy Macro</button>
-			  </div>
-			  <div id="kbMacroContent" class="kb-macro-content"></div>
-			</div>
-			
+            <div id="kbMacroContainer" class="kb-macro-block" style="display: none; margin-top: 0; margin-bottom: 1.25rem;">
+              <div class="kb-macro-header">
+                <span>Gorgias Canned Response</span>
+                <button type="button" onclick="copyCurrentMacroText()" id="copyMacroBtn" class="btn btn-blue btn-sm" style="padding: 2px 8px; font-size: 0.72rem;">📋 Copy Macro</button>
+              </div>
+              <div id="kbMacroContent" class="kb-macro-content"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1731,7 +1713,7 @@
         </div>
       </div>
 
-      <!-- VIEW 7: IN-PORTAL MESSENGER (SLACK ARCHITECTURE) -->
+      <!-- VIEW 7: IN-PORTAL MESSENGER -->
       <div id="messengerView" class="view-page" style="max-width: 1250px;">
         <div class="slack-layout">
           <div class="slack-sidebar">
@@ -1997,73 +1979,146 @@
 	  
     </div>
 	
-	<!-- ANNOUNCEMENT MANDATORY MODAL -->
-  <dialog id="mandatoryUpdateModal" style="max-width: 520px; border-radius: 14px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
-    <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.5rem;">📢</span>
+    <!-- ANNOUNCEMENT MANDATORY MODAL -->
+    <dialog id="mandatoryUpdateModal" style="max-width: 520px; border-radius: 14px; padding: 0; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-dark);">
+      <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.5rem;">📢</span>
+          <div>
+            <span class="badge-v1" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">Mandatory Update</span>
+            <h3 id="announcementTitle" style="margin-top: 4px; font-size: 1.15rem; color: var(--primary-green);">Important Team Update</h3>
+          </div>
+        </div>
+        <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 220px; overflow-y: auto;"></div>
         <div>
-          <span class="badge-v1" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">Mandatory Update</span>
-          <h3 id="announcementTitle" style="margin-top: 4px; font-size: 1.15rem; color: var(--primary-green);">Important Team Update</h3>
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Verification Keyword:</label>
+          <input type="text" id="verificationKeywordInput" placeholder="Enter keyword here..." autocomplete="off" />
+          <span id="verificationErrorMsg" style="color: #ef4444; font-size: 0.78rem; display: none; margin-top: 4px; font-weight: 600;">Incorrect keyword. Please read the note carefully.</span>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+          <button onclick="confirmAnnouncementRead()" class="btn btn-sm" style="width: 100%; padding: 0.65rem;">I Have Read &amp; Understood This Update</button>
         </div>
       </div>
-      <div id="announcementBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.5; max-height: 220px; overflow-y: auto;"></div>
-      <div>
-        <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; color: var(--text-muted);">Verification Keyword:</label>
-        <input type="text" id="verificationKeywordInput" placeholder="Enter keyword here..." autocomplete="off" />
-        <span id="verificationErrorMsg" style="color: #ef4444; font-size: 0.78rem; display: none; margin-top: 4px; font-weight: 600;">Incorrect keyword. Please read the note carefully.</span>
-      </div>
-      <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
-        <button onclick="confirmAnnouncementRead()" class="btn btn-sm" style="width: 100%; padding: 0.65rem;">I Have Read &amp; Understood This Update</button>
-      </div>
-    </div>
-  </dialog>
+    </dialog>
   
-	  <!-- KB EDITOR MODAL -->
-	  <dialog id="kbEditorModal">
-		<div class="modal-box" style="max-width: 680px;">
-		  <div class="modal-header">
-			<h2 id="kbEditorModalTitle">Edit Guide</h2>
-			<button type="button" class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
-		  </div>
-		  <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll" style="display:flex; flex-direction:column; gap:0.75rem;">
-			<input type="hidden" id="kb_edit_id" />
-			<div class="vibe-row">
-			  <span class="vibe-label">Category</span>
-			  <div class="vibe-input-wrap">
-				<select id="kb_edit_category" required onchange="toggleMacroFieldVisibility(this.value)">
-				  <option value="playbook">📖 Playbook (Standard Operating Procedure)</option>
-				  <option value="macro">💬 Macro (Gorgias Canned Reply)</option>
-				  <option value="faq">❓ Internal FAQ</option>
-				</select>
-			  </div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Article Title</span>
-			  <div class="vibe-input-wrap"><input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required /></div>
-			</div>
-			<div class="vibe-row">
-			  <span class="vibe-label">Tags (comma-separated)</span>
-			  <div class="vibe-input-wrap"><input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" /></div>
-			</div>
-			<div class="vibe-row align-start">
-			  <span class="vibe-label" style="margin-top: 5px;">Guide Content (HTML)</span>
-			  <div class="vibe-input-wrap"><textarea id="kb_edit_content" rows="6" placeholder="Paste formatted SOP HTML content..." required></textarea></div>
-			</div>
-			<div class="vibe-row align-start" id="kb_macro_field_row" style="display: none;">
-			  <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
-			  <div class="vibe-input-wrap"><textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias template here..."></textarea></div>
-			</div>
-			<div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
-			  <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
-			  <button type="submit" class="btn btn-sm">Save &amp; Publish Guide</button>
-			</div>
-		  </form>
-		</div>
-	  </dialog>
+    <!-- KB EDITOR MODAL -->
+    <dialog id="kbEditorModal">
+      <div class="modal-box" style="max-width: 680px;">
+        <div class="modal-header">
+          <h2 id="kbEditorModalTitle">Edit Guide</h2>
+          <button type="button" class="modal-close-btn" onclick="closeArticleEditorModal()">✕</button>
+        </div>
+        <form id="kbEditorForm" onsubmit="saveKnowledgeBaseArticle(event)" class="modal-body-scroll" style="display:flex; flex-direction:column; gap:0.75rem;">
+          <input type="hidden" id="kb_edit_id" />
+          <div class="vibe-row">
+            <span class="vibe-label">Category</span>
+            <div class="vibe-input-wrap">
+              <select id="kb_edit_category" required onchange="toggleMacroFieldVisibility(this.value)">
+                <option value="playbook">📖 Playbook (Standard Operating Procedure)</option>
+                <option value="macro">💬 Macro (Gorgias Canned Reply)</option>
+                <option value="faq">❓ Internal FAQ</option>
+              </select>
+            </div>
+          </div>
+          <div class="vibe-row">
+            <span class="vibe-label">Article Title</span>
+            <div class="vibe-input-wrap"><input type="text" id="kb_edit_title" placeholder="e.g. LIT Handling Procedure" required /></div>
+          </div>
+          <div class="vibe-row">
+            <span class="vibe-label">Tags (comma-separated)</span>
+            <div class="vibe-input-wrap"><input type="text" id="kb_edit_tags" placeholder="e.g. lit, shipping, refund" /></div>
+          </div>
+          <div class="vibe-row align-start">
+            <span class="vibe-label" style="margin-top: 5px;">Guide Content (HTML)</span>
+            <div class="vibe-input-wrap"><textarea id="kb_edit_content" rows="6" placeholder="Paste formatted SOP HTML content..." required></textarea></div>
+          </div>
+          <div class="vibe-row align-start" id="kb_macro_field_row" style="display: none;">
+            <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
+            <div class="vibe-input-wrap"><textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias template here..."></textarea></div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
+            <button type="submit" class="btn btn-sm">Save &amp; Publish Guide</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
 	  
+    <!-- EDIT REFUND MODAL -->
+    <dialog id="editRefundModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 id="editModalHeading">Edit Refund</h2>
+          <button type="button" class="modal-close-btn" onclick="closeEditModal()">✕</button>
+        </div>
+        <form onsubmit="saveRefundRecord(event)" class="modal-body-scroll">
+          <input type="hidden" id="edit_task_id" />
+          <div class="vibe-row"><span class="vibe-label">Status</span><div class="vibe-input-wrap"><select id="edit_status"><option value="New">New</option><option value="Follow Up">Follow Up</option><option value="Confirmed">Confirmed</option><option value="Denied">Denied</option><option value="Failed">Failed</option><option value="Refunded">Refunded</option></select></div></div>
+          <div class="vibe-row"><span class="vibe-label">Order #</span><div class="vibe-input-wrap"><input type="text" id="edit_order_number" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Customer Email</span><div class="vibe-input-wrap"><input type="email" id="edit_your_email_address" /><a id="edit_shopify_customer_link" href="#" target="_blank" class="field-link">View in Shopify &nearr;</a></div></div>
+          <div class="vibe-row"><span class="vibe-label">First Name</span><div class="vibe-input-wrap"><input type="text" id="edit_first_name" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Last Name</span><div class="vibe-input-wrap"><input type="text" id="edit_last_name" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Full Name</span><div class="vibe-input-wrap"><input type="text" id="edit_name" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Product</span><div class="vibe-input-wrap"><select id="edit_product"></select></div></div>
+          <div class="vibe-row"><span class="vibe-label">Refund Options</span><div class="vibe-input-wrap"><input type="text" id="edit_refund_options" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Channel</span><div class="vibe-input-wrap"><input type="text" id="edit_channel" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Refund Amount</span><div class="vibe-input-wrap"><input type="text" id="edit_refund_amount" oninput="sanitizeAmountInput(this)" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Original Amount</span><div class="vibe-input-wrap"><span id="edit_original_order_amount" class="read-only-text">—</span></div></div>
+          <div class="vibe-row"><span class="vibe-label">Units</span><div class="vibe-input-wrap"><input type="number" id="edit_number_of_units" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Assignee</span><div class="vibe-input-wrap"><select id="edit_assignee_email"></select></div></div>
+          <div class="vibe-row"><span class="vibe-label">Validation Reason</span><div class="vibe-input-wrap"><input type="text" id="edit_validation_reason" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Failed Reason</span><div class="vibe-input-wrap"><span id="edit_failed_refund_reason" class="read-only-text">—</span></div></div>
+          <div class="vibe-row align-start"><span class="vibe-label">Notes</span><div class="vibe-input-wrap"><textarea id="edit_notes" rows="3"></textarea></div></div>
+          <h4 class="dates-header">Dates &amp; Asana</h4>
+          <div class="vibe-row"><span class="vibe-label">Asana Link</span><div class="vibe-input-wrap"><a id="edit_asana_link" href="#" target="_blank" class="field-link">Open Asana Task &nearr;</a></div></div>
+          <div class="vibe-row"><span class="vibe-label">Created At</span><div class="vibe-input-wrap"><input type="date" id="edit_created_at" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Completed At</span><div class="vibe-input-wrap"><input type="date" id="edit_completed_at" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Due Date</span><div class="vibe-input-wrap"><input type="date" id="edit_due_date" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Start Date</span><div class="vibe-input-wrap"><input type="date" id="edit_start_date" /></div></div>
+          <div class="vibe-row"><span class="vibe-label">Refund Date</span><div class="vibe-input-wrap"><input type="date" id="edit_refund_date" /></div></div>
+          <div id="edit_last_modified_banner" class="last-modified-banner"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openCommentsFromEdit()">💬 Comments <span id="editModalCommentBadge" class="comment-count-pill" style="display:none;">0</span></button>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="closeEditModal()">Cancel</button>
+              <button type="submit" class="btn btn-sm">Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <!-- COMMENTS MODAL -->
+    <dialog id="commentsModal" style="max-width: 500px;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 id="commentsModalTitle">Task Comments</h2>
+          <button type="button" class="modal-close-btn" onclick="closeCommentsModal()">✕</button>
+        </div>
+        <div class="modal-body-scroll">
+          <div id="commentsFeed" style="max-height: 260px; overflow-y: auto; margin-bottom: 1rem;"></div>
+          <form onsubmit="submitNewComment(event)" style="display: flex; gap: 8px;">
+            <input type="text" id="commentInputText" placeholder="Write a comment..." required />
+            <button type="submit" class="btn btn-sm">Post</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- AGENT NOTICE BOARD MODAL -->
+    <dialog id="agentNoticeBoardModal" style="max-width: 560px;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>📢 Team Notice Board</h2>
+          <button type="button" class="modal-close-btn" onclick="document.getElementById('agentNoticeBoardModal').close()">✕</button>
+        </div>
+        <div id="agentNoticeBoardList" class="modal-body-scroll"></div>
+      </div>
+    </dialog>
+  
   </main>
-<!-- ============================================================ -->
+
+  <!-- ============================================================ -->
   <!-- INTAKE FORM MODALS                                           -->
   <!-- ============================================================ -->
 
@@ -2275,6 +2330,7 @@
       </form>
     </div>
   </dialog>
+
   <!-- ============================================================ -->
   <!-- JAVASCRIPT LOGIC                                             -->
   <!-- ============================================================ -->
@@ -2299,6 +2355,7 @@
     let queueTotalRecords = 0;
     let currentEditingRecord = null;
     let currentActiveTaskId = null;
+    window.currentVibeRows = [];
 
     let currentUserProfile = { role: 'agent', full_name: 'Agent', is_approved: false };
     let currentChatAttachment = null;
@@ -2379,6 +2436,10 @@
       return String(d).slice(0, 10);
     }
 
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     // STRICT UNIFIED VIEW ROUTER
     window.switchView = function(viewId) {
       const userSession = JSON.parse(localStorage.getItem('user_session')) || null;
@@ -2391,19 +2452,16 @@
       const isAdmin = isAdminActual && !isAgentPreviewSimulated;
       const isModerator = (currentUserProfile.role === 'moderator');
 
-      // Restrict announcement manager strictly to admins/moderators
       if (viewId === 'announcementsManagerView' && !isAdmin && !isModerator) {
         showToast('Announcement creation is restricted to administrators and moderators.', 'error');
         viewId = 'dashboardView';
       }
 
-      // Restrict Admin Settings strictly to admins
       if (viewId === 'adminSettingsView' && !isAdminActual) {
         showToast('Admin Settings are restricted to administrators.', 'error');
         viewId = 'dashboardView';
       }
 
-      // Granular Module-Level Maintenance Enforcement
       if (!isAdmin) {
         if (viewId === 'refundsQueueView' && systemMaintenanceState.vibe) {
           showToast('Vibe Refunding is currently offline for maintenance.', 'error');
@@ -2450,7 +2508,7 @@
         } else if (viewId === 'reportsView') {
           const isModOrAdmin = isAdmin || (currentUserProfile.role === 'moderator');
           heading.innerText = isModOrAdmin ? 'Search & Reports' : 'Record Search';
-          fetchPortalData(); // Always refresh to pull the latest entries
+          fetchPortalData();
         } else if (viewId === 'announcementsManagerView') {
           heading.innerText = 'Announcement Manager';
           fetchAnnouncementsList();
@@ -2665,7 +2723,6 @@
       const isModerator = (currentUserProfile.role === 'moderator');
       const hasReportsPrivileges = isAdmin || isModerator;
 
-      // Strict visibility control for admin elements
       document.querySelectorAll('.admin-only').forEach(el => {
         el.style.setProperty('display', (isAdmin || isModerator) ? 'block' : 'none', 'important');
       });
@@ -2674,7 +2731,6 @@
         adminSectionHeader.style.display = (isAdmin || isModerator) ? 'block' : 'none';
       }
 
-      // Hide Admin Settings link specifically from moderators and non-admins
       const adminSettingsItem = document.getElementById('sidebar-admin-settings-item');
       if (adminSettingsItem) {
         adminSettingsItem.style.setProperty('display', isAdmin ? 'block' : 'none', 'important');
@@ -2766,8 +2822,8 @@
 
         return `
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="font-weight: 700;">${p.full_name || 'Agent'}</td>
-            <td>${p.email}</td>
+            <td style="font-weight: 700;">${escapeHtml(p.full_name || 'Agent')}</td>
+            <td>${escapeHtml(p.email)}</td>
             <td>
               <select onchange="updateUserRole('${p.id}', this.value)" style="padding: 3px 6px; font-size: 0.78rem;">
                 <option value="agent" ${p.role === 'agent' ? 'selected' : ''}>Agent</option>
@@ -2823,10 +2879,9 @@
       return merged;
     }
 
-    async function ensureChannelExistsInDatabase(channelId, channelName, channelDesc = '') {
+    async function ensureChannelExistsInDatabase(channelId, channelName) {
       if (!db || !channelId) return;
       try {
-        // Only sends columns id and name to prevent 400 Bad Request on tables without created_by
         await db.from('chat_channels').upsert([{
           id: channelId,
           name: channelName || channelId
@@ -2859,7 +2914,7 @@
       dynamicChannels.push(newChan);
       localStorage.setItem('portal_custom_channels', JSON.stringify(dynamicChannels));
 
-      await ensureChannelExistsInDatabase(cleanId, cleanId, desc);
+      await ensureChannelExistsInDatabase(cleanId, cleanId);
 
       if (db) {
         db.channel('public:chat_channels_sync').send({
@@ -2883,7 +2938,7 @@
     window.selectChatTarget = async function(type, id, name, desc = '') {
       activeChatTarget = { type, id, name, desc };
 
-      await ensureChannelExistsInDatabase(id, name, desc);
+      await ensureChannelExistsInDatabase(id, name);
 
       if (unreadChatCounts[id]) {
         delete unreadChatCounts[id];
@@ -2988,7 +3043,7 @@
             return `
               <button class="slack-item-btn ${isActive ? 'active' : ''}" onclick="selectChatTarget('dm', '${dmId}', '${escapeHtml(displayName)}', '${p.email}')">
                 <span class="online-indicator ${isOnline ? 'online' : ''}" title="${isOnline ? 'Online now' : 'Offline'}"></span>
-                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${displayName}</span>
+                <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(displayName)}</span>
                 ${badgeHtml}
               </button>
             `;
@@ -3083,7 +3138,7 @@
         senderId = prof?.id;
       }
 
-      await ensureChannelExistsInDatabase(activeChatTarget.id, activeChatTarget.name, activeChatTarget.desc);
+      await ensureChannelExistsInDatabase(activeChatTarget.id, activeChatTarget.name);
 
       const msgPayload = {
         channel_id: activeChatTarget.id,
@@ -3109,7 +3164,7 @@
       }
     };
 	
-	function initTrackerRealtime() {
+    function initTrackerRealtime() {
       if (!db) return;
 
       const trackerTables = [
@@ -3137,7 +3192,6 @@
               details = `${row.refund_reason || 'Refund'} | ${row.sub_status || ''}`;
             }
 
-            // Avoid duplicate prepends if current user submitted it
             const alreadyExists = globalPortalData.some(d => 
               d.order_number === row.order_number && 
               d.customer_email === row.customer_email && 
@@ -3154,6 +3208,7 @@
                 reason: details,
                 amount: amount
               });
+              populateReportFilterDropdowns();
               filterReportData();
             }
           })
@@ -3224,19 +3279,13 @@
       selectChatTarget('channel', 'general', 'general', 'Company announcements & team chat');
     }
 
-    function escapeHtml(str) {
-      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
     // ============================================================
     // INTAKE FORMS DISPATCHER
     // ============================================================
-	window.openFormModal = function(id) {
-      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+    window.openFormModal = function(id) {
       const isAdminActual = (currentUserProfile.role === 'admin');
       const isAdmin = isAdminActual && !isAgentPreviewSimulated;
 
-      // Maintenance checks for regular agents
       if (!isAdmin && typeof systemMaintenanceState !== 'undefined') {
         if (systemMaintenanceState.forms) {
           showToast('Ticket Submission Hub is offline for maintenance.', 'error');
@@ -3267,12 +3316,11 @@
         } else {
           modalEl.setAttribute('open', '');
         }
-      } else {
-        console.error(`Dialog element #${id} not found in DOM.`);
       }
     };
 
     window.closeFormModal = function(id) { document.getElementById(id)?.close(); };
+
     function checkPolicyReminder(val) {
       const alertBox = document.getElementById('replacementPolicyAlert');
       if (alertBox) alertBox.style.display = (val === 'LIT' || val === 'Damaged') ? 'block' : 'none';
@@ -3357,27 +3405,22 @@
       executeQueueFetch(queueCurrentPage);
     };
 
+    function sanitizeAmountInput(el) {
+      let val = el.value;
+      val = val.replace(/[^0-9.]/g, '');
 
-		// Real-time input cleaner: allows only digits and a single decimal point
-		function sanitizeAmountInput(el) {
-		  let val = el.value;
+      const parts = val.split('.');
+      if (parts.length > 2) {
+        val = parts[0] + '.' + parts.slice(1).join('');
+      }
 
-		  // Remove any character that is not a digit (0-9) or a dot (.)
-		  val = val.replace(/[^0-9.]/g, '');
+      if (parts.length === 2 && parts[1].length > 2) {
+        val = parts[0] + '.' + parts[1].slice(0, 2);
+      }
 
-		  // If there are multiple dots, preserve only the first one
-		  const parts = val.split('.');
-		  if (parts.length > 2) {
-			val = parts[0] + '.' + parts.slice(1).join('');
-		  }
+      el.value = val;
+    }
 
-		  // Limit to 2 decimal places if decimals exist
-		  if (parts.length === 2 && parts[1].length > 2) {
-			val = parts[0] + '.' + parts[1].slice(0, 2);
-		  }
-
-		  el.value = val;
-		}
     // ============================================================
     // VIBE QUEUE DATA TABLE
     // ============================================================
@@ -3428,14 +3471,14 @@
           return;
         }
 
+        window.currentVibeRows = data;
         tbody.innerHTML = '';
-        data.forEach(row => {
+        data.forEach((row, idx) => {
           const tr = document.createElement('tr');
-          const shortTaskId = row.task_id ? `#${row.task_id.slice(-6)}` : '—';
+          const shortTaskId = row.task_id ? `#${String(row.task_id).slice(-6)}` : '—';
           const asanaLink = row.task_id ? `<a class="link-tag" href="${ASANA_BASE}/${row.task_id}" target="_blank">${shortTaskId} &nearr;</a>` : '—';
-          const shopifyOrder = row.shopify_order_id ? `<a class="link-tag" href="${SHOPIFY_ORDERS}${row.shopify_order_id}" target="_blank">${row.order_number || '—'} &nearr;</a>` : (row.order_number || '—');
-          const shopifyCustomer = row.shopify_customer_id ? `<a class="link-tag" href="${SHOPIFY_CUSTOMERS}${row.shopify_customer_id}" target="_blank">${row.your_email_address || '—'} &nearr;</a>` : (row.your_email_address || '—');
-          const safeRowJson = JSON.stringify(row).replace(/'/g, "&apos;");
+          const shopifyOrder = row.shopify_order_id ? `<a class="link-tag" href="${SHOPIFY_ORDERS}${row.shopify_order_id}" target="_blank">${escapeHtml(row.order_number || '—')} &nearr;</a>` : escapeHtml(row.order_number || '—');
+          const shopifyCustomer = row.shopify_customer_id ? `<a class="link-tag" href="${SHOPIFY_CUSTOMERS}${row.shopify_customer_id}" target="_blank">${escapeHtml(row.your_email_address || '—')} &nearr;</a>` : escapeHtml(row.your_email_address || '—');
           const commentCount = Number(row.comment_count) || 0;
           const commentBadge = commentCount > 0 ? `<span class="comments-count-badge">${commentCount > 99 ? '99+' : commentCount}</span>` : '';
 
@@ -3443,26 +3486,26 @@
             <td>${asanaLink}</td>
             <td>${shopifyCustomer}</td>
             <td>${shopifyOrder}</td>
-            <td><strong>${row.status || '—'}</strong></td>
-            <td>${row.validation_mechanism || '—'}</td>
-            <td>${row.validation_reason || '—'}</td>
+            <td><strong>${escapeHtml(row.status || '—')}</strong></td>
+            <td>${escapeHtml(row.validation_mechanism || '—')}</td>
+            <td>${escapeHtml(row.validation_reason || '—')}</td>
             <td>${row.created_at ? String(row.created_at).slice(0, 10) : '—'}</td>
-            <td>${row.last_modified_by ? row.last_modified_by.split('@')[0] : '—'}</td>
-            <td>${row.assignee_email ? row.assignee_email.split('@')[0] : '—'}</td>
+            <td>${row.last_modified_by ? escapeHtml(row.last_modified_by.split('@')[0]) : '—'}</td>
+            <td>${row.assignee_email ? escapeHtml(row.assignee_email.split('@')[0]) : '—'}</td>
             <td>
               <div class="actions-cell-wrap">
                 <span class="comments-btn-wrap">
-                  <button class="btn-action-show" onclick="openCommentsModal('${row.task_id}')">Show comments</button>
+                  <button type="button" class="btn-action-show" onclick="openCommentsModal('${row.task_id}')">Show comments</button>
                   ${commentBadge}
                 </span>
-                <button class="btn-action-edit" onclick='openEditModal(${safeRowJson})'>Edit</button>
+                <button type="button" class="btn-action-edit" onclick="openEditModal(window.currentVibeRows[${idx}])">Edit</button>
               </div>
             </td>
           `;
           tbody.appendChild(tr);
         });
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Query Error: ${e.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: #d9534f; padding: 1.5rem;">Query Error: ${escapeHtml(e.message)}</td></tr>`;
       }
     };
 
@@ -3474,6 +3517,7 @@
     };
 
     window.openEditModal = function(record) {
+      if (!record) return;
       currentEditingRecord = record;
       document.getElementById('editModalHeading').textContent = `Edit refund — Order # ${record.order_number || record.task_id || '—'}`;
       document.getElementById('edit_task_id').value = record.task_id || '';
@@ -3610,8 +3654,8 @@
         item.style.paddingBottom = '0.4rem';
         item.style.marginBottom = '0.4rem';
         item.innerHTML = `
-          <small style="color: var(--text-muted); font-size: 0.74rem;">${new Date(c.created_at).toLocaleString()} — <strong>${c.author_email || 'Agent'}</strong></small>
-          <p style="margin: 2px 0 0 0; font-size: 0.82rem;">${c.body}</p>
+          <small style="color: var(--text-muted); font-size: 0.74rem;">${new Date(c.created_at).toLocaleString()} — <strong>${escapeHtml(c.author_email || 'Agent')}</strong></small>
+          <p style="margin: 2px 0 0 0; font-size: 0.82rem;">${escapeHtml(c.body)}</p>
         `;
         feed.appendChild(item);
       });
@@ -3646,7 +3690,7 @@
       }
     };
 
-	// ============================================================
+    // ============================================================
     // MODULE 4: SUPABASE INTELLIGENCE & REPORTING ENGINE
     // ============================================================
     let chartVolumeInstance = null;
@@ -3751,14 +3795,12 @@
         combined.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
 
         globalPortalData = combined;
-		if (typeof populateReportFilterDropdowns === 'function') {
-          populateReportFilterDropdowns();
-        }
+        populateReportFilterDropdowns();
         filterReportData();
         showToast(`Loaded all ${globalPortalData.length.toLocaleString()} records from Supabase!`, 'success');
 
       } catch (err) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:1.5rem;">Fetch error: ${err.message}</td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:1.5rem;">Fetch error: ${escapeHtml(err.message)}</td></tr>`;
       }
     };
 
@@ -3824,20 +3866,6 @@
       filterReportData();
     };
 
-    window.clearDateFilter = function() {
-      const presetSelect = document.getElementById('reportDatePreset');
-      const customBox = document.getElementById('customDateRangeBox');
-      const startInput = document.getElementById('reportStartDate');
-      const endInput = document.getElementById('reportEndDate');
-
-      if (presetSelect) presetSelect.value = 'all';
-      if (customBox) customBox.style.display = 'none';
-      if (startInput) startInput.value = '';
-      if (endInput) endInput.value = '';
-
-      filterReportData();
-    };
-
     function parseRecordDate(ts) {
       if (!ts) return null;
       const parsed = new Date(ts);
@@ -3875,7 +3903,7 @@
       }
     };
 
-	function renderFilteredBreakdowns(filteredData) {
+    function renderFilteredBreakdowns(filteredData) {
       const reasonTbody = document.getElementById('breakdownReasonsTbody');
       const agentTbody = document.getElementById('breakdownAgentsTbody');
       const badgeReason = document.getElementById('badgeReasonCount');
@@ -3915,7 +3943,6 @@
           }
         }
 
-        // Reason mapping
         let rawReason = (item.reason || '').trim();
         if (!rawReason || rawReason === '—') rawReason = 'Unspecified';
         const primaryReason = rawReason.includes('|') ? rawReason.split('|')[0].trim() : rawReason;
@@ -3926,7 +3953,6 @@
         reasonMap[primaryReason].count++;
         reasonMap[primaryReason].total += amount;
 
-        // Agent mapping
         let rawAgent = (item.agent_email || '').trim();
         if (!rawAgent || rawAgent === '—') rawAgent = 'Unassigned';
         const cleanAgent = rawAgent.includes('@') ? rawAgent.split('@')[0] : rawAgent;
@@ -3938,7 +3964,6 @@
         agentMap[cleanAgent].total += amount;
       });
 
-      // Render Agents (Left Box)
       const sortedAgents = Object.entries(agentMap).sort((a, b) => b[1].total - a[1].total);
       if (badgeAgent) badgeAgent.innerText = `${sortedAgents.length} AGENT${sortedAgents.length === 1 ? '' : 'S'}`;
 
@@ -3956,7 +3981,6 @@
         </tr>
       `).join('');
 
-      // Render Reasons (Right Box)
       const sortedReasons = Object.entries(reasonMap).sort((a, b) => b[1].count - a[1].count);
       if (badgeReason) badgeReason.innerText = `${sortedReasons.length} REASON${sortedReasons.length === 1 ? '' : 'S'}`;
 
@@ -3974,7 +3998,6 @@
         </tr>
       `).join('');
 
-      // Update Both Footers
       const formattedTotalDollars = `$${grandTotalDollars.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       const formattedTotalTickets = grandTotalTickets.toLocaleString();
 
@@ -4004,23 +4027,19 @@
       }
 
       const filtered = globalPortalData.filter(item => {
-        // Source Sheet filter
         if (category !== 'all' && item._sourceSheet !== category) return false;
 
-        // Agent dropdown filter
         if (selectedAgent !== 'all') {
           let agent = (item.agent_email || '').toLowerCase().trim();
           if (agent.includes('@')) agent = agent.split('@')[0];
           if (agent !== selectedAgent.toLowerCase()) return false;
         }
 
-        // Reason dropdown filter
         if (selectedReason !== 'all') {
           const itemReason = (item.reason || '').toLowerCase();
           if (!itemReason.includes(selectedReason.toLowerCase())) return false;
         }
 
-        // Search text box (checks order #, customer email, amount)
         const matchesSearch = !query || 
           String(item.order_number).toLowerCase().includes(query) ||
           String(item.customer_email).toLowerCase().includes(query) ||
@@ -4029,7 +4048,6 @@
           String(item.amount).toLowerCase().includes(query);
         if (!matchesSearch) return false;
 
-        // Date bounds
         if (startBound || endBound) {
           const recDate = parseRecordDate(item.timestamp);
           if (!recDate) return false;
@@ -4044,7 +4062,7 @@
 
       renderReportMetrics(filtered);
       renderReportCharts(filtered);
-	  renderFilteredBreakdowns(filtered);
+      renderFilteredBreakdowns(filtered);
       renderReportTable(filtered);
     };
 
@@ -4213,20 +4231,19 @@
                            item._sourceSheet === 'Recall Order Refunds' ? '#f59e0b' : '#a855f7';
 
         tr.innerHTML = `
-          <td><span class="badge-v1" style="font-size:0.68rem; color:${badgeColor}; border-color:${badgeColor}33;">${item._sourceSheet}</span></td>
+          <td><span class="badge-v1" style="font-size:0.68rem; color:${badgeColor}; border-color:${badgeColor}33;">${escapeHtml(item._sourceSheet)}</span></td>
           <td style="font-size:0.75rem; color:var(--text-muted);">${item.timestamp ? String(item.timestamp).slice(0, 16) : '—'}</td>
-          <td style="font-weight: 700;">${item.order_number}</td>
-          <td>${item.customer_email}</td>
-          <td>${item.agent_email ? item.agent_email.split('@')[0] : '—'}</td>
+          <td style="font-weight: 700;">${escapeHtml(item.order_number)}</td>
+          <td>${escapeHtml(item.customer_email)}</td>
+          <td>${item.agent_email ? escapeHtml(item.agent_email.split('@')[0]) : '—'}</td>
           <td style="max-width:280px; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(item.reason)}">${escapeHtml(item.reason)}</td>
-          <td style="font-weight: 700; color: ${item.amount && item.amount !== 'N/A' ? '#ef4444' : 'var(--text-muted)'};">${item.amount || '—'}</td>
+          <td style="font-weight: 700; color: ${item.amount && item.amount !== 'N/A' ? '#ef4444' : 'var(--text-muted)'};">${escapeHtml(item.amount || '—')}</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
     window.exportReportsCSV = function() {
-      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const isAdmin = (currentUserProfile.role === 'admin');
       const isModerator = (currentUserProfile.role === 'moderator');
 
@@ -4235,7 +4252,6 @@
         return;
       }
 
-      // Use the filtered records currently displayed on your screen, or fallback to all records
       const exportSet = (typeof currentFilteredReportsData !== 'undefined' && currentFilteredReportsData.length > 0)
         ? currentFilteredReportsData
         : (globalPortalData || []);
@@ -4258,8 +4274,6 @@
       ]);
 
       const csvString = [headers.join(','), ...rows.map(e => e.join(','))].join('\r\n');
-
-      // Use a Blob with UTF-8 BOM (\uFEFF) to support large exports and preserve Excel formatting
       const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
       const blobUrl = URL.createObjectURL(blob);
 
@@ -4269,7 +4283,6 @@
       document.body.appendChild(link);
       link.click();
       
-      // Clean up memory
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(blobUrl);
@@ -4340,9 +4353,9 @@
 
         tr.innerHTML = `
           <td>${statusBadge}</td>
-          <td><strong>${ann.title}</strong></td>
-          <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${ann.verification_keyword}</code></td>
-          <td>${ann.created_by ? ann.created_by.split('@')[0] : '—'}</td>
+          <td><strong>${escapeHtml(ann.title)}</strong></td>
+          <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${escapeHtml(ann.verification_keyword)}</code></td>
+          <td>${ann.created_by ? escapeHtml(ann.created_by.split('@')[0]) : '—'}</td>
           <td><strong>${annReads.length} verified</strong></td>
           <td>
             <div style="display:flex; gap:4px;">
@@ -4408,10 +4421,7 @@
       const inputEl = document.getElementById('verificationKeywordInput');
       const errEl = document.getElementById('verificationErrorMsg');
 
-      if (!modal) {
-        console.error("Critical: #mandatoryUpdateModal dialog missing from DOM");
-        return;
-      }
+      if (!modal) return;
 
       if (titleEl) titleEl.innerText = currentActiveAnnouncement.title || 'Team Update';
       if (bodyEl) bodyEl.innerHTML = currentActiveAnnouncement.body || '';
@@ -4471,7 +4481,7 @@
         item.style.padding = '0.75rem 0';
         item.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <strong style="color:var(--primary-green); font-size:0.9rem;">${ann.title}</strong>
+            <strong style="color:var(--primary-green); font-size:0.9rem;">${escapeHtml(ann.title)}</strong>
             <small style="color:var(--text-muted); font-size:0.72rem;">${new Date(ann.created_at).toLocaleDateString()}</small>
           </div>
           <div style="font-size:0.82rem; line-height:1.45; color:var(--text-dark);">${ann.body}</div>
@@ -4567,57 +4577,55 @@
         const tagsHtml = (art.tags && art.tags.length > 0)
           ? art.tags.slice(0, 3).map(t => `<span class="kb-chip-tag" onclick="event.stopPropagation(); filterByTag('${t}')">#${t}</span>`).join('')
           : `<span style="font-size:0.7rem; color:var(--text-muted);">${art.category}</span>`;
-        li.innerHTML = `<div class="kb-article-item-title">${icon} ${art.title}</div><div style="display:flex; flex-wrap:wrap; align-items:center;">${tagsHtml}</div>`;
+        li.innerHTML = `<div class="kb-article-item-title">${icon} ${escapeHtml(art.title)}</div><div style="display:flex; flex-wrap:wrap; align-items:center;">${tagsHtml}</div>`;
         listEl.appendChild(li);
       });
     };
 
-		function renderSelectedArticle(article) {
-			  currentSelectedArticle = article;
-			  filterKnowledgeBaseArticles();
+    function renderSelectedArticle(article) {
+      currentSelectedArticle = article;
+      filterKnowledgeBaseArticles();
 
-			  const catNormalized = String(article.category || '').toLowerCase().trim();
+      const catNormalized = String(article.category || '').toLowerCase().trim();
 
-			  document.getElementById('kbCurrentCategoryBadge').innerText = (article.category || 'GUIDE').toUpperCase();
-			  document.getElementById('kbCurrentArticleTitle').innerText = article.title || 'Untitled';
-			  
-			  const lastEdited = article.updated_at ? new Date(article.updated_at).toLocaleDateString() : 'Recently';
-			  document.getElementById('kbCurrentArticleMeta').innerText = `Last updated ${lastEdited} by ${article.last_edited_by || 'Team'}`;
-			  
-			  const tagsContainer = document.getElementById('kbCurrentArticleTags');
-			  tagsContainer.innerHTML = (article.tags && article.tags.length > 0)
-				? article.tags.map(t => `<span class="kb-chip-tag" onclick="filterByTag('${t}')">#${t}</span>`).join('')
-				: '';
+      document.getElementById('kbCurrentCategoryBadge').innerText = (article.category || 'GUIDE').toUpperCase();
+      document.getElementById('kbCurrentArticleTitle').innerText = article.title || 'Untitled';
+      
+      const lastEdited = article.updated_at ? new Date(article.updated_at).toLocaleDateString() : 'Recently';
+      document.getElementById('kbCurrentArticleMeta').innerText = `Last updated ${lastEdited} by ${article.last_edited_by || 'Team'}`;
+      
+      const tagsContainer = document.getElementById('kbCurrentArticleTags');
+      tagsContainer.innerHTML = (article.tags && article.tags.length > 0)
+        ? article.tags.map(t => `<span class="kb-chip-tag" onclick="filterByTag('${t}')">#${t}</span>`).join('')
+        : '';
 
-			  // Check whether active user has permission to edit/delete guides
-			  const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
-			  const isAdminActual = userSession && (currentUserProfile.role === 'admin');
-			  const isAdmin = isAdminActual && !isAgentPreviewSimulated;
-			  const isModerator = (currentUserProfile.role === 'moderator');
-			  const canManageKB = isAdmin || isModerator;
+      const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
+      const isAdminActual = userSession && (currentUserProfile.role === 'admin');
+      const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+      const isModerator = (currentUserProfile.role === 'moderator');
+      const canManageKB = isAdmin || isModerator;
 
-			  const editBtn = document.getElementById('kbEditArticleBtn');
-			  const deleteBtn = document.getElementById('kbDeleteArticleBtn');
-			  const newBtn = document.getElementById('kbNewArticleBtn');
+      const editBtn = document.getElementById('kbEditArticleBtn');
+      const deleteBtn = document.getElementById('kbDeleteArticleBtn');
+      const newBtn = document.getElementById('kbNewArticleBtn');
 
-			  if (editBtn) editBtn.style.setProperty('display', canManageKB ? 'inline-flex' : 'none', 'important');
-			  if (deleteBtn) deleteBtn.style.setProperty('display', canManageKB ? 'inline-flex' : 'none', 'important');
-			  if (newBtn) newBtn.style.setProperty('display', canManageKB ? 'inline-block' : 'none', 'important');
+      if (editBtn) editBtn.style.setProperty('display', canManageKB ? 'inline-flex' : 'none', 'important');
+      if (deleteBtn) deleteBtn.style.setProperty('display', canManageKB ? 'inline-flex' : 'none', 'important');
+      if (newBtn) newBtn.style.setProperty('display', canManageKB ? 'inline-block' : 'none', 'important');
 
-			  document.getElementById('kbCurrentArticleBody').innerHTML = article.content || '<p style="color:var(--text-muted);">No content provided.</p>';
+      document.getElementById('kbCurrentArticleBody').innerHTML = article.content || '<p style="color:var(--text-muted);">No content provided.</p>';
 
-			  // Display Gorgias macro block if category is macro
-			  const macroBox = document.getElementById('kbMacroContainer');
-			  const macroContent = document.getElementById('kbMacroContent');
-			  const macroString = (article.macro_text || article.macro || '').trim();
+      const macroBox = document.getElementById('kbMacroContainer');
+      const macroContent = document.getElementById('kbMacroContent');
+      const macroString = (article.macro_text || article.macro || '').trim();
 
-			  if (catNormalized === 'macro' && macroString) {
-				macroBox.style.setProperty('display', 'block', 'important');
-				macroContent.textContent = macroString;
-			  } else {
-				macroBox.style.setProperty('display', 'none', 'important');
-			  }
-			}
+      if (catNormalized === 'macro' && macroString) {
+        macroBox.style.setProperty('display', 'block', 'important');
+        macroContent.textContent = macroString;
+      } else {
+        macroBox.style.setProperty('display', 'none', 'important');
+      }
+    }
 
     window.copyCurrentMacroText = function() {
       if (!currentSelectedArticle || !currentSelectedArticle.macro_text) return;
@@ -4661,7 +4669,7 @@
       }
     };
 
-	window.openArticleEditorModal = function(article) {
+    window.openArticleEditorModal = function(article) {
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const isAdminActual = userSession && (currentUserProfile.role === 'admin');
       const isAdmin = isAdminActual && !isAgentPreviewSimulated;
@@ -4849,15 +4857,14 @@
           toggleAuthMode();
 
         } else {
-          // --- LOGIN ---
-          const { data: loginData, error: loginErr } = await db.auth.signInWithPassword({
+          const { error: loginErr } = await db.auth.signInWithPassword({
             email: email,
             password: password
           });
 
           if (loginErr) throw loginErr;
 
-          const { data: prof, error: profErr } = await db
+          const { data: prof } = await db
             .from('profiles')
             .select('id, full_name, role, is_approved')
             .eq('email', email)
@@ -4898,6 +4905,7 @@
 
           initDropdownOptions();
           initChatRealtime();
+          initTrackerRealtime();
         }
       } catch (err) {
         showToast(err.message || 'Authentication failed', 'error');
@@ -4951,7 +4959,7 @@
         await loadMaintenanceSettings();
         initDropdownOptions();
         initChatRealtime();
-		initTrackerRealtime();
+        initTrackerRealtime();
 		
         const isAdmin = (currentUserProfile.role === 'admin');
 
@@ -4965,7 +4973,7 @@
       }
     }
 
-   async function initDropdownOptions() {
+    async function initDropdownOptions() {
       if (!db) return;
       try {
         const { data: users } = await db.from('profiles').select('email').order('email', { ascending: true });
@@ -5010,7 +5018,6 @@
       }
     }
 
-// Exact reasons defined in each form modal
     const SOURCE_REASONS_MAP = {
       'all': [
         'Delivered not Received', 'LIT (Lost In Transit)', 'Damaged', 'Mispicks', 'Missing', 'RTS (Return to Sender)',
@@ -5072,7 +5079,6 @@
       });
       agentSelect.innerHTML = agentHtml;
 
-      // Initialize Reason dropdown based on currently selected sheet
       const currentSheet = document.getElementById('reportCategoryFilter')?.value || 'all';
       updateReasonDropdown(currentSheet);
     }
