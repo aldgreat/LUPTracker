@@ -1125,6 +1125,21 @@
 
     <div class="content-area">
 
+      <!-- ADMIN REFUND THRESHOLD ALARM BANNER -->
+      <div id="adminThresholdAlarmBanner" class="admin-only" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-left: 5px solid #ef4444; border-radius: 8px; padding: 0.85rem 1.1rem; margin-bottom: 1rem; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.35rem;">🚨</span>
+          <div>
+            <div style="font-weight: 800; font-size: 0.86rem; color: #ef4444; text-transform: uppercase; letter-spacing: 0.4px;">Refund Threshold Alarm</div>
+            <div id="adminThresholdAlarmText" style="font-size: 0.82rem; color: var(--text-dark); margin-top: 2px;">Threshold alert triggered.</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button type="button" onclick="switchView('adminSettingsView')" class="btn btn-sm" style="background: #ef4444; color: #fff;">Adjust Thresholds</button>
+          <button type="button" onclick="dismissThresholdAlarmBanner()" class="btn btn-secondary btn-sm">Dismiss</button>
+        </div>
+      </div>
+
       <!-- VIEW 1: AUTHENTICATION -->
       <div id="loginView" class="view-page active" style="max-width: 420px; margin: 3.5rem auto; width: 100%;">
         <div class="portal-card" style="padding: 2.25rem 2rem; box-shadow: var(--shadow); border-radius: 12px;">
@@ -2020,6 +2035,157 @@
           </div>
         </div>
 
+        <!-- REFUND THRESHOLD & AUTO-LOCKOUT CONTROL CENTER -->
+        <div class="portal-card" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h3 style="margin: 0; font-size: 1.15rem; color: var(--primary-green);">🚨 Refund Threshold &amp; Auto-Lockout Controls</h3>
+              <p style="margin: 3px 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                Set spending limits (Daily, Weekly, or Monthly) and warning alarm percentages for <strong>Recall Order Refunds</strong> and <strong>Refund Others</strong>. When Auto-Lockout is enabled and 100% of the cap is reached, agents are automatically locked out while administrators retain manual bypass access.
+              </p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" onclick="evaluateRefundThresholds(true)" class="btn btn-secondary btn-sm">🔄 Recalculate Spend</button>
+            </div>
+          </div>
+
+          <!-- Alarm Sound Customization Bar -->
+          <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.15rem; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span style="font-weight: 800; font-size: 0.84rem; color: var(--text-dark);">🔔 Alarm Audio:</span>
+              <select id="thresh-sound-preset" onchange="handleThresholdSoundPresetChange(this.value)" style="width: auto; min-width: 195px; padding: 0.35rem 0.6rem; font-size: 0.8rem;">
+                <option value="chime">Soft Double Chime (Default)</option>
+                <option value="urgent">Urgent Siren Pulse</option>
+                <option value="bell">Classic Service Bell</option>
+                <option value="radar">Sonar Radar Ping</option>
+                <option value="custom">Custom Uploaded Audio...</option>
+              </select>
+              <input type="file" id="thresh-custom-audio-input" accept="audio/*" style="display: none;" onchange="handleCustomAlarmAudioUpload(this)" />
+              <button type="button" id="thresh-upload-audio-btn" onclick="document.getElementById('thresh-custom-audio-input').click()" class="btn btn-secondary btn-sm" style="display: none; font-size: 0.76rem;">📁 Choose Audio File</button>
+              <span id="thresh-custom-audio-name" style="font-size: 0.74rem; color: var(--primary-green); font-weight: 600;"></span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <label style="display: flex; align-items: center; gap: 6px; font-size: 0.76rem; font-weight: 700; color: var(--text-muted);">
+                <span>Vol:</span>
+                <input type="range" id="thresh-sound-volume" min="10" max="100" value="70" oninput="updateThresholdVolumeLabel(this.value)" onchange="saveThresholdAudioSettings()" style="width: 80px; accent-color: var(--primary-green); cursor: pointer;" />
+                <span id="thresh-sound-vol-label" style="min-width: 32px; color: var(--text-dark);">70%</span>
+              </label>
+              <button type="button" onclick="playThresholdAlarmSound()" class="btn btn-blue btn-sm" style="font-size: 0.76rem;">🔊 Test Sound</button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem;">
+            <!-- Card A: Recall Order Refunds Threshold -->
+            <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 800; font-size: 0.95rem; color: var(--text-dark);">⚠️ Recall Order Refunds</span>
+                <span id="thresh-badge-recall" class="badge-v1" style="font-size: 0.68rem;">DISABLED</span>
+              </div>
+
+              <!-- Live Progress Bar -->
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; margin-bottom: 4px;">
+                  <span id="thresh-spend-text-recall" style="color: var(--text-dark);">$0.00 / $0.00</span>
+                  <span id="thresh-pct-text-recall" style="color: var(--text-muted);">0%</span>
+                </div>
+                <div style="width: 100%; height: 9px; background: var(--card-bg); border-radius: 99px; overflow: hidden; border: 1px solid var(--border-color);">
+                  <div id="thresh-bar-recall" style="height: 100%; width: 0%; background: #22c55e; transition: width 0.3s ease, background 0.3s ease;"></div>
+                </div>
+                <div id="thresh-window-label-recall" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 3px;">Period: Monthly</div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Reset Period</label>
+                  <select id="thresh-period-recall">
+                    <option value="daily">Daily (Today)</option>
+                    <option value="weekly">Weekly (Mon–Sun)</option>
+                    <option value="monthly" selected>Monthly (This Month)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Threshold Cap ($)</label>
+                  <input type="number" id="thresh-limit-recall" step="0.01" min="0" placeholder="5000.00" />
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Alarm Warning (%)</label>
+                  <input type="number" id="thresh-warn-recall" min="1" max="100" placeholder="50" />
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 6px; padding-top: 12px;">
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                    <input type="checkbox" id="thresh-enabled-recall" style="width: auto; accent-color: var(--primary-green);" />
+                    <span>Enable Monitoring</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 700; color: #ef4444; cursor: pointer;">
+                    <input type="checkbox" id="thresh-autolock-recall" style="width: auto; accent-color: #ef4444;" />
+                    <span>Auto-Lock at 100%</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" onclick="saveThresholdConfig('recall')" class="btn btn-sm" style="width: 100%; margin-top: 2px;">💾 Save Recall Threshold</button>
+            </div>
+
+            <!-- Card B: Refund Others Threshold -->
+            <div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.1rem; display: flex; flex-direction: column; gap: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 800; font-size: 0.95rem; color: var(--text-dark);">💳 Refund Others</span>
+                <span id="thresh-badge-others" class="badge-v1" style="font-size: 0.68rem;">DISABLED</span>
+              </div>
+
+              <!-- Live Progress Bar -->
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.76rem; font-weight: 700; margin-bottom: 4px;">
+                  <span id="thresh-spend-text-others" style="color: var(--text-dark);">$0.00 / $0.00</span>
+                  <span id="thresh-pct-text-others" style="color: var(--text-muted);">0%</span>
+                </div>
+                <div style="width: 100%; height: 9px; background: var(--card-bg); border-radius: 99px; overflow: hidden; border: 1px solid var(--border-color);">
+                  <div id="thresh-bar-others" style="height: 100%; width: 0%; background: #22c55e; transition: width 0.3s ease, background 0.3s ease;"></div>
+                </div>
+                <div id="thresh-window-label-others" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 3px;">Period: Monthly</div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Reset Period</label>
+                  <select id="thresh-period-others">
+                    <option value="daily">Daily (Today)</option>
+                    <option value="weekly">Weekly (Mon–Sun)</option>
+                    <option value="monthly" selected>Monthly (This Month)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Threshold Cap ($)</label>
+                  <input type="number" id="thresh-limit-others" step="0.01" min="0" placeholder="3000.00" />
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                <div>
+                  <label style="display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;">Alarm Warning (%)</label>
+                  <input type="number" id="thresh-warn-others" min="1" max="100" placeholder="50" />
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 6px; padding-top: 12px;">
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer;">
+                    <input type="checkbox" id="thresh-enabled-others" style="width: auto; accent-color: var(--primary-green);" />
+                    <span>Enable Monitoring</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 700; color: #ef4444; cursor: pointer;">
+                    <input type="checkbox" id="thresh-autolock-others" style="width: auto; accent-color: #ef4444;" />
+                    <span>Auto-Lock at 100%</span>
+                  </label>
+                </div>
+              </div>
+
+              <button type="button" onclick="saveThresholdConfig('others')" class="btn btn-sm" style="width: 100%; margin-top: 2px;">💾 Save Refund Others Threshold</button>
+            </div>
+          </div>
+        </div>
+
         <div class="portal-card">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
             <div>
@@ -2601,6 +2767,7 @@
         } else if (viewId === 'adminSettingsView') {
           heading.innerText = 'Admin Settings';
           loadUserProfilesTable();
+          loadRefundThresholdSettings();
           applyMaintenanceUI();
         }
 
@@ -2711,18 +2878,20 @@
       updateNavLink('nav-kb-faqs', systemMaintenanceState.kb);
 
       const updateCardLaunchBtn = (formKey, modalId) => {
-        const isOffline = systemMaintenanceState.forms || systemMaintenanceState[formKey];
+        const isMaintOffline = systemMaintenanceState.forms || systemMaintenanceState[formKey];
+        const isThreshLocked = (formKey === 'form_recall' && refundThresholdRuntime.recall.isLocked) ||
+                               (formKey === 'form_refund_others' && refundThresholdRuntime.others.isLocked);
         const btn = document.querySelector(`button[onclick*="${modalId}"]`);
         if (!btn) return;
 
-        if (isOffline && !isAdmin) {
+        if ((isMaintOffline || isThreshLocked) && !isAdmin) {
           btn.disabled = true;
           btn.style.opacity = '0.55';
-          btn.innerText = 'Offline (Maintenance)';
+          btn.innerText = isThreshLocked ? 'Locked (Threshold Reached)' : 'Offline (Maintenance)';
         } else {
           btn.disabled = false;
           btn.style.opacity = '1';
-          btn.innerHTML = 'Launch Intake &rarr;';
+          btn.innerHTML = isThreshLocked && isAdmin ? 'Admin Bypass &rarr;' : 'Launch Intake &rarr;';
         }
       };
 
@@ -2755,10 +2924,7 @@
 
       if (db) {
         try {
-          const { error: updErr } = await db.from('app_settings').update({ value: nextVal, updated_at: new Date().toISOString() }).eq('key', dbKey);
-          if (updErr) {
-            await db.from('app_settings').upsert([{ key: dbKey, value: nextVal, updated_at: new Date().toISOString() }], { onConflict: 'key' });
-          }
+          await db.from('app_settings').upsert([{ key: dbKey, value: nextVal }], { onConflict: 'key' });
         } catch(e) {
           console.warn('DB note (local state saved):', e.message);
         }
@@ -2766,6 +2932,448 @@
 
       showToast(`Maintenance for ${key.replace(/_/g, ' ').toUpperCase()} set to ${nextVal ? 'Active' : 'Offline'}!`, 'info');
     };
+
+    // ============================================================
+    // MODULE 2B: REFUND THRESHOLD & AUTO-LOCKOUT ENGINE
+    // ============================================================
+    let refundThresholdSettings = {
+      recall: { enabled: false, period: 'monthly', limit: 5000, warnPct: 50, autoLock: true },
+      others: { enabled: false, period: 'monthly', limit: 3000, warnPct: 50, autoLock: true }
+    };
+
+    let refundThresholdRuntime = {
+      recall: { spent: 0, pct: 0, isWarning: false, isLocked: false },
+      others: { spent: 0, pct: 0, isWarning: false, isLocked: false }
+    };
+
+    let thresholdAlarmDismissed = false;
+
+    function getThresholdPeriodStart(period) {
+      const now = new Date();
+      if (period === 'daily') {
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      } else if (period === 'weekly') {
+        const day = now.getDay(); // 0 = Sun, 1 = Mon
+        const diff = (day === 0 ? -6 : 1 - day);
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 0, 0, 0, 0);
+      }
+      // monthly
+      return new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+    }
+
+    async function loadRefundThresholdSettings() {
+      const cached = localStorage.getItem('portal_refund_thresholds');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed.recall) Object.assign(refundThresholdSettings.recall, parsed.recall);
+          if (parsed.others) Object.assign(refundThresholdSettings.others, parsed.others);
+        } catch (e) {}
+      }
+
+      if (db) {
+        try {
+          const { data, error } = await db
+            .from('app_settings')
+            .select('key, value')
+            .in('key', ['threshold_recall_config', 'threshold_others_config', 'threshold_audio_config']);
+
+          if (!error && data && data.length > 0) {
+            data.forEach(item => {
+              if (item.key === 'threshold_recall_config' && item.value && typeof item.value === 'object') {
+                Object.assign(refundThresholdSettings.recall, item.value);
+              }
+              if (item.key === 'threshold_others_config' && item.value && typeof item.value === 'object') {
+                Object.assign(refundThresholdSettings.others, item.value);
+              }
+              if (item.key === 'threshold_audio_config' && item.value && typeof item.value === 'object') {
+                Object.assign(thresholdAudioConfig, item.value);
+                localStorage.setItem('portal_threshold_audio', JSON.stringify(thresholdAudioConfig));
+              }
+            });
+            localStorage.setItem('portal_refund_thresholds', JSON.stringify(refundThresholdSettings));
+          }
+        } catch (err) {
+          console.warn('Threshold settings sync notice:', err.message);
+        }
+      }
+
+      loadThresholdAudioConfig();
+      syncThresholdAdminInputs();
+      await evaluateRefundThresholds(false);
+    }
+
+    function syncThresholdAdminInputs() {
+      ['recall', 'others'].forEach(type => {
+        const cfg = refundThresholdSettings[type];
+        const pEl = document.getElementById(`thresh-period-${type}`);
+        const lEl = document.getElementById(`thresh-limit-${type}`);
+        const wEl = document.getElementById(`thresh-warn-${type}`);
+        const eEl = document.getElementById(`thresh-enabled-${type}`);
+        const aEl = document.getElementById(`thresh-autolock-${type}`);
+
+        if (pEl) pEl.value = cfg.period || 'monthly';
+        if (lEl) lEl.value = cfg.limit != null ? cfg.limit : 0;
+        if (wEl) wEl.value = cfg.warnPct != null ? cfg.warnPct : 50;
+        if (eEl) eEl.checked = !!cfg.enabled;
+        if (aEl) aEl.checked = !!cfg.autoLock;
+      });
+    }
+
+    window.saveThresholdConfig = async function(type) {
+      const period = document.getElementById(`thresh-period-${type}`)?.value || 'monthly';
+      const limit = parseFloat(document.getElementById(`thresh-limit-${type}`)?.value) || 0;
+      const warnPct = Math.min(100, Math.max(1, parseFloat(document.getElementById(`thresh-warn-${type}`)?.value) || 50));
+      const enabled = !!document.getElementById(`thresh-enabled-${type}`)?.checked;
+      const autoLock = !!document.getElementById(`thresh-autolock-${type}`)?.checked;
+
+      refundThresholdSettings[type] = { enabled, period, limit, warnPct, autoLock };
+      localStorage.setItem('portal_refund_thresholds', JSON.stringify(refundThresholdSettings));
+      thresholdAlarmDismissed = false;
+
+      const dbKey = type === 'recall' ? 'threshold_recall_config' : 'threshold_others_config';
+      if (db) {
+        try {
+          const { error: upsertErr } = await db
+            .from('app_settings')
+            .upsert([{ key: dbKey, value: refundThresholdSettings[type] }], { onConflict: 'key' });
+          if (upsertErr) {
+            console.error('Threshold Supabase upsert error:', upsertErr);
+            showToast('Warning: Could not sync threshold to database: ' + upsertErr.message, 'error');
+          }
+        } catch (err) {
+          console.warn('Threshold save DB notice:', err.message);
+        }
+      }
+
+      const label = type === 'recall' ? 'Recall Order Refunds' : 'Refund Others';
+      showToast(`${label} threshold settings saved!`, 'success');
+      await evaluateRefundThresholds(true);
+    };
+
+    let thresholdAudioConfig = {
+      preset: 'chime',
+      volume: 70,
+      customName: '',
+      customDataUrl: ''
+    };
+
+    function loadThresholdAudioConfig() {
+      try {
+        const saved = localStorage.getItem('portal_threshold_audio');
+        if (saved) Object.assign(thresholdAudioConfig, JSON.parse(saved));
+      } catch (e) {}
+      syncThresholdAudioUI();
+    }
+
+    function syncThresholdAudioUI() {
+      const presetEl = document.getElementById('thresh-sound-preset');
+      const uploadBtn = document.getElementById('thresh-upload-audio-btn');
+      const nameSpan = document.getElementById('thresh-custom-audio-name');
+      const volSlider = document.getElementById('thresh-sound-volume');
+      const volLabel = document.getElementById('thresh-sound-vol-label');
+
+      if (presetEl) presetEl.value = thresholdAudioConfig.preset || 'chime';
+      if (uploadBtn) uploadBtn.style.display = (thresholdAudioConfig.preset === 'custom') ? 'inline-flex' : 'none';
+      if (nameSpan) {
+        nameSpan.textContent = (thresholdAudioConfig.preset === 'custom' && thresholdAudioConfig.customName)
+          ? `🎵 ${thresholdAudioConfig.customName}`
+          : '';
+      }
+      if (volSlider) volSlider.value = thresholdAudioConfig.volume ?? 70;
+      if (volLabel) volLabel.textContent = `${thresholdAudioConfig.volume ?? 70}%`;
+    }
+
+    window.updateThresholdVolumeLabel = function(val) {
+      const volLabel = document.getElementById('thresh-sound-vol-label');
+      if (volLabel) volLabel.textContent = `${val}%`;
+    };
+
+    window.saveThresholdAudioSettings = async function() {
+      const presetEl = document.getElementById('thresh-sound-preset');
+      const volSlider = document.getElementById('thresh-sound-volume');
+      if (presetEl) thresholdAudioConfig.preset = presetEl.value;
+      if (volSlider) thresholdAudioConfig.volume = parseInt(volSlider.value, 10) || 70;
+
+      localStorage.setItem('portal_threshold_audio', JSON.stringify(thresholdAudioConfig));
+      syncThresholdAudioUI();
+
+      if (db) {
+        try {
+          const syncPayload = {
+            preset: thresholdAudioConfig.preset,
+            volume: thresholdAudioConfig.volume,
+            customName: thresholdAudioConfig.customName,
+            customDataUrl: (thresholdAudioConfig.customDataUrl && thresholdAudioConfig.customDataUrl.length < 600000) ? thresholdAudioConfig.customDataUrl : ''
+          };
+          const { error: upsertErr } = await db
+            .from('app_settings')
+            .upsert([{ key: 'threshold_audio_config', value: syncPayload }], { onConflict: 'key' });
+          if (upsertErr) {
+            console.error('Audio config Supabase upsert error:', upsertErr);
+            showToast('Warning: Could not sync audio to database: ' + upsertErr.message, 'error');
+          }
+        } catch (e) {
+          console.warn('Audio save DB notice:', e.message);
+        }
+      }
+    };
+
+    window.handleThresholdSoundPresetChange = async function(val) {
+      thresholdAudioConfig.preset = val;
+      syncThresholdAudioUI();
+      if (val === 'custom' && !thresholdAudioConfig.customDataUrl) {
+        document.getElementById('thresh-custom-audio-input')?.click();
+        return;
+      }
+      await saveThresholdAudioSettings();
+      playThresholdAlarmSound();
+    };
+
+    window.handleCustomAlarmAudioUpload = function(inputEl) {
+      const file = inputEl.files && inputEl.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('Audio file too large (max 2MB). Please choose a shorter clip.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        thresholdAudioConfig.preset = 'custom';
+        thresholdAudioConfig.customName = file.name;
+        thresholdAudioConfig.customDataUrl = e.target.result;
+        await saveThresholdAudioSettings();
+        showToast(`Custom alarm "${file.name}" saved!`, 'success');
+        playThresholdAlarmSound();
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.playThresholdAlarmSound = function() {
+      const vol = Math.min(1, Math.max(0.05, (thresholdAudioConfig.volume ?? 70) / 100));
+      const preset = thresholdAudioConfig.preset || 'chime';
+
+      if (preset === 'custom' && thresholdAudioConfig.customDataUrl) {
+        try {
+          const audio = new Audio(thresholdAudioConfig.customDataUrl);
+          audio.volume = vol;
+          audio.play().catch(() => {});
+          return;
+        } catch (e) {}
+      }
+
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        if (preset === 'urgent') {
+          // 3 rapid high-urgency pulses
+          [0, 0.16, 0.32].forEach((offset) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(880, now + offset);
+            osc.frequency.exponentialRampToValueAtTime(620, now + offset + 0.12);
+            gain.gain.setValueAtTime(vol * 0.25, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.13);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.14);
+          });
+        } else if (preset === 'bell') {
+          // Clear resonant service bell
+          [1046.5, 1567.98].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(vol * (i === 0 ? 0.35 : 0.15), now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.75);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.78);
+          });
+        } else if (preset === 'radar') {
+          // Sonar radar ping
+          [0, 0.35].forEach((offset) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1320, now + offset);
+            gain.gain.setValueAtTime(vol * 0.3, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.28);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.3);
+          });
+        } else {
+          // Default: Soft Double Chime
+          [0, 0.22].forEach((offset, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(i === 0 ? 780 : 980, now + offset);
+            gain.gain.setValueAtTime(vol * 0.3, now + offset);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + offset);
+            osc.stop(now + offset + 0.24);
+          });
+        }
+      } catch (e) {}
+    };
+
+    window.dismissThresholdAlarmBanner = function() {
+      thresholdAlarmDismissed = true;
+      const banner = document.getElementById('adminThresholdAlarmBanner');
+      if (banner) banner.style.setProperty('display', 'none', 'important');
+    };
+
+    window.evaluateRefundThresholds = async function(manualTrigger = false) {
+      if (!db) return;
+
+      try {
+        const [recallRows, othersRows] = await Promise.all([
+          fetchAllTableRows('tracker_recall_refunds'),
+          fetchAllTableRows('tracker_refund_others')
+        ]);
+
+        const getThresholdPeriodBounds = (period) => {
+          const now = new Date();
+          if (period === 'daily') {
+            return {
+              start: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0),
+              end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
+            };
+          } else if (period === 'weekly') {
+            const day = now.getDay(); // 0 = Sun, 1 = Mon
+            const diff = (day === 0 ? -6 : 1 - day);
+            const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff, 0, 0, 0, 0);
+            const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 6, 23, 59, 59, 999);
+            return { start, end };
+          }
+          // monthly: 1st of current month through last day of current month
+          return {
+            start: new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0),
+            end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999)
+          };
+        };
+
+        const computeSpend = (rows, period) => {
+          const { start, end } = getThresholdPeriodBounds(period);
+          let total = 0;
+          (rows || []).forEach(r => {
+            // Use the exact same timestamp field as Search & Reports so numbers match 1:1
+            const recDate = parseRecordDate(r.timestamp);
+            if (!recDate || recDate < start || recDate > end) return;
+            const num = parseFloat(String(r.refund_amount || '').replace(/[^0-9.]/g, ''));
+            if (!isNaN(num)) total += num;
+          });
+          return total;
+        };
+
+        ['recall', 'others'].forEach(type => {
+          const cfg = refundThresholdSettings[type];
+          const rows = type === 'recall' ? recallRows : othersRows;
+          const spent = computeSpend(rows, cfg.period);
+          const pct = cfg.limit > 0 ? (spent / cfg.limit) * 100 : 0;
+
+          const isWarning = cfg.enabled && cfg.limit > 0 && pct >= cfg.warnPct;
+          const isLocked = cfg.enabled && cfg.autoLock && cfg.limit > 0 && spent >= cfg.limit;
+
+          refundThresholdRuntime[type] = { spent, pct, isWarning, isLocked };
+        });
+
+        renderThresholdStatusUI(manualTrigger);
+        applyMaintenanceUI();
+      } catch (err) {
+        console.warn('Threshold evaluation error:', err.message);
+      }
+    };
+
+    function renderThresholdStatusUI(manualTrigger = false) {
+      const alerts = [];
+
+      ['recall', 'others'].forEach(type => {
+        const cfg = refundThresholdSettings[type];
+        const rt = refundThresholdRuntime[type];
+        const name = type === 'recall' ? 'Recall Order Refunds' : 'Refund Others';
+
+        const badgeEl = document.getElementById(`thresh-badge-${type}`);
+        const spendEl = document.getElementById(`thresh-spend-text-${type}`);
+        const pctEl = document.getElementById(`thresh-pct-text-${type}`);
+        const barEl = document.getElementById(`thresh-bar-${type}`);
+        const periodEl = document.getElementById(`thresh-window-label-${type}`);
+
+        const formattedSpent = `$${rt.spent.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const formattedLimit = `$${Number(cfg.limit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+        if (spendEl) spendEl.innerText = `${formattedSpent} / ${formattedLimit}`;
+        if (pctEl) pctEl.innerText = `${rt.pct.toFixed(1)}%`;
+        if (periodEl) {
+          const pLabel = cfg.period === 'daily' ? 'Daily (Today)' : cfg.period === 'weekly' ? 'Weekly (Mon–Sun)' : 'Monthly (This Month)';
+          periodEl.innerText = `Window: ${pLabel} • Alarm at ${cfg.warnPct}%`;
+        }
+
+        if (barEl) {
+          barEl.style.width = `${Math.min(100, rt.pct)}%`;
+          barEl.style.background = rt.isLocked ? '#ef4444' : rt.isWarning ? '#f59e0b' : '#22c55e';
+        }
+
+        if (badgeEl) {
+          if (!cfg.enabled) {
+            badgeEl.innerText = 'DISABLED';
+            badgeEl.style.color = 'var(--text-muted)';
+            badgeEl.style.background = 'var(--card-bg)';
+          } else if (rt.isLocked) {
+            badgeEl.innerText = 'LOCKED (100% REACHED)';
+            badgeEl.style.color = '#ef4444';
+            badgeEl.style.background = 'rgba(239, 68, 68, 0.16)';
+          } else if (rt.isWarning) {
+            badgeEl.innerText = `WARNING (>= ${cfg.warnPct}%)`;
+            badgeEl.style.color = '#f59e0b';
+            badgeEl.style.background = 'rgba(245, 158, 11, 0.16)';
+          } else {
+            badgeEl.innerText = 'ACTIVE (OK)';
+            badgeEl.style.color = '#16a34a';
+            badgeEl.style.background = 'rgba(34, 197, 94, 0.16)';
+          }
+        }
+
+        if (rt.isLocked) {
+          alerts.push(`<strong>${name}</strong> reached <strong>${rt.pct.toFixed(1)}%</strong> (${formattedSpent} / ${formattedLimit}) — Agents are locked out.`);
+        } else if (rt.isWarning) {
+          alerts.push(`<strong>${name}</strong> reached <strong>${rt.pct.toFixed(1)}%</strong> (${formattedSpent} / ${formattedLimit}) — Warning alarm (${cfg.warnPct}%).`);
+        }
+      });
+
+      const isAdminActual = (currentUserProfile.role === 'admin');
+      const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+      const banner = document.getElementById('adminThresholdAlarmBanner');
+      const alarmText = document.getElementById('adminThresholdAlarmText');
+
+      if (banner && alarmText) {
+        if (isAdmin && alerts.length > 0 && !thresholdAlarmDismissed) {
+          alarmText.innerHTML = alerts.join(' &nbsp;|&nbsp; ');
+          banner.style.setProperty('display', 'flex', 'important');
+
+          const alertSignature = alerts.join('|');
+          if (window._lastThresholdAlertSig !== alertSignature || manualTrigger) {
+            window._lastThresholdAlertSig = alertSignature;
+            playThresholdAlarmSound();
+            showToast('🚨 Refund Threshold Alarm triggered! Check Admin Settings.', 'error');
+          }
+        } else {
+          banner.style.setProperty('display', 'none', 'important');
+        }
+      }
+    }
 
     // ============================================================
     // MODULE 3: AUTH, PROFILES & RBAC WITH STRICT ANNOUNCEMENT GATE
@@ -3301,17 +3909,43 @@
                 populateReportFilterDropdowns();
               }
               filterReportData();
+              if (source === 'Recall Order Refunds' || source === 'Refund Others') {
+                evaluateRefundThresholds(false);
+              }
             }
           })
           .subscribe();
       });
+
+      db.channel('public:app_settings_thresholds')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'app_settings' }, () => {
+          loadMaintenanceSettings();
+          loadRefundThresholdSettings();
+        })
+        .subscribe();
     }
 	
+    let chatMessagesChannelInstance = null;
+    let chatChannelsSyncInstance = null;
+
     function initChatRealtime() {
       if (!db) return;
 
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const myEmail = userSession.email;
+
+      if (presenceChannelInstance) {
+        try { db.removeChannel(presenceChannelInstance); } catch (e) {}
+        presenceChannelInstance = null;
+      }
+      if (chatMessagesChannelInstance) {
+        try { db.removeChannel(chatMessagesChannelInstance); } catch (e) {}
+        chatMessagesChannelInstance = null;
+      }
+      if (chatChannelsSyncInstance) {
+        try { db.removeChannel(chatChannelsSyncInstance); } catch (e) {}
+        chatChannelsSyncInstance = null;
+      }
 
       if (myEmail) {
         presenceChannelInstance = db.channel('online-presence-room', {
@@ -3336,7 +3970,7 @@
           });
       }
 
-      db.channel('public:chat_messages')
+      chatMessagesChannelInstance = db.channel('public:chat_messages')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, payload => {
           const newMsg = payload.new;
           if (newMsg.channel_id === activeChatTarget.id) {
@@ -3354,7 +3988,7 @@
         })
         .subscribe();
 
-      db.channel('public:chat_channels_sync')
+      chatChannelsSyncInstance = db.channel('public:chat_channels_sync')
         .on('broadcast', { event: 'new_channel' }, payload => {
           const incomingChan = payload.payload;
           if (!dynamicChannels.some(dc => dc.id === incomingChan.id)) {
@@ -3402,6 +4036,14 @@
         }
         if (id === 'form4Modal' && systemMaintenanceState.form_refund_others) {
           showToast('Refund Others intake is offline for maintenance.', 'error');
+          return;
+        }
+        if (id === 'form3Modal' && refundThresholdRuntime.recall.isLocked) {
+          showToast('Recall Order Refunds is locked: spending threshold limit reached.', 'error');
+          return;
+        }
+        if (id === 'form4Modal' && refundThresholdRuntime.others.isLocked) {
+          showToast('Refund Others is locked: spending threshold limit reached.', 'error');
           return;
         }
       }
@@ -3465,6 +4107,16 @@
           }
         } else if (formType === 'recall_order_refunds' || formType === 'refund_others') {
           const isRecall = formType === 'recall_order_refunds';
+          const isAdminActual = (currentUserProfile.role === 'admin');
+          const isAdmin = isAdminActual && !isAgentPreviewSimulated;
+          const isThreshLocked = isRecall ? refundThresholdRuntime.recall.isLocked : refundThresholdRuntime.others.isLocked;
+
+          if (isThreshLocked && !isAdmin) {
+            showToast(`${isRecall ? 'Recall Order Refunds' : 'Refund Others'} threshold limit reached. Submission locked.`, 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+            return;
+          }
           const orderNum = formatOrderNumber(isRecall ? document.getElementById('recall_order_num').value : document.getElementById('ro_order_num').value);
           const cleanOrderNum = orderNum.replace('#', '').trim();
           const custEmail = (isRecall ? document.getElementById('recall_customer_email').value : document.getElementById('ro_customer_email').value).trim();
@@ -3501,6 +4153,7 @@
       submitBtn.innerText = originalText;
       form.reset();
       closeFormModal(modalId);
+      evaluateRefundThresholds(false);
       executeQueueFetch(queueCurrentPage);
     };
 
@@ -5227,6 +5880,7 @@
 
           await loadUserProfile(email);
           await loadMaintenanceSettings();
+          await loadRefundThresholdSettings();
 
           const isAdmin = (currentUserProfile.role === 'admin');
           const targetView = (systemMaintenanceState.vibe && !isAdmin) ? 'dashboardView' : 'refundsQueueView';
@@ -5248,6 +5902,11 @@
 
     window.logout = async function() {
       if (db) {
+        try {
+          if (presenceChannelInstance) { await db.removeChannel(presenceChannelInstance); presenceChannelInstance = null; }
+          if (chatMessagesChannelInstance) { await db.removeChannel(chatMessagesChannelInstance); chatMessagesChannelInstance = null; }
+          if (chatChannelsSyncInstance) { await db.removeChannel(chatChannelsSyncInstance); chatChannelsSyncInstance = null; }
+        } catch(e) {}
         try { await db.auth.signOut(); } catch(e) {}
       }
       localStorage.removeItem('user_session');
@@ -5286,6 +5945,7 @@
         }
 
         await loadMaintenanceSettings();
+        await loadRefundThresholdSettings();
         initDropdownOptions();
         initChatRealtime();
 		initTrackerRealtime();
