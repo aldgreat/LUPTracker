@@ -2107,6 +2107,16 @@
 			  <span class="vibe-label" style="margin-top: 5px;">Canned Macro Text</span>
 			  <div class="vibe-input-wrap"><textarea id="kb_edit_macro_text" rows="5" placeholder="Paste exact Gorgias template here..."></textarea></div>
 			</div>
+			<div style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; margin-top: 0.25rem;">
+			  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700; color: var(--primary-green);">
+				<input type="checkbox" id="kb_edit_announce_check" onchange="toggleKbAnnounceKeyword(this.checked)" style="width: auto; accent-color: var(--primary-green);" />
+				<span>📢 Broadcast as Mandatory Team Announcement</span>
+			  </label>
+			  <div id="kb_announce_keyword_wrap" style="display: none; margin-top: 0.65rem;">
+				<label style="display: block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Verification Keyword (Agents must type this to unlock)</label>
+				<input type="text" id="kb_edit_announce_keyword" placeholder="e.g. Updated Policy" />
+			  </div>
+			</div>
 			<div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
 			  <button type="button" class="btn btn-secondary btn-sm" onclick="closeArticleEditorModal()">Cancel</button>
 			  <button type="submit" class="btn btn-sm">Save &amp; Publish Guide</button>
@@ -3425,6 +3435,7 @@
       const userSession = JSON.parse(localStorage.getItem('user_session')) || {};
       const agentEmail = userSession.email || 'agent@letsliveitup.com';
       const now = new Date();
+      const nowIso = now.toISOString();
       const nowFormatted = formatDisplayTimestamp(now);
       const todayDate = now.toISOString().split('T')[0];
 
@@ -3440,7 +3451,7 @@
 
           Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus });
           if (db) {
-            await db.from('tracker_sgrelaunch').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus }]);
+            await db.from('tracker_sgrelaunch').insert([{ timestamp: nowFormatted, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmt, sub_status: subStatus }]);
           }
         } else if (formType === 'replacement_tracking') {
           const orderNum = formatOrderNumber(document.getElementById('rep_order_num').value);
@@ -3450,7 +3461,7 @@
 
           Object.assign(sheetPayload, { order_number: orderNum, customer_email: custEmail, reason: repReason, replacement_order_num: repOrderNum });
           if (db) {
-            await db.from('tracker_replacements').insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, replacement_reason: repReason, replacement_order_number: repOrderNum }]);
+            await db.from('tracker_replacements').insert([{ timestamp: nowFormatted, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, replacement_reason: repReason, replacement_order_number: repOrderNum }]);
           }
         } else if (formType === 'recall_order_refunds' || formType === 'refund_others') {
           const isRecall = formType === 'recall_order_refunds';
@@ -3466,7 +3477,7 @@
 
           if (db) {
             const targetTable = isRecall ? 'tracker_recall_refunds' : 'tracker_refund_others';
-            await db.from(targetTable).insert([{ timestamp: nowIso, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason }]);
+            await db.from(targetTable).insert([{ timestamp: nowFormatted, agent_email: agentEmail, order_number: orderNum, customer_email: custEmail, refund_amount: refundAmtWithSymbol, sub_status: subStatus, refund_reason: refReason }]);
 
             const { data: matchedRecords } = await db.from('refunds').select('task_id, order_number, notes').ilike('your_email_address', custEmail).or(`order_number.eq.${cleanOrderNum},order_number.eq.#${cleanOrderNum}`).limit(5);
 
@@ -4937,6 +4948,13 @@
       if (row) row.style.display = (category === 'macro') ? 'grid' : 'none';
     };
 
+    window.toggleKbAnnounceKeyword = function(checked) {
+      const wrap = document.getElementById('kb_announce_keyword_wrap');
+      const kwInput = document.getElementById('kb_edit_announce_keyword');
+      if (wrap) wrap.style.display = checked ? 'block' : 'none';
+      if (kwInput) kwInput.required = checked;
+    };
+
     window.closeArticleEditorModal = function() {
       document.getElementById('kbEditorModal')?.close();
     };
@@ -4973,6 +4991,7 @@
       const modal = document.getElementById('kbEditorModal');
       const form = document.getElementById('kbEditorForm');
       if (form) form.reset();
+      toggleKbAnnounceKeyword(false);
 
       const editIdEl = document.getElementById('kb_edit_id');
       const catEl = document.getElementById('kb_edit_category');
@@ -5047,9 +5066,29 @@
           if (error) throw error;
           if (data && data.length > 0) savedId = data[0].id;
         }
+        const shouldAnnounce = document.getElementById('kb_edit_announce_check')?.checked;
+        const announceKeyword = (document.getElementById('kb_edit_announce_keyword')?.value || '').trim();
+
+        if (shouldAnnounce && announceKeyword) {
+          const catLabel = category === 'playbook' ? 'Playbook' : category === 'macro' ? 'Macro Guide' : 'Internal FAQ';
+          const { error: annErr } = await db.from('portal_announcements').insert([{
+            title: `📚 Knowledge Base Update (${catLabel}): ${title}`,
+            body: `<p style="margin-bottom: 8px;">A Knowledge Base guide has been ${editId ? 'updated' : 'published'}. Please review it in <strong>Knowledge Base &rarr; ${catLabel}s</strong>.</p>${content}`,
+            verification_keyword: announceKeyword,
+            created_by: agentEmail,
+            is_active: true
+          }]);
+          if (annErr) {
+            showToast('Guide saved, but announcement failed: ' + annErr.message, 'error');
+          } else {
+            showToast('Guide saved & broadcasted as mandatory announcement!', 'success');
+          }
+        } else {
+          showToast('Guide published and updated successfully!', 'success');
+        }
+
         closeArticleEditorModal();
         await loadKnowledgeBaseArticles(savedId);
-        showToast('Guide published and updated successfully!', 'success');
       } catch (err) {
         showToast('Error saving guide: ' + err.message, 'error');
       }
