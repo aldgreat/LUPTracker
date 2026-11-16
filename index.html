@@ -1126,7 +1126,7 @@
     <div class="content-area">
 
       <!-- ADMIN REFUND THRESHOLD ALARM BANNER -->
-      <div id="adminThresholdAlarmBanner" class="admin-only" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-left: 5px solid #ef4444; border-radius: 8px; padding: 0.85rem 1.1rem; margin-bottom: 1rem; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+      <div id="adminThresholdAlarmBanner" style="display: none; background: rgba(239, 68, 68, 0.12); border: 1px solid #ef4444; border-left: 5px solid #ef4444; border-radius: 8px; padding: 0.85rem 1.1rem; margin-bottom: 1rem; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 1.35rem;">🚨</span>
           <div>
@@ -2732,10 +2732,12 @@
       const topNavbar = document.querySelector('.top-navbar');
       const heading = document.getElementById('topPageHeading');
 
-      if (viewId === 'loginView' || !userSession) {
-        if (sidebar) sidebar.style.display = 'none';
-        if (topNavbar) topNavbar.style.display = 'none';
-      } else {
+     if (viewId === 'loginView' || !userSession) {
+	  if (sidebar) sidebar.style.display = 'none';
+	  if (topNavbar) topNavbar.style.display = 'none';
+	  const alarmBanner = document.getElementById('adminThresholdAlarmBanner');
+	  if (alarmBanner) alarmBanner.style.setProperty('display', 'none', 'important');
+	} else {
         if (sidebar) sidebar.style.display = 'flex';
         if (topNavbar) topNavbar.style.display = 'flex';
         
