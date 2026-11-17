@@ -1744,7 +1744,7 @@
       </div>
 			
       <!-- VIEW 6: ANNOUNCEMENTS MANAGER -->
-      <div id="announcementsManagerView" class="view-page" style="max-width: 950px;">
+      <div id="announcementsManagerView" class="view-page">
         <div class="portal-card" style="margin-bottom: 1.5rem;">
           <h2 style="font-size: 1.25rem; color: var(--primary-green); margin-bottom: 0.25rem;">Broadcast Team Announcement</h2>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Post a required update. Agents will be locked out until they read and confirm with your verification keyword.</p>
@@ -1951,7 +1951,7 @@
       </div>
 
       <!-- VIEW 9: ADMIN SETTINGS & RBAC -->
-      <div id="adminSettingsView" class="view-page" style="max-width: 960px;">
+      <div id="adminSettingsView" class="view-page">
         <div class="portal-card" style="margin-bottom: 1.5rem;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
             <div>
@@ -1960,9 +1960,14 @@
                 Manage granular maintenance modes across all portal modules and intake forms. When active, agents are completely locked out from using or launching that specific feature, while administrators retain full bypass access.
               </p>
             </div>
-            <button onclick="toggleAgentPreviewMode()" id="btn-agent-preview" class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">
-              👁️ Simulate Agent View: <span id="preview-mode-state" style="color:#ef4444; font-weight:700;">OFF</span>
-            </button>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" onclick="broadcastSiteUpdateNow()" class="btn btn-blue btn-sm" style="font-size: 0.76rem;">
+                🚀 Push Live Update to All Users
+              </button>
+              <button onclick="toggleAgentPreviewMode()" id="btn-agent-preview" class="btn btn-secondary btn-sm" style="font-size: 0.76rem;">
+                👁️ Simulate Agent View: <span id="preview-mode-state" style="color:#ef4444; font-weight:700;">OFF</span>
+              </button>
+            </div>
           </div>
 
           <div class="table-responsive">
@@ -2237,7 +2242,7 @@
       </div>
     </div>
   </dialog>
-  
+   
 	  <!-- KB EDITOR MODAL -->
 	  <dialog id="kbEditorModal">
 		<div class="modal-box" style="max-width: 680px;">
@@ -2360,6 +2365,31 @@
         <button type="button" class="modal-close-btn" onclick="document.getElementById('agentNoticeBoardModal').close()">✕</button>
       </div>
       <div id="agentNoticeBoardList" class="modal-body-scroll"></div>
+    </div>
+  </dialog>
+  
+  <!-- ANNOUNCEMENT READ RECEIPTS AUDIT MODAL -->
+  <dialog id="announcementReadsModal" style="max-width: 560px;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="annReadsModalTitle">Read Receipts</h2>
+        <button type="button" class="modal-close-btn" onclick="document.getElementById('announcementReadsModal').close()">✕</button>
+      </div>
+      <div id="annReadsModalBody" class="modal-body-scroll"></div>
+    </div>
+  </dialog>
+
+  <!-- ANNOUNCEMENT CONTENT PREVIEW MODAL -->
+  <dialog id="announcementPreviewModal" style="max-width: 560px;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="annPreviewTitle">Announcement Preview</h2>
+        <button type="button" class="modal-close-btn" onclick="document.getElementById('announcementPreviewModal').close()">✕</button>
+      </div>
+      <div class="modal-body-scroll" style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div id="annPreviewMeta" style="font-size: 0.76rem; color: var(--text-muted);"></div>
+        <div id="annPreviewBody" style="background: var(--input-bg); border: 1px solid var(--border-color); padding: 1rem; border-radius: 8px; font-size: 0.88rem; line-height: 1.55;"></div>
+      </div>
     </div>
   </dialog>
   
@@ -5281,6 +5311,9 @@
       fetchAnnouncementsList();
     };
 
+    let cachedAnnouncementsList = [];
+    let cachedAnnouncementReads = [];
+
     window.fetchAnnouncementsList = async function() {
       if (!db) return;
       const tbody = document.getElementById('announcementsTableBody');
@@ -5292,22 +5325,33 @@
         return;
       }
 
-      const { data: reads } = await db.from('announcement_reads').select('announcement_id, agent_email');
+      const { data: reads } = await db.from('announcement_reads').select('*');
+
+      cachedAnnouncementsList = list;
+      cachedAnnouncementReads = reads || [];
 
       tbody.innerHTML = '';
       list.forEach(ann => {
         const tr = document.createElement('tr');
-        const annReads = (reads || []).filter(r => String(r.announcement_id) === String(ann.id));
+        const annReads = cachedAnnouncementReads.filter(r => String(r.announcement_id) === String(ann.id));
         const statusBadge = ann.is_active 
           ? '<span class="badge-v1" style="background:#dcfce7; color:#15803d; border-color:#86efac;">ACTIVE</span>' 
           : '<span class="badge-v1" style="background:#f1f5f9; color:#64748b; border-color:#cbd5e1;">INACTIVE</span>';
 
         tr.innerHTML = `
           <td>${statusBadge}</td>
-          <td><strong>${ann.title}</strong></td>
-          <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${ann.verification_keyword}</code></td>
-          <td>${ann.created_by ? ann.created_by.split('@')[0] : '—'}</td>
-          <td><strong>${annReads.length} verified</strong></td>
+          <td>
+            <a href="javascript:void(0)" onclick="openAnnouncementPreview(${ann.id})" title="Click to preview announcement message" style="color: var(--primary-green); font-weight: 700; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+              ${escapeHtml(ann.title)}
+            </a>
+          </td>
+          <td><code style="background:var(--input-bg); padding:2px 6px; border-radius:4px; font-weight:700;">${escapeHtml(ann.verification_keyword)}</code></td>
+          <td>${ann.created_by ? escapeHtml(ann.created_by.split('@')[0]) : '—'}</td>
+          <td>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="openAnnouncementReadsModal(${ann.id})" title="Click to see who verified">
+              👁️ ${annReads.length} verified
+            </button>
+          </td>
           <td>
             <div style="display:flex; gap:4px;">
               <button class="btn btn-secondary btn-sm" onclick="toggleAnnouncementStatus(${ann.id}, ${!ann.is_active})">${ann.is_active ? 'Deactivate' : 'Activate'}</button>
@@ -5317,6 +5361,87 @@
         `;
         tbody.appendChild(tr);
       });
+    };
+
+    window.openAnnouncementPreview = function(annId) {
+      const ann = cachedAnnouncementsList.find(a => String(a.id) === String(annId));
+      if (!ann) return;
+
+      document.getElementById('annPreviewTitle').innerText = ann.title || 'Announcement';
+      const publishedDate = ann.created_at ? formatDisplayTimestamp(ann.created_at) : '—';
+      document.getElementById('annPreviewMeta').innerHTML =
+        `Published by <strong>${escapeHtml(ann.created_by || 'Admin')}</strong> on ${escapeHtml(publishedDate)} &nbsp;•&nbsp; Keyword: <code>${escapeHtml(ann.verification_keyword || '')}</code>`;
+      document.getElementById('annPreviewBody').innerHTML = ann.body || '<p style="color:var(--text-muted);">No message content.</p>';
+
+      document.getElementById('announcementPreviewModal').showModal();
+    };
+
+    window.openAnnouncementReadsModal = async function(annId) {
+      const modal = document.getElementById('announcementReadsModal');
+      const titleEl = document.getElementById('annReadsModalTitle');
+      const bodyEl = document.getElementById('annReadsModalBody');
+      if (!modal || !bodyEl) return;
+
+      const ann = cachedAnnouncementsList.find(a => String(a.id) === String(annId));
+      const annReads = cachedAnnouncementReads.filter(r => String(r.announcement_id) === String(annId));
+
+      if (titleEl) titleEl.innerText = ann ? `Verified Readers — ${ann.title}` : 'Read Receipts';
+      bodyEl.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:1rem;">Loading team roster...</p>';
+      modal.showModal();
+
+      // Fetch approved profiles to compare who has read vs. who hasn't yet
+      let allProfiles = [];
+      if (db) {
+        const { data: profs } = await db.from('profiles').select('email, full_name, is_approved').eq('is_approved', true);
+        allProfiles = profs || [];
+      }
+
+      const nameMap = {};
+      allProfiles.forEach(p => {
+        if (p.email) nameMap[p.email.toLowerCase()] = p.full_name || p.email.split('@')[0];
+      });
+
+      const verifiedEmails = new Set(annReads.map(r => (r.agent_email || '').toLowerCase()));
+      const pendingUsers = allProfiles.filter(p => !verifiedEmails.has((p.email || '').toLowerCase()));
+
+      let html = `
+        <div style="margin-bottom: 1rem;">
+          <div style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: #16a34a; margin-bottom: 6px;">
+            ✅ Verified (${annReads.length})
+          </div>
+      `;
+
+      if (annReads.length === 0) {
+        html += `<p style="font-size: 0.82rem; color: var(--text-muted); padding: 0.5rem 0;">No agents have verified this update yet.</p>`;
+      } else {
+        html += `<table class="refund-table"><thead><tr><th>Agent</th><th>Email</th><th>Verified At</th></tr></thead><tbody>`;
+        annReads.forEach(r => {
+          const email = (r.agent_email || '').toLowerCase();
+          const displayName = nameMap[email] || (email ? email.split('@')[0] : 'Agent');
+          const rawTs = r.created_at || r.read_at || r.acknowledged_at || r.verified_at || r.timestamp
+			|| Object.values(r).find(v => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v));
+	 	  const ts = rawTs ? formatDisplayTimestamp(rawTs) : 'Verified';
+          html += `<tr><td><strong>${escapeHtml(displayName)}</strong></td><td>${escapeHtml(r.agent_email || '—')}</td><td style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(ts)}</td></tr>`;
+        });
+        html += `</tbody></table>`;
+      }
+
+      html += `</div>`;
+
+      if (pendingUsers.length > 0) {
+        html += `
+          <div style="border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+            <div style="font-size: 0.76rem; font-weight: 800; text-transform: uppercase; color: #f59e0b; margin-bottom: 6px;">
+              ⏳ Pending Verification (${pendingUsers.length})
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${pendingUsers.map(u => `<span class="badge-v1" style="text-transform:none; font-size:0.74rem;">${escapeHtml(u.full_name || u.email.split('@')[0])}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      bodyEl.innerHTML = html;
     };
 
     window.toggleAnnouncementStatus = async function(id, nextState) {
@@ -6093,6 +6218,130 @@
       updateReasonDropdown(currentSheet);
     }
 	
+	// ============================================================
+    // LIVE SITE AUTO-PATCH & VERSION SYNC ENGINE
+    // ============================================================
+    let initialPageFingerprint = null;
+    let isAutoPatchPending = false;
+    let isAutoPatchReloading = false;
+
+    function computeHtmlFingerprint(rawHtml) {
+      // Strip volatile whitespace/comments and hash the full HTML source
+      const normalized = String(rawHtml || '').replace(/\r\n/g, '\n').trim();
+      let hash = 5381;
+      for (let i = 0; i < normalized.length; i++) {
+        hash = ((hash << 5) + hash) ^ normalized.charCodeAt(i);
+      }
+      return `${normalized.length}_${hash >>> 0}`;
+    }
+
+    function applyAutoPatchReload() {
+      if (isAutoPatchReloading) return;
+
+      // Wait if a user is actively filling out a form or reading a mandatory modal
+      const openDialog = document.querySelector('dialog[open]');
+      if (openDialog) {
+        isAutoPatchPending = true;
+        return;
+      }
+
+      isAutoPatchReloading = true;
+      showToast('🔄 New portal update detected — applying patch...', 'info');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1800);
+    }
+
+    async function checkForSiteUpdate(isInitialBaseline = false) {
+      // Only run HTTP fetch checks when hosted over http/https (skip local file:// testing)
+      if (!window.location.protocol.startsWith('http')) return;
+
+      try {
+        const baseUrl = window.location.href.split('#')[0].split('?')[0];
+        const res = await fetch(`${baseUrl}?_patch_ts=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        });
+        if (!res.ok) return;
+
+        const latestHtml = await res.text();
+        if (!latestHtml || latestHtml.length < 5000) return;
+
+        const latestFingerprint = computeHtmlFingerprint(latestHtml);
+
+        if (isInitialBaseline || !initialPageFingerprint) {
+          initialPageFingerprint = latestFingerprint;
+          return;
+        }
+
+        if (latestFingerprint !== initialPageFingerprint) {
+          applyAutoPatchReload();
+        }
+      } catch (err) {
+        // Silently ignore transient offline/network blips
+      }
+    }
+
+    window.broadcastSiteUpdateNow = async function() {
+      if (!db) return;
+      try {
+        const buildStamp = new Date().toISOString();
+        const { error } = await db
+          .from('app_settings')
+          .upsert([{ key: 'portal_live_build', value: buildStamp }], { onConflict: 'key' });
+        if (error) throw error;
+        showToast('🚀 Live update signal sent! All open tabs will auto-patch shortly.', 'success');
+      } catch (err) {
+        showToast('Failed to broadcast update: ' + err.message, 'error');
+      }
+    };
+
+    function initSiteAutoPatch() {
+      // 1. Capture baseline fingerprint of the currently deployed file
+      checkForSiteUpdate(true);
+
+      // 2. Poll GitHub Pages every 45 seconds with cache-busting headers
+      setInterval(() => {
+        if (isAutoPatchPending) {
+          applyAutoPatchReload();
+        } else {
+          checkForSiteUpdate(false);
+        }
+      }, 45000);
+
+      // 3. Check immediately whenever an agent returns to this browser tab
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          if (isAutoPatchPending) applyAutoPatchReload();
+          else checkForSiteUpdate(false);
+        }
+      });
+
+      // 3b. If an update arrived while a modal was open, apply it as soon as the modal closes
+      document.querySelectorAll('dialog').forEach(dlg => {
+        dlg.addEventListener('close', () => {
+          if (isAutoPatchPending) {
+            setTimeout(() => applyAutoPatchReload(), 400);
+          }
+        });
+      });
+
+      // 4. Listen for instant admin push notifications via Supabase Realtime
+      if (db) {
+        db.channel('public:portal_live_build_sync')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'app_settings', filter: 'key=eq.portal_live_build' },
+            () => {
+              // Wait 3 seconds for CDN propagation, then check and apply patch
+              setTimeout(() => checkForSiteUpdate(false), 3000);
+            }
+          )
+          .subscribe();
+      }
+    }
+
+    initSiteAutoPatch();
     initTheme();
     initAuth();
   </script>
